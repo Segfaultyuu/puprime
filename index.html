@@ -92,8 +92,10 @@
       border-radius: 50%;
       overflow: hidden;
       flex-shrink: 0;
+      display: block;
+      cursor: pointer;
     }
-    .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .nav-spacer { flex: 1; }
     .nav-actions { display: flex; gap: 20px; align-items: center; }
     .nav-icon { width: 18px; height: 18px; opacity: 0.9; color: var(--text-primary); }
@@ -688,9 +690,9 @@
 
   <!-- NAVBAR -->
   <div class="navbar">
-    <div class="nav-avatar">
+    <a class="nav-avatar" href="menu-prelogin.html" aria-label="Open menu">
       <img src="images/avatar1.png" alt="avatar" />
-    </div>
+    </a>
     <div class="nav-spacer"></div>
     <div class="nav-actions">
       <div class="nav-icon" aria-label="search">
@@ -812,7 +814,7 @@
     <!-- BANNER CARD -->
     <div class="banner-card">
       <div class="banner-text">
-        <h3>Free USD80 Gold Contract<br/>On your first deposit</h3>
+        <h3>Free USD 80 Gold Contract<br/>On your first deposit</h3>
         <button class="claim-btn" type="button">
           Claim now
           <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>

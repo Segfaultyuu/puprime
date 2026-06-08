@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, initial-scale=1.0" />
+  <title>PU Prime – Trade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #1dd1a1;
+      --red: #ee5253;
+      --blue: #006bff;
+    }
+    .phone {
+      --bg-dark: #040a15;
+      --bg-card: #141527;
+      --bg-card2: #1b1d22;
+      --field: #262930;
+      --border-dark: rgba(255,255,255,0.08);
+      --text-primary: #ffffff;
+      --text-secondary: #898787;
+      --text-muted: #70707b;
+    }
+
+    body {
+      background: #040a15;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .phone {
+      width: 393px;
+      margin: 0 auto;
+      background: var(--bg-dark);
+      position: relative;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* radial backdrop glow */
+    .trade-glow {
+      position: absolute;
+      top: -340px;
+      left: -360px;
+      width: 720px;
+      height: 720px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,107,255,0.20) 0%, rgba(0,107,255,0.05) 40%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .scroll { position: relative; z-index: 5; }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      height: 54px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 20px 10px;
+      justify-content: space-between;
+    }
+    .status-time { font-size: 17px; font-weight: 600; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+    .status-icons svg { fill: #fff; }
+
+    /* ── HEADER (Contract / Copy + 3-dot menu) ── */
+    .trade-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: 44px;
+    }
+    .header-tabs { display: flex; gap: 24px; }
+    .header-tab {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      background: none;
+      border: none;
+      padding: 8px 0;
+      cursor: pointer;
+      letter-spacing: -0.2px;
+      font-family: inherit;
+    }
+    .header-tab.active { color: #fff; }
+    .header-menu {
+      width: 16px; height: 16px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .header-menu span {
+      width: 3px; height: 3px;
+      background: #eee;
+      border-radius: 0;
+    }
+
+    /* ── PAIR BAR (BTCUSD ⌄ + actions) ── */
+    .pair-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 8px;
+    }
+    .pair-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      color: #fff;
+      font-family: inherit;
+    }
+    .pair-name svg { width: 14px; height: 14px; opacity: 0.7; }
+    .pair-actions { display: flex; gap: 16px; align-items: center; }
+    .pair-action {
+      width: 18px; height: 18px;
+      color: #fff;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pair-action svg { width: 18px; height: 18px; }
+
+    /* ── BUY / SELL BUTTONS ── */
+    .order-action {
+      padding: 4px 16px 0;
+      position: relative;
+    }
+    .ba-row {
+      display: flex;
+      gap: 10px;
+      position: relative;
+    }
+    .ba-btn {
+      flex: 1;
+      height: 41px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid transparent;
+      transition: filter 0.15s;
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+    }
+    .ba-btn:hover { filter: brightness(1.06); }
+    .ba-btn.sell {
+      background: #ee5253;
+      border-color: #ee5253;
+      border-radius: 100px 4px 4px 100px;
+      box-shadow: 0 7px 8.5px rgba(202,49,64,0.40);
+    }
+    .ba-btn.buy {
+      background: #1dd1a1;
+      border-color: #1dd1a1;
+      border-radius: 4px 100px 100px 4px;
+      box-shadow: 0 7px 8.5px rgba(34,180,150,0.28);
+    }
+    .ba-btn .label {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.22px;
+    }
+    .ba-btn .price {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      font-feature-settings: 'tnum' 1;
+    }
+    .ba-spread-pill {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 22px;
+      height: 16px;
+      border-radius: 6px;
+      background: #364e7b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 500;
+      color: #fff;
+      pointer-events: none;
+    }
+
+    /* ── BAR BENEATH (red/green progress) ── */
+    .ba-progress {
+      margin: 8px 0 4px;
+      display: flex;
+      align-items: center;
+      height: 4px;
+      border-radius: 100px;
+      overflow: hidden;
+      background: var(--field);
+      position: relative;
+    }
+    .ba-progress .red {
+      flex: 1;
+      background: var(--red);
+      height: 100%;
+    }
+    .ba-progress .green {
+      width: 163px;
+      background: var(--green);
+      height: 100%;
+    }
+    .ba-tip {
+      font-size: 9px;
+      color: var(--text-secondary);
+      text-align: right;
+      margin-top: 2px;
+      font-feature-settings: 'tnum' 1;
+    }
+
+    /* ── ORDER FIELDS ── */
+    .order-fields {
+      padding: 12px 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .field {
+      background: var(--field);
+      border-radius: 8px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+      color: #fff;
+      font-family: inherit;
+    }
+    .field.outlined { border: 1px solid #eee; }
+    .field-info-icon {
+      width: 14px; height: 14px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .field-info-icon svg { width: 100%; height: 100%; }
+    .field-label-only {
+      flex: 1;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 400;
+    }
+    .field-caret {
+      width: 12px; height: 12px;
+      color: var(--text-secondary);
+    }
+    .field-caret svg { width: 100%; height: 100%; }
+    .stepper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .stepper-btn {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .stepper-btn:hover { color: var(--blue); }
+    .stepper-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+    }
+    .stepper-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: -0.1px;
+    }
+    .stepper-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      font-feature-settings: 'tnum' 1;
+    }
+    .stepper-cursor {
+      display: inline-block;
+      width: 1px;
+      height: 14px;
+      background: var(--blue);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 1s steps(2) infinite;
+    }
+    @keyframes blink { to { opacity: 0; } }
+
+    .field.combo {
+      gap: 8px;
+    }
+    .field.combo .vol-stepper { flex: 1; display: flex; align-items: center; }
+    .field.combo .divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255,255,255,0.10);
+      flex-shrink: 0;
+    }
+    .field.combo .lots-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      width: 64px;
+      height: 28px;
+      padding: 0 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: inherit;
+    }
+    .field.combo .lots-toggle:hover { color: var(--blue); }
+    .field.combo .lots-toggle .lots-text {
+      font-size: 14px;
+      color: inherit;
+      font-weight: 500;
+    }
+    .field.combo .lots-toggle .field-caret { color: inherit; opacity: 0.65; }
+
+    /* ── SLIDER ── */
+    .slider-wrap {
+      padding: 16px 16px 0;
+    }
+    .slider {
+      position: relative;
+      height: 28px;
+      display: flex;
+      align-items: center;
+    }
+    .slider .track {
+      width: 100%;
+      height: 2px;
+      background: var(--field);
+      border-radius: 12px;
+      position: relative;
+    }
+    .slider .dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--bg-dark);
+      border: 2px solid var(--field);
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .slider .dot.active {
+      border-color: #eee;
+      box-shadow: 0 4px 6px -2px rgba(0,0,0,0.4);
+    }
+    .slider-info {
+      margin-top: 6px;
+      text-align: right;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-feature-settings: 'tnum' 1;
+    }
+
+    /* ── TP/SL ── */
+    .tpsl-wrap {
+      padding: 16px 16px 0;
+    }
+    .tpsl-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .tpsl-check {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+    }
+    .tpsl-check svg { width: 12px; height: 12px; }
+    .tpsl-check.off {
+      background: transparent;
+      border: 2px solid var(--field);
+    }
+    .tpsl-check.off svg { display: none; }
+    .tpsl-label {
+      font-size: 14px;
+      color: #fff;
+      font-weight: 500;
+      border-bottom: 1px dashed rgba(255,255,255,0.25);
+      padding-bottom: 1px;
+    }
+    .tpsl-fields {
+      display: flex;
+      gap: 12px;
+    }
+    .tpsl-fields .field { flex: 1; }
+    .tpsl-stepper-label { font-size: 11px; color: var(--text-secondary); }
+    .tpsl-stepper-value { font-size: 12px; font-weight: 500; color: #fff; font-feature-settings: 'tnum' 1; }
+
+    /* ── MARGIN INFO ── */
+    .margin-info {
+      padding: 12px 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .margin-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .margin-row .key {
+      color: var(--text-secondary);
+      border-bottom: 1px dashed rgba(255,255,255,0.18);
+      padding-bottom: 1px;
+    }
+    .margin-row .key.no-dash { border-bottom: none; }
+    .margin-row .val { color: #eee; font-feature-settings: 'tnum' 1; }
+
+    /* ── SUBMIT BUTTON ── */
+    .submit-wrap {
+      padding: 20px 16px 16px;
+    }
+    .submit-btn {
+      width: 100%;
+      height: 40px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.06px;
+      transition: filter 0.15s;
+    }
+    .submit-btn.sell {
+      background: var(--red);
+      box-shadow: 0 20px 25px -5px rgba(238,82,83,0.20),
+                  0 8px 10px -6px rgba(238,82,83,0.20);
+    }
+    .submit-btn.buy {
+      background: var(--green);
+      box-shadow: 0 20px 25px -5px rgba(29,209,161,0.20),
+                  0 8px 10px -6px rgba(29,209,161,0.20);
+    }
+    .submit-btn:hover { filter: brightness(1.08); }
+
+    /* ── ORDER TABS ── */
+    .order-tabs {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 8px 16px 0;
+      position: relative;
+    }
+    .order-tab {
+      background: none;
+      border: none;
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .order-tab.active {
+      background: var(--field);
+      color: #fff;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .order-history {
+      margin-left: auto;
+      width: 16px; height: 16px;
+      color: #fff;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    .order-history svg { width: 100%; height: 100%; }
+
+    .order-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      margin-top: 8px;
+    }
+    .order-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+    }
+    .order-checkbox .box {
+      width: 16px; height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .order-checkbox .box-inner {
+      width: 12px; height: 12px;
+      border-radius: 4px;
+      border: 1px solid var(--text-secondary);
+    }
+    .close-all-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: var(--field);
+      border: none;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .close-all-btn svg { width: 12px; height: 12px; }
+
+    /* ── POSITION ROW ── */
+    .position {
+      padding: 12px 16px;
+      border-bottom: 0.66px solid var(--field);
+    }
+    .pos-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .pos-tag {
+      padding: 2px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 4px;
+    }
+    .pos-tag.sell { background: rgba(238,82,83,0.12); color: var(--red); }
+    .pos-tag.buy  { background: rgba(29,209,161,0.12); color: var(--green); }
+    .pos-symbol {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .pos-symbol-wrap { display: flex; align-items: center; gap: 4px; flex: 1; }
+    .pos-symbol-wrap .small-icon {
+      width: 16px; height: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pos-symbol-wrap .small-icon svg { width: 100%; height: 100%; opacity: 0.7; }
+    .pos-pnl {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--green);
+      font-feature-settings: 'tnum' 1;
+    }
+    .pos-pnl.neg { color: var(--red); }
+    .pos-pnl .unit {
+      font-size: 13px;
+      font-weight: 700;
+      margin-left: 2px;
+    }
+    .pos-share {
+      width: 14px; height: 14px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .pos-share svg { width: 100%; height: 100%; }
+
+    .pos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      row-gap: 8px;
+      column-gap: 8px;
+      margin-bottom: 12px;
+    }
+    .pos-cell-key {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .pos-cell-val {
+      font-size: 12px;
+      color: #fff;
+      font-feature-settings: 'tnum' 1;
+    }
+    .pos-cell-val .tp { color: var(--green); }
+    .pos-cell-val .sl { color: var(--red); }
+    .pos-cell.right { text-align: right; }
+    .pos-cell.right .pos-cell-key { text-align: right; }
+    .pos-cell.right .pos-cell-val { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; }
+    .pos-edit-icon {
+      width: 14px; height: 14px;
+      color: var(--text-secondary);
+    }
+    .pos-edit-icon svg { width: 100%; height: 100%; }
+
+    .pos-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .pos-action-icon-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--bg-card2);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fafafa;
+      flex-shrink: 0;
+    }
+    .pos-action-icon-btn svg { width: 16px; height: 16px; }
+    .pos-action-btn {
+      flex: 1;
+      height: 32px;
+      border-radius: 100px;
+      background: var(--bg-card2);
+      border: none;
+      cursor: pointer;
+      color: #fafafa;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+    .pos-action-btn:hover { filter: brightness(1.15); }
+
+    /* bottom padding so the last row clears the bottom-nav */
+    .trade-bottom-spacer { height: 140px; }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="trade-glow"></div>
+  <div class="scroll">
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12">
+          <rect x="0" y="8" width="3" height="4" rx="0.5" fill="currentColor"/>
+          <rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5" fill="currentColor"/>
+          <rect x="9" y="3" width="3" height="9" rx="0.5" fill="currentColor"/>
+          <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="currentColor"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+          <path d="M8 9.5L8 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M5.5 7.2C6.2 6.5 7.05 6.1 8 6.1C8.95 6.1 9.8 6.5 10.5 7.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <path d="M3 4.7C4.35 3.4 6.1 2.6 8 2.6C9.9 2.6 11.65 3.4 13 4.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <path d="M0.5 2.1C2.35 0.35 5.05 -0.5 8 0.2C10.5 0.5 12.7 1.65 14.5 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+        </svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
+          <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+          <rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"/>
+          <path d="M23.5 4.5V8.5C24.5 8 24.5 5 23.5 4.5Z" fill="currentColor" opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="trade-header">
+      <div class="header-tabs">
+        <button class="header-tab active" data-view="contract" type="button">Contract</button>
+        <button class="header-tab" data-view="copy" type="button">Copy</button>
+      </div>
+      <button class="header-menu" aria-label="More" type="button">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- PAIR BAR -->
+    <div class="pair-bar">
+      <button class="pair-name" type="button">
+        BTCUSD
+        <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="pair-actions">
+        <button class="pair-action" aria-label="Indicators" type="button">
+          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 5h6M13 5h2M3 9h2M9 9h6M3 13h6M13 13h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="11" cy="5"  r="1.6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+            <circle cx="7"  cy="9"  r="1.6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+            <circle cx="11" cy="13" r="1.6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+          </svg>
+        </button>
+        <button class="pair-action" aria-label="Chart" type="button">
+          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 14L7 10L10 12L15 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="3" y="3" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.4" fill="none"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- BUY / SELL ACTION ROW -->
+    <div class="order-action">
+      <div class="ba-row">
+        <button class="ba-btn sell" type="button">
+          <span class="label">Sell</span>
+          <span class="price">105,390.71</span>
+        </button>
+        <button class="ba-btn buy" type="button">
+          <span class="price">105,390.71</span>
+          <span class="label">Buy</span>
+        </button>
+        <span class="ba-spread-pill">18</span>
+      </div>
+      <div class="ba-progress">
+        <div class="red"></div>
+        <div class="green"></div>
+      </div>
+      <div class="ba-tip">+8888</div>
+    </div>
+
+    <!-- ORDER FIELDS -->
+    <div class="order-fields">
+      <!-- order type select -->
+      <div class="field">
+        <span class="field-info-icon">
+          <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/>
+            <circle cx="7" cy="4.5" r="0.7" fill="currentColor"/>
+            <path d="M7 6V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="field-label-only">Limit</span>
+        <span class="field-caret">
+          <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </div>
+
+      <!-- limit price stepper (focused) -->
+      <div class="field outlined">
+        <div class="stepper">
+          <button class="stepper-btn" type="button" data-step="-" data-target="limitPrice">−</button>
+          <div class="stepper-center">
+            <span class="stepper-label">Limit Price</span>
+            <span class="stepper-value">
+              <span id="limitPrice">92,636.40</span><span class="stepper-cursor"></span>
+            </span>
+          </div>
+          <button class="stepper-btn" type="button" data-step="+" data-target="limitPrice">+</button>
+        </div>
+      </div>
+
+      <!-- volume + lots toggle -->
+      <div class="field combo">
+        <div class="vol-stepper">
+          <button class="stepper-btn" type="button" data-step="-" data-target="volume">−</button>
+          <div class="stepper-center">
+            <span style="font-size:14px; color: var(--text-secondary);">Volume</span>
+          </div>
+          <button class="stepper-btn" type="button" data-step="+" data-target="volume">+</button>
+        </div>
+        <span class="divider"></span>
+        <button class="lots-toggle" type="button">
+          <span class="lots-text">Lots</span>
+          <span class="field-caret">
+            <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- VOLUME SLIDER -->
+    <div class="slider-wrap">
+      <div class="slider">
+        <div class="track">
+          <div class="dot active" style="left: 0%;"></div>
+          <div class="dot" style="left: 25%;"></div>
+          <div class="dot" style="left: 50%;"></div>
+          <div class="dot" style="left: 75%;"></div>
+          <div class="dot" style="left: 100%;"></div>
+        </div>
+      </div>
+      <div class="slider-info">Max open <span style="color:#eee;">100</span> Lots</div>
+    </div>
+
+    <!-- TP/SL -->
+    <div class="tpsl-wrap">
+      <div class="tpsl-row">
+        <button class="tpsl-check" id="tpslCheck" type="button" aria-label="Toggle TP/SL">
+          <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.5 6L5 8.5L9.5 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="tpsl-label">TP/SL</span>
+      </div>
+      <div class="tpsl-fields">
+        <div class="field">
+          <button class="stepper-btn" type="button" data-step="-" data-target="tp">−</button>
+          <div class="stepper-center">
+            <span class="tpsl-stepper-label">Take Profit</span>
+            <span class="tpsl-stepper-value" id="tp">92,636.40</span>
+          </div>
+          <button class="stepper-btn" type="button" data-step="+" data-target="tp">+</button>
+        </div>
+        <div class="field">
+          <button class="stepper-btn" type="button" data-step="-" data-target="sl">−</button>
+          <div class="stepper-center">
+            <span class="tpsl-stepper-label">Stop Loss</span>
+            <span class="tpsl-stepper-value" id="sl">92,636.40</span>
+          </div>
+          <button class="stepper-btn" type="button" data-step="+" data-target="sl">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARGIN / FEES INFO -->
+    <div class="margin-info">
+      <div class="margin-row">
+        <span class="key">Margin / Fees</span>
+        <span class="val">1,283.32 / 12.00 USD</span>
+      </div>
+      <div class="margin-row">
+        <span class="key no-dash">Free Margin</span>
+        <span class="val">2,357.00 USD</span>
+      </div>
+      <div class="margin-row">
+        <span class="key no-dash">Margin Level After Trading</span>
+        <span class="val">1,234,98.00%</span>
+      </div>
+      <div class="margin-row">
+        <span class="key">Leverage</span>
+        <span class="val">1:2,000,000</span>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-wrap">
+      <button class="submit-btn sell" id="submitBtn" type="button">Sell</button>
+    </div>
+
+    <!-- POSITION TABS -->
+    <div class="order-tabs">
+      <button class="order-tab active" type="button">Position (2)</button>
+      <button class="order-tab" type="button">Pending (2)</button>
+      <button class="order-history" aria-label="History" type="button">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 3a5 5 0 1 1-4.9 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M5 3.5L3.1 5L4.6 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 6V8.4L9.7 9.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="order-controls">
+      <button class="order-checkbox" type="button">
+        <span class="box"><span class="box-inner"></span></span>
+        Hide Other Symbols
+      </button>
+      <button class="close-all-btn" type="button">
+        Close All
+        <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- POSITION ROW 1 -->
+    <div class="position">
+      <div class="pos-head">
+        <span class="pos-tag sell">SELL</span>
+        <div class="pos-symbol-wrap">
+          <span class="pos-symbol">BTCUSD</span>
+          <span class="small-icon">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 5h8M5 7h6M3 9h6M5 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </div>
+        <span class="pos-pnl">+10.12<span class="unit"> USD</span></span>
+        <span class="pos-share">
+          <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 7.5L3 9.5M3 9.5L5 11.5M3 9.5H8.5C10.4 9.5 11.5 8.4 11.5 6.5V3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </div>
+      <div class="pos-grid">
+        <div class="pos-cell">
+          <div class="pos-cell-key">Entry Price</div>
+          <div class="pos-cell-val">104,823.78</div>
+        </div>
+        <div class="pos-cell right">
+          <div class="pos-cell-key">Current Price</div>
+          <div class="pos-cell-val">104,823.78</div>
+        </div>
+        <div class="pos-cell">
+          <div class="pos-cell-key">Volume (Lots)</div>
+          <div class="pos-cell-val">0.01</div>
+        </div>
+        <div class="pos-cell right">
+          <div class="pos-cell-key">TP/SL</div>
+          <div class="pos-cell-val">
+            <span class="tp">13,348.23</span>
+            <span style="color: var(--text-secondary);"> / </span>
+            <span class="sl">13,350.23</span>
+            <span class="pos-edit-icon">
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="pos-actions">
+        <button class="pos-action-icon-btn" aria-label="Reverse" type="button">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6L5 4L7 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5 4V11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M13 10L11 12L9 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 12V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="pos-action-btn" type="button">TP/SL</button>
+        <button class="pos-action-btn" type="button">Partially Close</button>
+        <button class="pos-action-btn" type="button">Close</button>
+      </div>
+    </div>
+
+    <!-- POSITION ROW 2 -->
+    <div class="position">
+      <div class="pos-head">
+        <span class="pos-tag sell">SELL</span>
+        <div class="pos-symbol-wrap">
+          <span class="pos-symbol">BTCUSD</span>
+          <span class="small-icon">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 5h8M5 7h6M3 9h6M5 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </div>
+        <span class="pos-pnl">+10.12<span class="unit"> USD</span></span>
+        <span class="pos-share">
+          <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 7.5L3 9.5M3 9.5L5 11.5M3 9.5H8.5C10.4 9.5 11.5 8.4 11.5 6.5V3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </div>
+      <div class="pos-grid">
+        <div class="pos-cell">
+          <div class="pos-cell-key">Entry Price</div>
+          <div class="pos-cell-val">104,823.78</div>
+        </div>
+        <div class="pos-cell right">
+          <div class="pos-cell-key">Current Price</div>
+          <div class="pos-cell-val">104,823.78</div>
+        </div>
+        <div class="pos-cell">
+          <div class="pos-cell-key">Volume (Lots)</div>
+          <div class="pos-cell-val">0.01</div>
+        </div>
+        <div class="pos-cell right">
+          <div class="pos-cell-key">TP/SL</div>
+          <div class="pos-cell-val">
+            <span class="tp">13,348.23</span>
+            <span style="color: var(--text-secondary);"> / </span>
+            <span class="sl">13,350.23</span>
+            <span class="pos-edit-icon">
+              <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="pos-actions">
+        <button class="pos-action-icon-btn" aria-label="Reverse" type="button">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6L5 4L7 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5 4V11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M13 10L11 12L9 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 12V5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="pos-action-btn" type="button">TP/SL</button>
+        <button class="pos-action-btn" type="button">Partially Close</button>
+        <button class="pos-action-btn" type="button">Close</button>
+      </div>
+    </div>
+
+    <div class="trade-bottom-spacer"></div>
+
+  </div><!-- end scroll -->
+</div><!-- end phone -->
+
+<script src="bottom-nav.js" defer></script>
+<script>
+  // Activate Trade tab on the bottom nav
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.vt-tab').forEach(t => t.classList.remove('active'));
+      const t = document.querySelector('.vt-tab[data-tab="trade"]');
+      if (t) t.classList.add('active');
+    }, 0);
+  });
+
+  // Header (Contract / Copy) tab switching
+  document.querySelectorAll('.header-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.header-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+
+  // Order tabs (Position / Pending)
+  document.querySelectorAll('.order-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.order-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+
+  // Stepper buttons
+  document.querySelectorAll('.stepper-btn[data-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.target;
+      const dir = btn.dataset.step === '+' ? 1 : -1;
+      const el = document.getElementById(id);
+      if (!el) return;
+      const num = parseFloat(el.textContent.replace(/,/g, '')) || 0;
+      const next = num + dir * 0.10;
+      el.textContent = next.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    });
+  });
+
+  // TP/SL toggle
+  const tpslCheck = document.getElementById('tpslCheck');
+  tpslCheck.addEventListener('click', () => {
+    tpslCheck.classList.toggle('off');
+  });
+
+  // Slider dot click
+  document.querySelectorAll('.slider .dot').forEach(d => {
+    d.addEventListener('click', () => {
+      document.querySelectorAll('.slider .dot').forEach(x => x.classList.remove('active'));
+      d.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

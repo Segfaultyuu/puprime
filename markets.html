@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, initial-scale=1.0" />
+  <title>PU Prime – Markets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #1dd1a1;
+      --red: #ee5253;
+      --blue: #006bff;
+    }
+
+    .phone {
+      --bg-dark: #0b0c1a;
+      --bg-card: #141527;
+      --bg-card2: #1a1b2e;
+      --border-dark: rgba(255,255,255,0.08);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.55);
+      --text-muted: rgba(255,255,255,0.35);
+      --text-hard: #ffffff;
+      --tab-label: rgba(255,255,255,0.4);
+    }
+
+    body {
+      background: #0b0c1a;
+      min-height: 100vh;
+    }
+    .phone {
+      width: 393px;
+      margin: 0 auto;
+      background: var(--bg-dark);
+      position: relative;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      height: 54px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 20px 10px;
+      justify-content: space-between;
+    }
+    .status-time { font-size: 17px; font-weight: 600; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+    .status-icons svg { fill: #fff; }
+
+    /* ── HEADER (Markets / News + search) ── */
+    .markets-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 44px;
+    }
+    .header-tabs { display: flex; gap: 24px; }
+    .header-tab {
+      font-size: 20px;
+      font-weight: 700;
+      color: #898787;
+      background: none;
+      border: none;
+      padding: 8px 0;
+      cursor: pointer;
+      letter-spacing: -0.2px;
+      font-family: inherit;
+    }
+    .header-tab.active { color: #fff; }
+    .header-search {
+      width: 24px; height: 24px;
+      background: none;
+      border: none;
+      padding: 0;
+      color: #fff;
+      cursor: pointer;
+    }
+    .header-search svg { width: 24px; height: 24px; }
+
+    /* ── REGION TABS ── */
+    .region-tabs {
+      display: flex;
+      gap: 24px;
+      padding: 4px 24px 12px;
+      border-bottom: 0.5px solid #262930;
+    }
+    .region-tab {
+      background: none;
+      border: none;
+      padding: 6px 0;
+      font-family: inherit;
+      font-size: 14px;
+      color: #898787;
+      cursor: pointer;
+      position: relative;
+    }
+    .region-tab.active { color: #fff; font-weight: 600; }
+    .region-tab.active::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* ── INDEX SUMMARY CHIPS ── */
+    .index-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      padding: 16px 0 4px;
+      border-bottom: 0.5px solid #262930;
+    }
+    .index-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 8px;
+      cursor: pointer;
+      position: relative;
+    }
+    .index-chip + .index-chip::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 12px;
+      width: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+    .index-name { font-size: 12px; color: #898787; font-weight: 500; }
+    .index-pct {
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 2px;
+      letter-spacing: 0.2px;
+    }
+    .index-pct.pos { color: var(--green); }
+    .index-pct.neg { color: var(--red); }
+    .index-pct.purple { color: #a5b4fc; }
+    .index-val {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 2px;
+      font-feature-settings: 'tnum' 1;
+    }
+
+    /* ── MAIN CHART ── */
+    .main-chart {
+      position: relative;
+      height: 220px;
+      padding: 18px 16px 12px;
+    }
+    .main-chart-grid {
+      position: absolute;
+      inset: 18px 16px 64px;
+      pointer-events: none;
+    }
+    .main-chart-grid .gridline {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+    }
+    .main-chart-grid .gridlabel {
+      position: absolute;
+      right: 0;
+      top: -8px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      font-feature-settings: 'tnum' 1;
+    }
+    .main-chart svg {
+      width: 100%;
+      height: calc(100% - 56px);
+      display: block;
+      position: relative;
+    }
+    .main-chart-tabs {
+      position: absolute;
+      bottom: 8px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 100px;
+    }
+    .main-chart-tab {
+      flex: 1;
+      height: 28px;
+      border-radius: 100px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .main-chart-tab.active {
+      background: var(--bg-card);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* ── MARKET TRENDS ── */
+    .section {
+      padding: 24px 16px 0;
+    }
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 0 8px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.16px;
+    }
+    .info-icon {
+      width: 16px; height: 16px;
+      color: rgba(255,255,255,0.35);
+    }
+    .trend-tabs {
+      display: flex;
+      gap: 16px;
+      padding: 0 8px 8px;
+      border-bottom: 0.5px solid #262930;
+    }
+    .trend-tab {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 12px;
+      color: #898787;
+      cursor: pointer;
+      padding: 4px 0;
+      font-weight: 600;
+      letter-spacing: 0.06px;
+      text-transform: uppercase;
+      position: relative;
+    }
+    .trend-tab.active { color: #fff; }
+    .trend-tab.active::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -8px;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 2px 2px 0 0;
+    }
+    .trend-table-head {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 8px 4px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+    }
+    .trend-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 8px;
+      cursor: pointer;
+    }
+    .trend-row:hover { background: rgba(255,255,255,0.02); border-radius: 8px; }
+    .trend-logo {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .trend-info { flex: 1; min-width: 0; }
+    .trend-symbol { font-size: 14px; font-weight: 700; color: #fff; }
+    .trend-name {
+      font-size: 11px;
+      color: #898787;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+    .trend-pct-pill {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      font-feature-settings: 'tnum' 1;
+      flex-shrink: 0;
+      min-width: 76px;
+      text-align: center;
+    }
+    .trend-pct-pill.pos { background: rgba(29,209,161,0.18); color: var(--green); }
+    .trend-pct-pill.neg { background: rgba(238,82,83,0.18);  color: var(--red); }
+
+    /* ── ALL INSTRUMENTS ── */
+    .instrument-tabs {
+      display: flex;
+      gap: 24px;
+      padding: 0 24px 0;
+      border-bottom: 0.5px solid #262930;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .instrument-tabs::-webkit-scrollbar { display: none; }
+    .instrument-tab {
+      background: none;
+      border: none;
+      padding: 8px 0;
+      font-family: inherit;
+      font-size: 15px;
+      color: #898787;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .instrument-tab.active { color: #fff; font-weight: 700; }
+    .instrument-tab.active::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 2px 2px 0 0;
+    }
+    .instrument-list { padding: 4px 0 24px; }
+    .instrument-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 24px;
+      cursor: pointer;
+    }
+    .instrument-row:hover { background: rgba(255,255,255,0.025); }
+    .instrument-logo {
+      width: 32px; height: 32px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .instrument-logo svg, .instrument-logo img {
+      width: 100%; height: 100%;
+      display: block;
+      border-radius: 50%;
+    }
+    .instrument-logo-pair { width: 32px; height: 32px; position: relative; }
+    .instrument-logo-pair img {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      position: absolute;
+      object-fit: cover;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .instrument-logo-pair img:nth-child(1) { top: 0; left: 0; }
+    .instrument-logo-pair img:nth-child(2) { bottom: 0; right: 0; }
+    .instrument-info { flex: 1; min-width: 0; }
+    .instrument-symbol { font-size: 14px; font-weight: 700; color: #fff; }
+    .instrument-name {
+      font-size: 12px;
+      color: #898787;
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+    .instrument-value { text-align: right; }
+    .instrument-price {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      font-feature-settings: 'tnum' 1;
+    }
+    .instrument-change {
+      font-size: 12px;
+      margin-top: 1px;
+      font-feature-settings: 'tnum' 1;
+    }
+    .instrument-change .delta-neutral { color: #898787; margin-right: 4px; }
+    .instrument-change .delta-pos     { color: var(--green); }
+    .instrument-change .delta-neg     { color: var(--red); }
+
+    /* ── ALL INSTRUMENTS SECTION HEADER (matches Figma) ── */
+    .all-instruments-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 24px 12px;
+    }
+    .all-instruments-header .section-title { font-size: 18px; }
+    .all-instruments-header .chev {
+      width: 16px; height: 16px;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ── UPCOMING EVENTS ── */
+    .events-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 24px 24px 12px;
+    }
+    .events-header .section-title { font-size: 18px; }
+    .events-region {
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+    }
+    .events-region svg { width: 14px; height: 14px; opacity: 0.7; }
+    .events-allevents {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--blue);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .events-tabs {
+      display: flex;
+      gap: 12px;
+      padding: 0 24px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .events-tabs::-webkit-scrollbar { display: none; }
+    .events-tab {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      height: 28px;
+      border-radius: 100px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      letter-spacing: 0.06px;
+      font-weight: 600;
+    }
+    .events-tab.active {
+      background: rgba(0,107,255,0.16);
+      color: var(--blue);
+    }
+    .events-cards {
+      display: flex;
+      gap: 12px;
+      padding: 0 24px 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .events-cards::-webkit-scrollbar { display: none; }
+    .event-card {
+      flex-shrink: 0;
+      width: 220px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+    }
+    .event-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .event-ticker {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+    }
+    .event-logo {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Georgia, serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: #c8060c;
+    }
+    .event-title {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .event-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* ── PERFORMANCE BY SECTOR ── */
+    .sector-section {
+      padding: 24px 24px 8px;
+    }
+    .sector-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .sector-tile {
+      aspect-ratio: 1 / 1;
+      border-radius: 6px;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-dark);
+    }
+    .sector-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.15;
+    }
+    .sector-value {
+      font-size: 11px;
+      font-feature-settings: 'tnum' 1;
+      color: rgba(255,255,255,0.85);
+    }
+    .sector-tile.heat-pos-strong { background: rgba(29,209,161,0.20); border-color: rgba(29,209,161,0.30); }
+    .sector-tile.heat-pos-soft   { background: rgba(29,209,161,0.10); border-color: rgba(29,209,161,0.18); }
+    .sector-tile.heat-neg-strong { background: rgba(238,82,83,0.22);  border-color: rgba(238,82,83,0.30); }
+    .sector-tile.heat-neg-soft   { background: rgba(238,82,83,0.10);  border-color: rgba(238,82,83,0.18); }
+    .sector-tile .sector-pct.pos { color: var(--green); font-size: 11px; font-weight: 600; }
+    .sector-tile .sector-pct.neg { color: var(--red);   font-size: 11px; font-weight: 600; }
+
+    /* ── POPULAR LISTS ── */
+    .popular-section {
+      padding: 24px 24px 24px;
+    }
+    .popular-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .popular-header .section-title { font-size: 18px; }
+    .popular-header .sub {
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .popular-view-all {
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .popular-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px 6px 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 100px;
+      font-size: 13px;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+    .popular-pill .pill-img {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #4776e6, #8e54e9);
+    }
+    .popular-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .popular-row + .popular-row { margin-top: 10px; }
+
+    /* ── NEWS VIEW ── */
+    .news-list { padding: 4px 24px 24px; }
+    .news-row {
+      padding: 16px 0;
+      border-bottom: 0.5px solid #262930;
+      cursor: pointer;
+    }
+    .news-row:last-child { border-bottom: none; }
+    .news-source {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      letter-spacing: -0.12px;
+    }
+    .news-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.4;
+      letter-spacing: -0.16px;
+    }
+    .news-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .news-meta-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px; height: 14px;
+      border-radius: 3px;
+      background: rgba(0,107,255,0.15);
+      color: var(--blue);
+      font-size: 9px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* simple non-circular custom logos used inline */
+    .logo-tile {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0;
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12">
+        <rect x="0" y="8" width="3" height="4" rx="0.5" fill="currentColor"/>
+        <rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5" fill="currentColor"/>
+        <rect x="9" y="3" width="3" height="9" rx="0.5" fill="currentColor"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="currentColor"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5L8 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M5.5 7.2C6.2 6.5 7.05 6.1 8 6.1C8.95 6.1 9.8 6.5 10.5 7.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M3 4.7C4.35 3.4 6.1 2.6 8 2.6C9.9 2.6 11.65 3.4 13 4.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M0.5 2.1C2.35 0.35 5.05 -0.5 8 0.2C10.5 0.5 12.7 1.65 14.5 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+      </svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"/>
+        <path d="M23.5 4.5V8.5C24.5 8 24.5 5 23.5 4.5Z" fill="currentColor" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- MARKETS / NEWS HEADER -->
+  <div class="markets-header">
+    <div class="header-tabs">
+      <button class="header-tab active" data-view="markets" type="button">Markets</button>
+      <button class="header-tab" data-view="news" type="button">News</button>
+    </div>
+    <button class="header-search" aria-label="Search" type="button">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M16 16L20 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- MARKETS VIEW -->
+  <div id="marketsView">
+
+  <!-- REGION TABS -->
+  <div class="region-tabs">
+    <button class="region-tab active" type="button">U.S.</button>
+    <button class="region-tab" type="button">Europe</button>
+    <button class="region-tab" type="button">Asia</button>
+    <button class="region-tab" type="button">FX</button>
+  </div>
+
+  <!-- INDEX SUMMARY CHIPS -->
+  <div class="index-summary">
+    <div class="index-chip">
+      <span class="index-name">S&amp;P 500</span>
+      <span class="index-pct pos">0.01%</span>
+      <span class="index-val">7384.67</span>
+    </div>
+    <div class="index-chip">
+      <span class="index-name">NASDAQ</span>
+      <span class="index-pct purple">0.02%</span>
+      <span class="index-val">25713.60</span>
+    </div>
+    <div class="index-chip">
+      <span class="index-name">RUSSELL 1000</span>
+      <span class="index-pct neg">−0.02%</span>
+      <span class="index-val">4017.85</span>
+    </div>
+  </div>
+
+  <!-- MAIN CHART -->
+  <div class="main-chart">
+    <div class="main-chart-grid">
+      <div class="gridline" style="top: 0%;"><span class="gridlabel">0.00%</span></div>
+      <div class="gridline" style="top: 33%;"><span class="gridlabel">−0.80%</span></div>
+      <div class="gridline" style="top: 66%;"><span class="gridlabel">−2.00%</span></div>
+      <div class="gridline" style="top: 99%;"><span class="gridlabel">−4.30%</span></div>
+    </div>
+    <svg viewBox="0 0 360 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lineSP" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#5c9fff" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#5c9fff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- S&P (blue) -->
+      <path d="M0,16 L12,12 L24,18 L36,22 L48,30 L60,40 L72,52 L84,68 L96,82 L108,88 L120,94 L132,90 L144,96 L156,100 L168,108 L180,114 L192,116 L204,108 L216,102 L228,96 L240,92 L252,90 L264,86 L276,84 L288,82 L300,84 L312,82 L324,84 L336,80 L348,78 L360,76 L360,130 L0,130 Z" fill="url(#lineSP)" opacity="0.6"/>
+      <path d="M0,16 L12,12 L24,18 L36,22 L48,30 L60,40 L72,52 L84,68 L96,82 L108,88 L120,94 L132,90 L144,96 L156,100 L168,108 L180,114 L192,116 L204,108 L216,102 L228,96 L240,92 L252,90 L264,86 L276,84 L288,82 L300,84 L312,82 L324,84 L336,80 L348,78 L360,76"
+            stroke="#5c9fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- NASDAQ (purple) -->
+      <path d="M0,18 L12,14 L24,22 L36,28 L48,36 L60,44 L72,58 L84,72 L96,86 L108,92 L120,96 L132,92 L144,98 L156,104 L168,112 L180,118 L192,114 L204,106 L216,100 L228,94 L240,88 L252,84 L264,82 L276,78 L288,76 L300,80 L312,78 L324,80 L336,76 L348,72 L360,68"
+            stroke="#a5b4fc" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- RUSSELL (red) -->
+      <path d="M0,20 L12,16 L24,24 L36,32 L48,42 L60,52 L72,66 L84,82 L96,98 L108,104 L120,110 L132,106 L144,114 L156,118 L168,122 L180,124 L192,120 L204,118 L216,114 L228,110 L240,108 L252,104 L264,102 L276,100 L288,98 L300,100 L312,98 L324,96 L336,92 L348,88 L360,84"
+            stroke="#ee5253" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="main-chart-tabs">
+      <button class="main-chart-tab active" type="button">Today</button>
+      <button class="main-chart-tab" type="button">5D</button>
+      <button class="main-chart-tab" type="button">1M</button>
+      <button class="main-chart-tab" type="button">1Y</button>
+      <button class="main-chart-tab" type="button">2Y</button>
+    </div>
+  </div>
+
+  <!-- MARKET TRENDS -->
+  <div class="section">
+    <div class="section-title-row">
+      <span class="section-title">Market Trends</span>
+      <svg class="info-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+        <circle cx="8" cy="5" r="0.9" fill="currentColor"/>
+        <path d="M8 7V11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="trend-tabs">
+      <button class="trend-tab active" type="button">TOP MOVERS</button>
+      <button class="trend-tab" type="button">MOST ACTIVE</button>
+      <button class="trend-tab" type="button">TOP OPTIONS VOLUME</button>
+    </div>
+    <div class="trend-table-head">
+      <span>Instrument</span>
+      <span>Last Price</span>
+    </div>
+    <div class="trend-row">
+      <div class="trend-logo logo-tile" style="background:#000;">
+        <span style="color:#1dd1a1; font-size:14px; font-weight:800;">N</span>
+      </div>
+      <div class="trend-info">
+        <div class="trend-symbol">NRIX</div>
+        <div class="trend-name">NURIX THERAPEUTICS INC</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">23.36</div>
+      </div>
+      <div class="trend-pct-pill pos">+72.93 (59.56%)</div>
+    </div>
+    <div class="trend-row">
+      <div class="trend-logo logo-tile" style="background:#fff; color:#0d0d0d;">CG</div>
+      <div class="trend-info">
+        <div class="trend-symbol">CANG</div>
+        <div class="trend-name">CANG INC/NY - CLASS A</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">0.3010</div>
+      </div>
+      <div class="trend-pct-pill neg">−0.0220 (−6.81%)</div>
+    </div>
+    <div class="trend-row">
+      <div class="trend-logo logo-tile" style="background:#0e2f63;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <polygon points="10,2 18,18 2,18" fill="#5c9fff"/>
+        </svg>
+      </div>
+      <div class="trend-info">
+        <div class="trend-symbol">MLAC</div>
+        <div class="trend-name">MOUNTAIN LAKE ACQUISITIO…</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">9.50</div>
+      </div>
+      <div class="trend-pct-pill pos">+1.53 (19.20%)</div>
+    </div>
+  </div>
+
+  <!-- ALL INSTRUMENTS -->
+  <div class="all-instruments-header">
+    <span class="section-title">All Instruments</span>
+    <svg class="chev" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="instrument-tabs">
+    <button class="instrument-tab active" type="button">All</button>
+    <button class="instrument-tab" type="button">Crypto</button>
+    <button class="instrument-tab" type="button">Metals</button>
+    <button class="instrument-tab" type="button">Indices</button>
+    <button class="instrument-tab" type="button">Forex</button>
+    <button class="instrument-tab" type="button">Commodities</button>
+  </div>
+
+  <div class="instrument-list">
+    <!-- EURUSD -->
+    <div class="instrument-row">
+      <div class="instrument-logo">
+        <div class="instrument-logo-pair">
+          <img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/us.svg" alt="US"/>
+          <img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/eu.svg" alt="EU"/>
+        </div>
+      </div>
+      <div class="instrument-info">
+        <div class="instrument-symbol">EURUSD</div>
+        <div class="instrument-name">Euro vs US</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">1.16482</div>
+        <div class="instrument-change">
+          <span class="delta-neutral">+0.00161</span><span class="delta-pos">(0.14%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CADJPY -->
+    <div class="instrument-row">
+      <div class="instrument-logo">
+        <div class="instrument-logo-pair">
+          <img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/jp.svg" alt="JP"/>
+          <img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/ca.svg" alt="CA"/>
+        </div>
+      </div>
+      <div class="instrument-info">
+        <div class="instrument-symbol">CADJPY</div>
+        <div class="instrument-name">Canadian Dollar/Ja...</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">159.708</div>
+        <div class="instrument-change">
+          <span class="delta-neutral">+0.038</span><span class="delta-pos">(0.366%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nikkei225 -->
+    <div class="instrument-row">
+      <div class="instrument-logo">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="nkGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fde08a"/>
+              <stop offset="100%" stop-color="#b8801c"/>
+            </linearGradient>
+          </defs>
+          <circle cx="16" cy="16" r="16" fill="url(#nkGrad)"/>
+          <text x="16" y="20" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="11" fill="#5c3a0a">225</text>
+        </svg>
+      </div>
+      <div class="instrument-info">
+        <div class="instrument-symbol">Nikkei225</div>
+        <div class="instrument-name">Nikkei Index Cash C...</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">66,869.24</div>
+        <div class="instrument-change">
+          <span class="delta-neutral">−368.91</span><span class="delta-neg">(0.54%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DJ30 -->
+    <div class="instrument-row">
+      <div class="instrument-logo">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="16" fill="#0a3d8f"/>
+          <text x="16" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="10" fill="#fff">DJ30</text>
+        </svg>
+      </div>
+      <div class="instrument-info">
+        <div class="instrument-symbol">DJ30</div>
+        <div class="instrument-name">Dow Jones Index Ca...</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">51,372.44</div>
+        <div class="instrument-change">
+          <span class="delta-neutral">−43.06</span><span class="delta-neg">(0.08%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- XAUUSD -->
+    <div class="instrument-row">
+      <div class="instrument-logo">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldX" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fde08a"/>
+              <stop offset="55%" stop-color="#f4b942"/>
+              <stop offset="100%" stop-color="#b8801c"/>
+            </linearGradient>
+          </defs>
+          <circle cx="16" cy="16" r="16" fill="url(#goldX)"/>
+          <text x="16" y="21" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="14" fill="#5c3a0a">Au</text>
+        </svg>
+      </div>
+      <div class="instrument-info">
+        <div class="instrument-symbol">XAUUSD</div>
+        <div class="instrument-name">Gold vs US Dollar</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">4,480.99</div>
+        <div class="instrument-change">
+          <span class="delta-neutral">−7.17</span><span class="delta-neg">(0.16%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TSLA -->
+    <div class="instrument-row">
+      <div class="instrument-logo">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="16" fill="#c8060c"/>
+          <path d="M16 9.5l-3.5 1L13.5 12L16 11.5L18.5 12L19.5 10.5L16 9.5Z M16 11.5V21" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="instrument-info">
+        <div class="instrument-symbol">TSLA</div>
+        <div class="instrument-name">Tesla</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">422.50</div>
+        <div class="instrument-change">
+          <span class="delta-neutral">+5.80</span><span class="delta-pos">(1.39%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BTCUSD -->
+    <div class="instrument-row">
+      <div class="instrument-logo">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="16" fill="#f7931a"/>
+          <path d="M21.4 14.2c.3-1.9-1.2-3-3.2-3.7l.7-2.7-1.6-.4-.6 2.6c-.5-.1-.9-.2-1.4-.3l.6-2.6-1.6-.4-.7 2.7c-.4-.1-.8-.2-1.1-.2l-2.3-.6-.4 1.7s1.2.3 1.2.3c.7.2.8.6.8.9l-.8 3.1c.1 0 .1 0 .2.1-.1 0-.1 0-.2-.1l-1.1 4.4c-.1.2-.3.5-.8.4 0 0-1.2-.3-1.2-.3l-.8 1.9 2.2.5c.4.1.8.2 1.2.3l-.7 2.7 1.6.4.7-2.7c.5.1.9.2 1.4.4l-.7 2.7 1.6.4.7-2.7c2.9.5 5.1.3 6-2.3.7-2.1 0-3.4-1.6-4.2 1.1-.2 1.9-.9 2.2-2.4zm-3.9 5.5c-.5 2.1-4 1-5.1.7l.9-3.5c1.1.3 4.7.8 4.2 2.8zm.5-5.5c-.5 1.9-3.4 1-4.4.7l.8-3.2c1 .3 4.1.7 3.6 2.5z" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="instrument-info">
+        <div class="instrument-symbol">BTCUSD</div>
+        <div class="instrument-name">Bitcoin</div>
+      </div>
+      <div class="instrument-value">
+        <div class="instrument-price">125,860.25</div>
+        <div class="instrument-change">
+          <span class="delta-neutral">+12,758.40</span><span class="delta-pos">(11.23%)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPCOMING EVENTS -->
+  <div class="events-header">
+    <span class="section-title">Upcoming Events</span>
+    <button class="events-region" type="button">
+      US
+      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <button class="events-allevents" type="button">All Events</button>
+  </div>
+  <div class="events-tabs">
+    <button class="events-tab active" type="button">EARNINGS</button>
+    <button class="events-tab" type="button">ECONOMIC</button>
+    <button class="events-tab" type="button">DIVIDENDS</button>
+    <button class="events-tab" type="button">IPOs</button>
+  </div>
+  <div class="events-cards">
+    <div class="event-card">
+      <div class="event-card-head">
+        <span class="event-ticker">CPB</span>
+        <div class="event-logo" style="font-style: italic;">𝓒</div>
+      </div>
+      <div class="event-title">CPB Q3 2026 Campbell's Co Earnings Release</div>
+      <div class="event-meta">June 8 at 7:15 PM</div>
+    </div>
+    <div class="event-card">
+      <div class="event-card-head">
+        <span class="event-ticker">6DU</span>
+        <div class="event-logo" style="color: #1d1d1d; font-family: 'Times New Roman', serif;">D</div>
+      </div>
+      <div class="event-title">6DU Q1 2026 Duluth Holdings Inc Earnings Release</div>
+      <div class="event-meta">June 9 at 6:00 AM</div>
+    </div>
+    <div class="event-card">
+      <div class="event-card-head">
+        <span class="event-ticker">ABM</span>
+        <div class="event-logo" style="color:#0a3d8f;">A</div>
+      </div>
+      <div class="event-title">ABM Q2 2026 ABM Industries Earnings Release</div>
+      <div class="event-meta">June 10 at 8:30 AM</div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE BY SECTOR -->
+  <div class="sector-section">
+    <span class="section-title">Performance by Sector</span>
+    <div class="sector-grid">
+      <div class="sector-tile heat-pos-soft">
+        <div class="sector-name">Technology</div>
+        <div class="sector-pct pos">0.31%</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Financials</div>
+        <div class="sector-value">C125.00</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Healthcare</div>
+        <div class="sector-value">C64.24</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Consumer Goods</div>
+        <div class="sector-value">C71.89</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Industrials</div>
+        <div class="sector-value">C157.19</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Telecom</div>
+        <div class="sector-value">C42.58</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Consumer Services</div>
+        <div class="sector-value">C99.58</div>
+      </div>
+      <div class="sector-tile heat-neg-soft">
+        <div class="sector-name">Consumer Staples</div>
+        <div class="sector-pct neg">−0.40%</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Energy</div>
+        <div class="sector-value">C61.09</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Basic Materials</div>
+        <div class="sector-value">C181.59</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Utilities</div>
+        <div class="sector-value">C112.23</div>
+      </div>
+      <div class="sector-tile">
+        <div class="sector-name">Infrastructur</div>
+        <div class="sector-value">C61.28</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POPULAR: LISTS -->
+  <div class="popular-section">
+    <div class="popular-header">
+      <div>
+        <span class="section-title">Popular:</span>
+        <span class="sub">Lists</span>
+      </div>
+      <button class="popular-view-all" type="button">View All</button>
+    </div>
+    <div class="popular-row">
+      <button class="popular-pill" type="button">
+        <span class="pill-img" style="background: linear-gradient(135deg,#4776e6,#5c9fff);"></span>
+        Index ETFs
+      </button>
+      <button class="popular-pill" type="button">
+        <span class="pill-img" style="background: linear-gradient(135deg,#1f2235,#3a3a55);"></span>
+        Thematic ETFs
+      </button>
+      <button class="popular-pill" type="button">
+        <span class="pill-img" style="background: linear-gradient(135deg,#0a4b3e,#1dd1a1);"></span>
+        Growth ETFs
+      </button>
+    </div>
+    <div class="popular-row">
+      <button class="popular-pill" type="button">
+        <span class="pill-img" style="background: linear-gradient(135deg,#7a3411,#c47b3d);"></span>
+        Real Estates ETFs
+      </button>
+      <button class="popular-pill" type="button">
+        <span class="pill-img" style="background: linear-gradient(135deg,#0a3d8f,#5c9fff);"></span>
+        Financial Services ETFs
+      </button>
+    </div>
+    <div class="popular-row">
+      <button class="popular-pill" type="button">
+        <span class="pill-img" style="background: linear-gradient(135deg,#11518f,#3477c9);"></span>
+        Global Large-Mid Cap Pick List June 2026
+      </button>
+    </div>
+    <div class="popular-row">
+      <button class="popular-pill" type="button">
+        <span class="pill-img" style="background: linear-gradient(135deg,#0c5d50,#13a487);"></span>
+        Conviction Long Portfolio August 2025
+      </button>
+    </div>
+  </div>
+
+  </div><!-- end #marketsView -->
+
+  <!-- NEWS VIEW -->
+  <div id="newsView" style="display:none;">
+    <div class="news-list">
+      <div class="news-row">
+        <div class="news-source">Zacks Investment Research Newswire</div>
+        <div class="news-title">Microsoft (MSFT) Registers a Bigger Fall Than the Market: Important Facts to Note</div>
+        <div class="news-meta">June 6 <span class="news-meta-tag">Z+</span></div>
+      </div>
+      <div class="news-row">
+        <div class="news-source">Zacks Investment Research Newswire</div>
+        <div class="news-title">Amazon (AMZN) Falls More Steeply Than Broader Market: What Investors Need to Know</div>
+        <div class="news-meta">June 6 <span class="news-meta-tag">Z+</span></div>
+      </div>
+      <div class="news-row">
+        <div class="news-source">Zacks Investment Research Newswire</div>
+        <div class="news-title">Disney (DIS) Down 8.6% Since Last Earnings Report: Can It Rebound?</div>
+        <div class="news-meta">June 5 <span class="news-meta-tag">Z+</span></div>
+      </div>
+      <div class="news-row">
+        <div class="news-source">Reuters Markets</div>
+        <div class="news-title">Fed Holds Rates Steady, Signals Possible Cut Later This Year as Inflation Cools</div>
+        <div class="news-meta">June 4 <span class="news-meta-tag">R</span></div>
+      </div>
+      <div class="news-row">
+        <div class="news-source">Bloomberg Top Stories</div>
+        <div class="news-title">Apple Unveils New AI Chip in Strategy Shift, Shares Climb on Investor Optimism</div>
+        <div class="news-meta">June 4 <span class="news-meta-tag">B</span></div>
+      </div>
+      <div class="news-row">
+        <div class="news-source">CNBC Pro</div>
+        <div class="news-title">Bitcoin Tops $125,000 for First Time as Institutional Inflows Surge</div>
+        <div class="news-meta">June 3 <span class="news-meta-tag">C</span></div>
+      </div>
+      <div class="news-row">
+        <div class="news-source">Financial Times</div>
+        <div class="news-title">Oil Prices Slip as OPEC+ Considers Output Increase Ahead of Summer Demand</div>
+        <div class="news-meta">June 3 <span class="news-meta-tag">FT</span></div>
+      </div>
+      <div class="news-row">
+        <div class="news-source">Zacks Investment Research Newswire</div>
+        <div class="news-title">Nvidia (NVDA) Earnings Beat Sends Chip Sector Higher in Pre-Market Trading</div>
+        <div class="news-meta">June 2 <span class="news-meta-tag">Z+</span></div>
+      </div>
+      <div class="news-row">
+        <div class="news-source">MarketWatch</div>
+        <div class="news-title">Tesla (TSLA) Shares Rise on Stronger-Than-Expected Q2 Delivery Numbers</div>
+        <div class="news-meta">June 2 <span class="news-meta-tag">MW</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end phone -->
+
+<script src="bottom-nav.js" defer></script>
+<script>
+  // Activate Markets tab in the bottom nav once it's mounted.
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.vt-tab').forEach(t => t.classList.remove('active'));
+      const m = document.querySelector('.vt-tab[data-tab="markets"]');
+      if (m) m.classList.add('active');
+    }, 0);
+  });
+
+  // Header (Markets / News) tab switching — toggles which view is visible
+  const marketsView = document.getElementById('marketsView');
+  const newsView    = document.getElementById('newsView');
+  document.querySelectorAll('.header-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.header-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const isNews = t.dataset.view === 'news';
+      marketsView.style.display = isNews ? 'none' : '';
+      newsView.style.display    = isNews ? '' : 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // Region tab switching
+  document.querySelectorAll('.region-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.region-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+
+  // Main chart range tabs
+  document.querySelectorAll('.main-chart-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.main-chart-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+
+  // Trend tabs
+  document.querySelectorAll('.trend-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.trend-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+
+  // Instrument tabs
+  document.querySelectorAll('.instrument-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.instrument-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+
+  // Upcoming events tabs
+  document.querySelectorAll('.events-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.events-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

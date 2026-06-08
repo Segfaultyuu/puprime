@@ -77,8 +77,10 @@
       border-radius: 50%;
       overflow: hidden;
       flex-shrink: 0;
+      cursor: pointer;
+      display: block;
     }
-    .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .nav-spacer { flex: 1; }
     .nav-actions { display: flex; gap: 20px; align-items: center; }
     .nav-icon { width: 18px; height: 18px; opacity: 0.9; color: var(--text-primary); }
@@ -233,8 +235,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
       background: var(--bg-card2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .currency-flag img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .currency-info { flex: 1; min-width: 0; }
     .currency-code { font-size: 14px; font-weight: 600; color: #fff; }
@@ -733,7 +741,7 @@
 
   <!-- NAVBAR -->
   <div class="navbar">
-    <div class="nav-avatar"><img src="images/avatar1.png" alt="avatar" /></div>
+    <a class="nav-avatar" href="menu.html" aria-label="Open menu"><img src="images/avatar1.png" alt="avatar" /></a>
     <div class="nav-spacer"></div>
     <div class="nav-actions">
       <div class="nav-icon" aria-label="search">
@@ -915,7 +923,7 @@
     <!-- BANNER CARD -->
     <div class="banner-card">
       <div class="banner-text">
-        <h3>Free USD80 Gold Contract<br/>On your first deposit</h3>
+        <h3>Free USD 80 Gold Contract<br/>On your first deposit</h3>
         <button class="claim-btn" type="button">
           Claim now
           <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1278,17 +1286,20 @@
   });
 
   // ─── CURRENCY BOTTOM SHEET ───
+  // Flags: hampusborgos/country-flags (MIT) via jsDelivr CDN.
+  // 4x3 SVGs are crisper at small sizes than the 1x1 set.
+  const FLAG_BASE = 'https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/';
   const CURRENCIES = [
-    { code: 'USD', symbol: '$',  name: 'US Dollar',           flag: '🇺🇸' },
-    { code: 'EUR', symbol: '€',  name: 'Euro',                flag: '🇪🇺' },
-    { code: 'GBP', symbol: '£',  name: 'British Pound',       flag: '🇬🇧' },
-    { code: 'JPY', symbol: '¥',  name: 'Japanese Yen',        flag: '🇯🇵' },
-    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar',   flag: '🇦🇺' },
-    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar',     flag: '🇨🇦' },
-    { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc',         flag: '🇨🇭' },
-    { code: 'CNY', symbol: '¥',  name: 'Chinese Yuan',        flag: '🇨🇳' },
-    { code: 'HKD', symbol: 'HK$',name: 'Hong Kong Dollar',    flag: '🇭🇰' },
-    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar',    flag: '🇸🇬' },
+    { code: 'USD', symbol: '$',  name: 'US Dollar',         iso: 'us' },
+    { code: 'EUR', symbol: '€',  name: 'Euro',              iso: 'eu' },
+    { code: 'GBP', symbol: '£',  name: 'British Pound',     iso: 'gb' },
+    { code: 'JPY', symbol: '¥',  name: 'Japanese Yen',      iso: 'jp' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar', iso: 'au' },
+    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar',   iso: 'ca' },
+    { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc',       iso: 'ch' },
+    { code: 'CNY', symbol: '¥',  name: 'Chinese Yuan',      iso: 'cn' },
+    { code: 'HKD', symbol: 'HK$',name: 'Hong Kong Dollar',  iso: 'hk' },
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar',  iso: 'sg' },
   ];
   let currencyIdx = 0;
   const currencyCode = document.getElementById('balanceCurrencyCode');
@@ -1299,7 +1310,9 @@
   function renderCurrencyList() {
     sheetList.innerHTML = CURRENCIES.map((c, i) => `
       <button class="currency-row${i === currencyIdx ? ' active' : ''}" data-idx="${i}" type="button">
-        <span class="currency-flag">${c.flag}</span>
+        <span class="currency-flag">
+          <img src="${FLAG_BASE}${c.iso}.svg" alt="${c.code}" loading="lazy" />
+        </span>
         <div class="currency-info">
           <div class="currency-code">${c.code}</div>
           <div class="currency-name">${c.name}</div>

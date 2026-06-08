@@ -253,6 +253,12 @@
     const mount = document.querySelector('.phone') || document.body;
     mount.appendChild(wrap);
 
+    const ROUTES = {
+      home:    'home.html',
+      markets: 'markets.html',
+      trade:   'trade.html',
+      promo:   'promo.html',
+    };
     wrap.addEventListener('click', e => {
       const tab = e.target.closest('.vt-tab');
       if (!tab) return;
@@ -262,6 +268,11 @@
         detail: { id: tab.dataset.tab },
         bubbles: true,
       }));
+      const dest = ROUTES[tab.dataset.tab];
+      if (dest) {
+        const here = location.pathname.split('/').pop() || 'home.html';
+        if (here !== dest) location.href = dest;
+      }
     });
   }
 
