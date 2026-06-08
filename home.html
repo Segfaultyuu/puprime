@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, initial-scale=1.0" />
+  <title>PU Prime – Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #1dd1a1;
+      --red: #ee5253;
+      --blue: #006bff;
+    }
+
+    .phone {
+      --bg-dark: #0b0c1a;
+      --bg-card: #141527;
+      --bg-card2: #1a1b2e;
+      --border-dark: rgba(255,255,255,0.08);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.55);
+      --text-muted: rgba(255,255,255,0.35);
+      --text-hard: #ffffff;
+      --nav-bg: #0e0f1d;
+      --nav-border: rgba(255,255,255,0.10);
+      --tab-label: rgba(255,255,255,0.4);
+      --status-color: #ffffff;
+      --dot-inactive: rgba(255,255,255,0.2);
+    }
+
+    body {
+      background: #0b0c1a;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .phone {
+      width: 393px;
+      margin: 0 auto;
+      background: var(--bg-dark);
+      position: relative;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* ─── STATUS BAR ─── */
+    .status-bar {
+      height: 54px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 20px 10px;
+      justify-content: space-between;
+      position: relative;
+      z-index: 20;
+      background: transparent;
+    }
+    .status-time { font-size: 17px; font-weight: 600; color: var(--status-color); line-height: 22px; }
+    .status-icons { display: flex; align-items: center; gap: 6px; color: var(--status-color); }
+    .status-icons svg { fill: var(--status-color); }
+
+    /* ─── NAVBAR ─── */
+    .navbar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      position: relative;
+      z-index: 20;
+      background: transparent;
+    }
+    .nav-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-spacer { flex: 1; }
+    .nav-actions { display: flex; gap: 20px; align-items: center; }
+    .nav-icon { width: 18px; height: 18px; opacity: 0.9; color: var(--text-primary); }
+    .nav-icon svg { width: 100%; height: 100%; display: block; }
+
+    /* ─── BALANCE HERO ─── */
+    .balance-hero {
+      position: relative;
+      padding: 16px 24px 0;
+      z-index: 5;
+    }
+    .balance-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .balance-info { display: flex; flex-direction: column; gap: 4px; }
+    .balance-label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .balance-label {
+      font-size: 14px;
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: -0.14px;
+    }
+    .balance-eye, .balance-currency {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      padding: 2px 0;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.18s;
+    }
+    .balance-eye { width: 18px; height: 18px; padding: 0; justify-content: center; }
+    .balance-eye:hover, .balance-currency:hover { color: #fff; }
+    .balance-eye svg { width: 14px; height: 14px; display: block; }
+    .balance-currency { font-size: 13px; color: #fff; }
+    .balance-currency svg { width: 12px; height: 12px; opacity: 0.7; }
+    .balance-amount {
+      font-size: 32px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.4px;
+      line-height: 44px;
+      font-feature-settings: 'tnum' 1;
+    }
+    .balance-pnl {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      margin-top: -2px;
+    }
+    .balance-pnl-label { font-size: 13px; color: #898787; }
+    .balance-pnl-value { font-size: 13px; font-weight: 500; color: var(--green); font-feature-settings: 'tnum' 1; }
+    .balance-pnl-value.neg { color: var(--red); }
+
+    /* ─── BOTTOM SHEET ─── */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+    .sheet {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 100%);
+      width: 393px;
+      max-width: 100vw;
+      background: #141527;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 8px 0 24px;
+      z-index: 210;
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .sheet.open { transform: translate(-50%, 0); }
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.25);
+      margin: 0 auto 12px;
+    }
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 20px 12px;
+    }
+    .sheet-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .sheet-close {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, color 0.18s;
+    }
+    .sheet-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .sheet-close svg { width: 14px; height: 14px; }
+    .sheet-list {
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 0 12px 4px;
+    }
+    .currency-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 12px;
+      background: none;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .currency-row:hover { background: rgba(255,255,255,0.04); }
+    .currency-row.active { background: rgba(0,107,255,0.10); }
+    .currency-flag {
+      width: 32px; height: 32px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: var(--bg-card2);
+    }
+    .currency-info { flex: 1; min-width: 0; }
+    .currency-code { font-size: 14px; font-weight: 600; color: #fff; }
+    .currency-name { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .currency-check {
+      width: 22px; height: 22px;
+      flex-shrink: 0;
+      color: var(--blue);
+      opacity: 0;
+    }
+    .currency-row.active .currency-check { opacity: 1; }
+    .currency-check svg { width: 100%; height: 100%; }
+
+    /* compact mini chart on the right */
+    .balance-mini-chart {
+      width: 132px;
+      height: 64px;
+      flex-shrink: 0;
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.18s ease;
+    }
+    .balance-mini-chart:hover { transform: scale(1.02); }
+    .balance-mini-chart .mini-grid {
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(0,107,255,0.45) 0.6px, transparent 0.7px);
+      background-size: 7px 7px;
+      opacity: 0.55;
+    }
+    .balance-mini-chart svg {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 0 4px rgba(92,159,255,0.7));
+    }
+
+    /* ─── EXPANDED CHART ─── */
+    .balance-chart-area {
+      position: relative;
+      width: 100%;
+      height: 0;
+      margin-top: 0;
+      overflow: hidden;
+      transition: height 0.35s ease, margin-top 0.35s ease;
+    }
+    .balance-hero.expanded .balance-chart-area {
+      height: 260px;
+      margin-top: 12px;
+    }
+    .balance-hero.expanded .balance-mini-chart { display: none; }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      margin-top: 4px;
+      margin-left: -24px;       /* let chart bleed to phone edges */
+      margin-right: -24px;
+      width: calc(100% + 48px);
+    }
+    .chart-wrapper svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .chart-label-top {
+      position: absolute;
+      top: 4px;
+      right: 24px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      font-feature-settings: 'tnum' 1;
+      z-index: 2;
+    }
+    .chart-label-bottom {
+      position: absolute;
+      bottom: 8px;
+      left: 90px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      font-feature-settings: 'tnum' 1;
+      z-index: 2;
+    }
+
+    .chart-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .chart-tab {
+      padding: 0 14px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      font-family: inherit;
+    }
+    .chart-tab.active {
+      background: #fff;
+      color: #232020;
+      border-color: #fff;
+    }
+
+    .chart-meta {
+      text-align: center;
+      font-size: 11px;
+      color: #898787;
+      margin-top: 24px;
+    }
+    .balance-collapse {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin-top: 16px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+    }
+    .balance-collapse svg {
+      width: 22px;
+      height: 22px;
+      transition: transform 0.3s ease;
+    }
+    .balance-hero.expanded .balance-collapse svg {
+      transform: rotate(180deg);
+    }
+
+    /* ─── TRADE / DEPOSIT BUTTONS ─── */
+    .balance-actions {
+      display: flex;
+      gap: 16px;
+      margin: 16px 0 0;
+      padding: 0 24px;
+    }
+    .balance-btn {
+      flex: 1;
+      height: 40px;
+      border-radius: 100px;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06px;
+      cursor: pointer;
+      color: #fff;
+      transition: filter 0.18s;
+    }
+    .balance-btn:hover { filter: brightness(1.08); }
+    .balance-btn.secondary { background: #3e3d43; }
+    .balance-btn.primary { background: var(--blue); }
+
+    /* ─── CONTENT AREA ─── */
+    .content {
+      background: var(--bg-dark);
+      padding: 0 16px;
+      margin-top: 28px;
+    }
+
+    /* ─── QUICK ACTIONS ─── */
+    .quick-actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0 8px;
+    }
+    .qa-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 57px;
+    }
+    .qa-icon-wrap {
+      width: 57px; height: 57px;
+      background: var(--bg-card);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border: 1px solid var(--border-dark);
+      color: var(--text-primary);
+    }
+    .qa-icon-wrap svg { width: 22px; height: 22px; }
+    .qa-badge {
+      position: absolute;
+      top: 2px; right: 2px;
+      background: #ff4757;
+      border-radius: 6px;
+      padding: 1px 4px;
+      font-size: 7px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.3px;
+    }
+    .qa-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* ─── BANNER CARD ─── */
+    .banner-card {
+      margin: 16px 0 0;
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 17px 0 16px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--border-dark);
+      overflow: hidden;
+      min-height: 86px;
+    }
+    .banner-text h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-hard);
+      line-height: 1.35;
+      max-width: 200px;
+    }
+    .banner-text .claim-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      margin-top: 6px;
+      padding: 0;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue);
+      cursor: pointer;
+      letter-spacing: 0.1px;
+    }
+    .banner-text .claim-btn svg { width: 12px; height: 12px; }
+    .banner-text .claim-btn:hover { opacity: 0.85; }
+    .banner-chart {
+      width: 130px; height: 86px;
+      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: 0 16px 16px 0;
+      position: relative;
+    }
+    .banner-chart video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      mix-blend-mode: screen;
+    }
+
+    .banner-dots {
+      display: flex;
+      gap: 9px;
+      justify-content: center;
+      margin-top: 12px;
+      padding-bottom: 4px;
+    }
+    .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--dot-inactive);
+    }
+    .dot.active { background: var(--blue); }
+
+    /* ─── SECTION HEADER ─── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 24px 0 16px;
+    }
+    .section-title { font-size: 18px; font-weight: 700; color: var(--text-hard); }
+    .see-all {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .see-all svg { width: 16px; height: 16px; opacity: 0.5; }
+
+    /* ─── TOP TRADERS ─── */
+    .traders-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+      margin: 0 -16px;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .traders-scroll::-webkit-scrollbar { display: none; }
+    .trader-return-label { color: var(--text-muted); }
+    .trader-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 12px;
+      min-width: 160px;
+      max-width: 160px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-dark);
+    }
+    .trader-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .trader-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: var(--bg-card2);
+    }
+    .trader-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .trader-name {
+      font-size: 10px;
+      color: var(--text-hard);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 67px;
+    }
+    .trader-ticker { font-size: 14px; font-weight: 800; color: var(--text-hard); line-height: 1; }
+    .trader-meta {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .trader-return { font-size: 12px; font-weight: 700; }
+    .trader-return.pos { color: var(--green); }
+    .trader-return.neg { color: var(--red); }
+
+    /* ─── POPULAR LIST ─── */
+    .popular-section { padding-bottom: 80px; }
+    .market-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-dark);
+      margin-bottom: 8px;
+      background: var(--bg-card);
+      position: relative;
+      overflow: hidden;
+    }
+    .market-item::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 100%;
+      border-radius: 11px;
+      pointer-events: none;
+      animation: mktSweep 2.8s linear infinite;
+    }
+    .market-item.up::before {
+      background: linear-gradient(90deg, transparent, rgba(29,209,161,0.10) 35%, rgba(29,209,161,0.22) 50%, rgba(29,209,161,0.10) 65%, transparent);
+    }
+    .market-item.down::before {
+      background: linear-gradient(90deg, transparent, rgba(238,82,83,0.08) 35%, rgba(238,82,83,0.18) 50%, rgba(238,82,83,0.08) 65%, transparent);
+    }
+    @keyframes mktSweep {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .spark-group { animation: scrollSpark 2.5s linear infinite; }
+    @keyframes scrollSpark {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-80px); }
+    }
+    .spark-line { fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .market-item.up   .spark-line { stroke: var(--green); }
+    .market-item.down .spark-line { stroke: var(--red); }
+    .spark-area { opacity: 0.18; }
+    .market-item.up   .spark-area { fill: #1dd1a1; }
+    .market-item.down .spark-area { fill: #ee5253; }
+    .spark-dot { animation: dotPulse 1.3s ease-in-out infinite; }
+    .market-item.up   .spark-dot { fill: var(--green); }
+    .market-item.down .spark-dot { fill: var(--red); }
+    @keyframes dotPulse {
+      0%, 100% { r: 2;   opacity: 1;   }
+      50%      { r: 3.5; opacity: 0.4; }
+    }
+
+    .market-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .market-logo {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      object-fit: cover;
+      background: var(--bg-card2);
+      display: block;
+    }
+    svg.market-logo { background: transparent; }
+    .market-logo-pair { width: 32px; height: 32px; position: relative; flex-shrink: 0; }
+    .market-info { flex: 1; min-width: 0; }
+    .market-name-row { display: flex; align-items: baseline; gap: 6px; }
+    .market-symbol {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-hard);
+      letter-spacing: 0.06px;
+      white-space: nowrap;
+    }
+    .market-fullname {
+      font-size: 11px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+    .market-price-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+    .market-price { font-size: 13px; font-weight: 800; color: var(--text-hard); }
+    .market-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .market-change { font-size: 11px; font-weight: 500; }
+    .market-change.pos { color: var(--green); }
+    .market-change.neg { color: var(--red); }
+
+    .market-sparkline {
+      width: 80px; height: 30px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .market-sparkline svg {
+      width: 80px; height: 30px;
+      overflow: hidden;
+      display: block;
+    }
+
+    .view-more {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 0 48px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .view-more svg { width: 18px; height: 18px; opacity: 0.6; }
+  </style>
+</head>
+<body>
+<div class="phone">
+<div class="scroll-area">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="18" height="12" viewBox="0 0 18 12">
+        <rect x="0" y="8" width="3" height="4" rx="0.5" fill="currentColor"/>
+        <rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5" fill="currentColor"/>
+        <rect x="9" y="3" width="3" height="9" rx="0.5" fill="currentColor"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="currentColor"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 9.5L8 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M5.5 7.2C6.2 6.5 7.05 6.1 8 6.1C8.95 6.1 9.8 6.5 10.5 7.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M3 4.7C4.35 3.4 6.1 2.6 8 2.6C9.9 2.6 11.65 3.4 13 4.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M0.5 2.1C2.35 0.35 5.05 -0.5 8 0.2C10.5 0.5 12.7 1.65 14.5 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+      </svg>
+      <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+        <rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"/>
+        <path d="M23.5 4.5V8.5C24.5 8 24.5 5 23.5 4.5Z" fill="currentColor" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="nav-avatar"><img src="images/avatar1.png" alt="avatar" /></div>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions">
+      <div class="nav-icon" aria-label="search">
+        <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="9.5" cy="9.5" r="6.5" stroke="currentColor" stroke-width="1.8" fill="none"/>
+          <path d="M14.5 14.5L19 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="nav-icon" aria-label="chat">
+        <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 5.5C3 4.4 3.9 3.5 5 3.5H17C18.1 3.5 19 4.4 19 5.5V13.5C19 14.6 18.1 15.5 17 15.5H8.5L4.5 19V15.5C3.7 15.5 3 14.6 3 13.5V5.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="none"/>
+          <circle cx="8" cy="9.5" r="1" fill="currentColor"/>
+          <circle cx="11" cy="9.5" r="1" fill="currentColor"/>
+          <circle cx="14" cy="9.5" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- BALANCE HERO (replaces video hero from index.html) -->
+  <div class="balance-hero" id="balanceHero">
+    <div class="balance-row">
+      <div class="balance-info">
+        <div class="balance-label-row">
+          <span class="balance-label">Total Value</span>
+          <button class="balance-eye" id="balanceEyeBtn" type="button" aria-label="Toggle balance visibility">
+            <!-- eye-open (default) -->
+            <svg id="iconEyeOpen" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 7s2.2-3.7 6-3.7S13 7 13 7s-2.2 3.7-6 3.7S1 7 1 7Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="7" cy="7" r="1.7" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            <!-- eye-off (hidden state) -->
+            <svg id="iconEyeOff" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+              <path d="M2 2L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M5.7 3.7C6.1 3.6 6.55 3.55 7 3.55C10.5 3.55 13 7 13 7C12.6 7.65 12.1 8.25 11.5 8.8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3.7 4.7C2.7 5.55 1.8 6.65 1 7C1 7 3.5 10.5 7 10.5C7.95 10.5 8.8 10.25 9.55 9.85" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5.85 5.85C5.5 6.15 5.3 6.55 5.3 7C5.3 7.95 6.05 8.7 7 8.7C7.45 8.7 7.85 8.5 8.15 8.15" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="balance-currency" id="balanceCurrencyBtn" type="button" aria-label="Change currency">
+            <span id="balanceCurrencyCode">USD</span>
+            <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="balance-amount" id="balanceAmount" data-value="10,483.01">$10,483.01</div>
+        <div class="balance-pnl">
+          <span class="balance-pnl-label">Today's PnL</span>
+          <span class="balance-pnl-value">+$0.00 (0.00%)</span>
+        </div>
+      </div>
+
+      <!-- compact mini chart (visible when collapsed) — click to expand -->
+      <div class="balance-mini-chart" id="balanceMiniChart" role="button" aria-label="Expand chart">
+        <div class="mini-grid"></div>
+        <svg viewBox="0 0 132 64" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="miniArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#5c9fff" stop-opacity="0.55"/>
+              <stop offset="55%"  stop-color="#1a3a8a" stop-opacity="0.28"/>
+              <stop offset="100%" stop-color="#0b0c1a" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- area under the line -->
+          <path d="M0,40 L4,38 L8,34 L12,30 L16,26 L20,28 L24,22 L28,16 L32,18 L36,14 L40,12 L44,10 L48,12 L52,8 L56,18 L60,14 L64,22 L68,18 L72,16 L76,20 L80,18 L84,14 L88,16 L92,12 L96,18 L100,16 L104,22 L108,18 L112,14 L116,16 L120,12 L124,16 L128,14 L132,18 L132,64 L0,64 Z"
+                fill="url(#miniArea)"/>
+          <!-- jagged straight-segment line -->
+          <path d="M0,40 L4,38 L8,34 L12,30 L16,26 L20,28 L24,22 L28,16 L32,18 L36,14 L40,12 L44,10 L48,12 L52,8 L56,18 L60,14 L64,22 L68,18 L72,16 L76,20 L80,18 L84,14 L88,16 L92,12 L96,18 L100,16 L104,22 L108,18 L112,14 L116,16 L120,12 L124,16 L128,14 L132,18"
+                stroke="#5c9fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- expanded chart area (toggled by chevron) -->
+    <div class="balance-chart-area">
+      <div class="chart-wrapper">
+        <span class="chart-label-top">$ 30,980.09</span>
+        <span class="chart-label-bottom">$ 30,980.09</span>
+        <svg viewBox="0 0 393 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bigArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#5c9fff" stop-opacity="0.55"/>
+              <stop offset="55%"  stop-color="#1a3a8a" stop-opacity="0.30"/>
+              <stop offset="100%" stop-color="#0b0c1a" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="bigGlow" cx="50%" cy="60%" r="55%">
+              <stop offset="0%"  stop-color="rgba(0,107,255,0.18)"/>
+              <stop offset="100%" stop-color="rgba(0,107,255,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- soft horizontal glow band behind the chart -->
+          <rect x="0" y="0" width="393" height="150" fill="url(#bigGlow)"/>
+          <!-- area + line — paths injected by JS on tab change -->
+          <path id="bigChartArea" fill="url(#bigArea)"/>
+          <path id="bigChartLine" stroke="#5c9fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="drop-shadow(0 0 6px rgba(92,159,255,0.55))"/>
+        </svg>
+      </div>
+
+      <div class="chart-tabs">
+        <button class="chart-tab active" data-range="7D" type="button">7D</button>
+        <button class="chart-tab" data-range="30D" type="button">30D</button>
+        <button class="chart-tab" data-range="90D" type="button">90D</button>
+        <button class="chart-tab" data-range="180D" type="button">180D</button>
+        <button class="chart-tab" data-range="360D" type="button">360D</button>
+      </div>
+
+      <div class="chart-meta">Last Updated: 2026-06-03 23:59 (UTC)</div>
+    </div>
+
+    <button class="balance-collapse" id="balanceCollapseBtn" type="button" aria-label="Toggle chart">
+      <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 9L11 15L17 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="balance-actions">
+    <button class="balance-btn secondary" type="button">Trade</button>
+    <button class="balance-btn primary" type="button">Deposit</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions">
+      <div class="qa-item">
+        <div class="qa-icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="8" width="16" height="3.5" rx="1" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <rect x="4.25" y="11.5" width="13.5" height="8" rx="1" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M11 8V19.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M11 8C9.4 8 7 7 7 5.4 7 4.4 7.65 3.7 8.7 3.7 10.5 3.7 11 8 11 8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M11 8C12.6 8 15 7 15 5.4 15 4.4 14.35 3.7 13.3 3.7 11.5 3.7 11 8 11 8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="qa-label">Promo</span>
+      </div>
+      <div class="qa-item">
+        <div class="qa-icon-wrap">
+          <svg viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M5.5 19.5c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="5" cy="9" r="2.4" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M1 18.5c0-2.5 1.8-4.4 4-4.4 0.55 0 1.1 0.1 1.6 0.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="19" cy="9" r="2.4" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M23 18.5c0-2.5-1.8-4.4-4-4.4-0.55 0-1.1 0.1-1.6 0.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="qa-label">Traders</span>
+      </div>
+      <div class="qa-item">
+        <div class="qa-icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2.5" y="5.5" width="17" height="12" rx="2.5" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M14 11.75H17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="15.5" cy="11.75" r="0.9" fill="currentColor"/>
+            <path d="M5 5.5V4.5C5 3.4 5.9 2.5 7 2.5H14.5C15 2.5 15.5 3 15.5 3.5V5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="qa-badge">NEW</div>
+        </div>
+        <span class="qa-label">Wallet</span>
+      </div>
+      <div class="qa-item">
+        <div class="qa-icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="12" r="7.5" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M10 12L10 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M10 12L16.5 15.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M10 4.5A7.5 7.5 0 0 1 16.5 15.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="qa-label">Analysis</span>
+      </div>
+    </div>
+
+    <!-- BANNER CARD -->
+    <div class="banner-card">
+      <div class="banner-text">
+        <h3>Free USD80 Gold Contract<br/>On your first deposit</h3>
+        <button class="claim-btn" type="button">
+          Claim now
+          <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="banner-chart">
+        <video class="auto-loop-video"
+          src="https://cdn.dribbble.com/userupload/2800094/file/original-64758650fe270ef744cb536e4a49f08d.mp4"
+          autoplay loop muted playsinline preload="auto" disablepictureinpicture></video>
+      </div>
+    </div>
+    <div class="banner-dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <!-- TOP TRADERS -->
+    <div class="section-header">
+      <span class="section-title">Top Traders</span>
+      <div class="see-all">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="traders-scroll">
+      <div class="trader-card">
+        <div class="trader-header">
+          <div class="trader-avatar"><img src="images/avatar2.png" alt="Savanna"/></div>
+          <div><div class="trader-name">Savanna...</div></div>
+        </div>
+        <div class="trader-ticker">35632.12</div>
+        <div class="trader-meta">Demi Wilkinson • 16 Jan 2026</div>
+        <div style="margin-top:6px;">
+          <div style="font-size:10px; margin-bottom:2px;" class="trader-return-label">3M Return</div>
+          <div class="trader-return pos">+0.0025 (+0.3661%)</div>
+        </div>
+      </div>
+      <div class="trader-card">
+        <div class="trader-header">
+          <div class="trader-avatar"><img src="images/avatar3.png" alt="Mia"/></div>
+          <div><div class="trader-name">Mia Iasabella</div></div>
+        </div>
+        <div class="trader-ticker">35632.12</div>
+        <div class="trader-meta">Demi Wilkinson • 16 Jan 2026</div>
+        <div style="margin-top:6px;">
+          <div style="font-size:10px; margin-bottom:2px;" class="trader-return-label">3M Return</div>
+          <div class="trader-return neg">-162,348.76%</div>
+        </div>
+      </div>
+      <div class="trader-card">
+        <div class="trader-header">
+          <div class="trader-avatar"><img src="images/avatar4.png" alt="Mia"/></div>
+          <div><div class="trader-name">Mia Iasabella</div></div>
+        </div>
+        <div class="trader-ticker">35632.12</div>
+        <div class="trader-meta">Demi Wilkinson • 16 Jan 2026</div>
+        <div style="margin-top:6px;">
+          <div style="font-size:10px; margin-bottom:2px;" class="trader-return-label">3M Return</div>
+          <div class="trader-return pos">+12.45%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POPULAR -->
+    <div class="section-header popular-section" style="padding-bottom:0;">
+      <span class="section-title">Popular</span>
+    </div>
+
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <linearGradient id="gradUp" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1dd1a1" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#1dd1a1" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="gradDown" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ee5253" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#ee5253" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div style="padding-bottom: 0;">
+      <!-- BTCUSD -->
+      <div class="market-item up">
+        <div class="market-left">
+          <svg class="market-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="16" fill="#f7931a"/>
+            <path d="M21.4 14.2c.3-1.9-1.2-3-3.2-3.7l.7-2.7-1.6-.4-.6 2.6c-.5-.1-.9-.2-1.4-.3l.6-2.6-1.6-.4-.7 2.7c-.4-.1-.8-.2-1.1-.2l-2.3-.6-.4 1.7s1.2.3 1.2.3c.7.2.8.6.8.9l-.8 3.1c.1 0 .1 0 .2.1-.1 0-.1 0-.2-.1l-1.1 4.4c-.1.2-.3.5-.8.4 0 0-1.2-.3-1.2-.3l-.8 1.9 2.2.5c.4.1.8.2 1.2.3l-.7 2.7 1.6.4.7-2.7c.5.1.9.2 1.4.4l-.7 2.7 1.6.4.7-2.7c2.9.5 5.1.3 6-2.3.7-2.1 0-3.4-1.6-4.2 1.1-.2 1.9-.9 2.2-2.4zm-3.9 5.5c-.5 2.1-4 1-5.1.7l.9-3.5c1.1.3 4.7.8 4.2 2.8zm.5-5.5c-.5 1.9-3.4 1-4.4.7l.8-3.2c1 .3 4.1.7 3.6 2.5z" fill="#fff"/>
+          </svg>
+          <div class="market-info">
+            <div class="market-name-row">
+              <span class="market-symbol">BTCUSD</span>
+              <span class="market-fullname">Bitcoin</span>
+            </div>
+            <div class="market-price-row">
+              <span class="market-price">125,860.25</span>
+              <div class="market-dot"></div>
+              <span class="market-change pos">+11.23%</span>
+            </div>
+          </div>
+        </div>
+        <div class="market-sparkline">
+          <svg viewBox="0 0 80 30" class="spark-svg">
+            <g class="spark-group" style="animation-duration:2.5s">
+              <path class="spark-area" d="M0,17 C5,11 11,7 18,10 C25,13 29,19 36,16 C43,13 49,7 56,11 C63,15 71,19 80,17 C85,11 91,7 98,10 C105,13 109,19 116,16 C123,13 129,7 136,11 C143,15 151,19 160,17 C165,11 171,7 178,10 C185,13 189,19 196,16 C203,13 209,7 216,11 C223,15 231,19 240,17 L240,30 L0,30 Z"/>
+              <path class="spark-line" d="M0,17 C5,11 11,7 18,10 C25,13 29,19 36,16 C43,13 49,7 56,11 C63,15 71,19 80,17 C85,11 91,7 98,10 C105,13 109,19 116,16 C123,13 129,7 136,11 C143,15 151,19 160,17 C165,11 171,7 178,10 C185,13 189,19 196,16 C203,13 209,7 216,11 C223,15 231,19 240,17"/>
+            </g>
+            <circle class="spark-dot" cx="76" cy="17" r="2.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ETHUSD -->
+      <div class="market-item up">
+        <div class="market-left">
+          <svg class="market-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="16" fill="#627eea"/>
+            <g fill="#fff">
+              <path d="M16.5 4v8.87l7.5 3.35z" opacity="0.6"/>
+              <path d="M16.5 4 9 16.22l7.5-3.35z"/>
+              <path d="M16.5 21.97v6.02L24 17.62z" opacity="0.6"/>
+              <path d="M16.5 27.99v-6.02L9 17.62z"/>
+              <path d="M16.5 20.57 24 16.22l-7.5-3.35z" opacity="0.2"/>
+              <path d="m9 16.22 7.5 4.35v-7.7z" opacity="0.6"/>
+            </g>
+          </svg>
+          <div class="market-info">
+            <div class="market-name-row">
+              <span class="market-symbol">ETHUSD</span>
+              <span class="market-fullname">Ethereum</span>
+            </div>
+            <div class="market-price-row">
+              <span class="market-price">3,283.07</span>
+              <div class="market-dot"></div>
+              <span class="market-change pos">+1.29%</span>
+            </div>
+          </div>
+        </div>
+        <div class="market-sparkline">
+          <svg viewBox="0 0 80 30" class="spark-svg">
+            <g class="spark-group" style="animation-duration:2.7s">
+              <path class="spark-area" d="M0,18 C8,14 16,10 26,14 C36,18 42,13 52,9 C60,6 70,11 76,15 C78,16 79,17 80,18 C88,14 96,10 106,14 C116,18 122,13 132,9 C140,6 150,11 156,15 C158,16 159,17 160,18 C168,14 176,10 186,14 C196,18 202,13 212,9 C220,6 230,11 236,15 C238,16 239,17 240,18 L240,30 L0,30 Z"/>
+              <path class="spark-line" d="M0,18 C8,14 16,10 26,14 C36,18 42,13 52,9 C60,6 70,11 76,15 C78,16 79,17 80,18 C88,14 96,10 106,14 C116,18 122,13 132,9 C140,6 150,11 156,15 C158,16 159,17 160,18 C168,14 176,10 186,14 C196,18 202,13 212,9 C220,6 230,11 236,15 C238,16 239,17 240,18"/>
+            </g>
+            <circle class="spark-dot" cx="76" cy="18" r="2.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- XAUUSD -->
+      <div class="market-item down">
+        <div class="market-left">
+          <svg class="market-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="goldGrad2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#fde08a"/>
+                <stop offset="55%" stop-color="#f4b942"/>
+                <stop offset="100%" stop-color="#b8801c"/>
+              </linearGradient>
+            </defs>
+            <circle cx="16" cy="16" r="16" fill="url(#goldGrad2)"/>
+            <text x="16" y="21" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="14" fill="#5c3a0a">Au</text>
+          </svg>
+          <div class="market-info">
+            <div class="market-name-row">
+              <span class="market-symbol">XAUUSD</span>
+              <span class="market-fullname">Gold vs US Dollar</span>
+            </div>
+            <div class="market-price-row">
+              <span class="market-price">4,034.85</span>
+              <div class="market-dot"></div>
+              <span class="market-change neg">-0.23%</span>
+            </div>
+          </div>
+        </div>
+        <div class="market-sparkline">
+          <svg viewBox="0 0 80 30" class="spark-svg">
+            <g class="spark-group" style="animation-duration:3s">
+              <path class="spark-area" d="M0,13 C6,16 12,20 20,18 C28,16 34,12 42,16 C50,20 58,23 66,20 C73,17 78,14 80,13 C86,16 92,20 100,18 C108,16 114,12 122,16 C130,20 138,23 146,20 C153,17 158,14 160,13 C166,16 172,20 180,18 C188,16 194,12 202,16 C210,20 218,23 226,20 C233,17 238,14 240,13 L240,30 L0,30 Z"/>
+              <path class="spark-line" d="M0,13 C6,16 12,20 20,18 C28,16 34,12 42,16 C50,20 58,23 66,20 C73,17 78,14 80,13 C86,16 92,20 100,18 C108,16 114,12 122,16 C130,20 138,23 146,20 C153,17 158,14 160,13 C166,16 172,20 180,18 C188,16 194,12 202,16 C210,20 218,23 226,20 C233,17 238,14 240,13"/>
+            </g>
+            <circle class="spark-dot" cx="76" cy="13" r="2.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- AAPL -->
+      <div class="market-item up">
+        <div class="market-left">
+          <svg class="market-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="16" fill="#000"/>
+            <path d="M21.3 17.1c0-2.6 2.1-3.8 2.2-3.9-1.2-1.7-3-2-3.7-2-1.6-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.1 2.5-1.8 3-.5 7.6 1.2 10 .9 1.2 1.9 2.6 3.2 2.5 1.3-.05 1.8-.85 3.3-.85 1.5 0 2 .85 3.3.8 1.4-.05 2.2-1.25 3.1-2.5.95-1.45 1.35-2.85 1.35-2.95-.05-.05-2.55-1-2.55-3.6zM18.6 9.7c.7-.85 1.2-2.05 1.05-3.25-1.05.05-2.3.7-3.05 1.55-.65.75-1.25 1.95-1.05 3.1 1.15.1 2.35-.6 3.05-1.4z" fill="#fff"/>
+          </svg>
+          <div class="market-info">
+            <div class="market-name-row">
+              <span class="market-symbol">AAPL</span>
+              <span class="market-fullname">Apple</span>
+            </div>
+            <div class="market-price-row">
+              <span class="market-price">268.81</span>
+              <div class="market-dot"></div>
+              <span class="market-change pos">+7.23%</span>
+            </div>
+          </div>
+        </div>
+        <div class="market-sparkline">
+          <svg viewBox="0 0 80 30" class="spark-svg">
+            <g class="spark-group" style="animation-duration:2.8s">
+              <path class="spark-area" d="M0,19 C8,15 14,10 22,13 C30,16 36,21 44,17 C52,13 60,8 68,12 C74,16 78,18 80,19 C88,15 94,10 102,13 C110,16 116,21 124,17 C132,13 140,8 148,12 C154,16 158,18 160,19 C168,15 174,10 182,13 C190,16 196,21 204,17 C212,13 220,8 228,12 C234,16 238,18 240,19 L240,30 L0,30 Z"/>
+              <path class="spark-line" d="M0,19 C8,15 14,10 22,13 C30,16 36,21 44,17 C52,13 60,8 68,12 C74,16 78,18 80,19 C88,15 94,10 102,13 C110,16 116,21 124,17 C132,13 140,8 148,12 C154,16 158,18 160,19 C168,15 174,10 182,13 C190,16 196,21 204,17 C212,13 220,8 228,12 C234,16 238,18 240,19"/>
+            </g>
+            <circle class="spark-dot" cx="76" cy="19" r="2.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- View more -->
+      <div class="view-more">
+        <span style="font-size:13px;">View more</span>
+        <svg viewBox="0 0 18 18" fill="none"><path d="M7 4l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+
+</div><!-- end scroll-area -->
+
+</div><!-- end phone -->
+
+<!-- CURRENCY BOTTOM SHEET -->
+<div class="sheet-backdrop" id="currencySheetBackdrop"></div>
+<div class="sheet" id="currencySheet" role="dialog" aria-modal="true" aria-labelledby="currencySheetTitle">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title" id="currencySheetTitle">Select currency</span>
+    <button class="sheet-close" id="currencySheetClose" type="button" aria-label="Close">
+      <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="sheet-list" id="currencySheetList"></div>
+</div>
+
+<script src="bottom-nav.js" defer></script>
+<script>
+  // Auto-loop video guard (banner)
+  (function () {
+    const videos = document.querySelectorAll('video.auto-loop-video');
+    const forcePlay = v => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+    videos.forEach(v => {
+      v.muted = true; v.loop = true; forcePlay(v);
+      v.addEventListener('loadedmetadata', () => forcePlay(v));
+      v.addEventListener('canplay',        () => forcePlay(v));
+      v.addEventListener('ended', () => { v.currentTime = 0; forcePlay(v); });
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') videos.forEach(forcePlay);
+    });
+  })();
+
+  // Balance hero expand/collapse
+  const hero = document.getElementById('balanceHero');
+  document.getElementById('balanceCollapseBtn').addEventListener('click', () => {
+    hero.classList.toggle('expanded');
+  });
+  // Mini chart click → expand
+  document.getElementById('balanceMiniChart').addEventListener('click', () => {
+    hero.classList.add('expanded');
+  });
+
+  // ─── CHART RENDER + TAB SWITCHING ───
+  // Deterministic per-range chart: each range has a seed + volatility +
+  // trend so the curve, top/bottom price labels all change predictably.
+  const RANGE_CONFIG = {
+    '7D':   { seed: 17, points: 28,  volatility: 14, trend: -0.30, hi: '$ 31,420.18', lo: '$ 30,210.55' },
+    '30D':  { seed: 41, points: 48,  volatility: 22, trend: -0.55, hi: '$ 32,180.04', lo: '$ 28,640.21' },
+    '90D':  { seed: 73, points: 64,  volatility: 30, trend: -0.65, hi: '$ 33,920.77', lo: '$ 26,150.92' },
+    '180D': { seed: 109, points: 80, volatility: 38, trend: -0.75, hi: '$ 35,012.60', lo: '$ 23,480.01' },
+    '360D': { seed: 211, points: 96, volatility: 46, trend: -0.85, hi: '$ 38,420.50', lo: '$ 19,720.40' },
+  };
+  const CHART_W = 393, CHART_H = 150, PAD_TOP = 22, PAD_BOTTOM = 18;
+
+  // Mulberry32 — small seedable PRNG so each range looks different but stable.
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function buildPath(cfg) {
+    const rand = mulberry32(cfg.seed);
+    const innerH = CHART_H - PAD_TOP - PAD_BOTTOM;
+    let pts = [];
+    let lvl = 0.55;
+    for (let i = 0; i < cfg.points; i++) {
+      // gentle trend pulling line up over time + jitter
+      const t = i / (cfg.points - 1);
+      const jitter = (rand() - 0.5) * (cfg.volatility / 100);
+      lvl += jitter;
+      // global trend nudge each step
+      lvl += (cfg.trend / cfg.points);
+      lvl = Math.max(0.05, Math.min(0.95, lvl));
+      const x = (t * CHART_W).toFixed(1);
+      const y = (PAD_TOP + lvl * innerH).toFixed(1);
+      pts.push([x, y]);
+    }
+    const line = 'M' + pts.map(p => p.join(',')).join(' L');
+    const area = line + ` L${CHART_W},${CHART_H} L0,${CHART_H} Z`;
+    return { line, area };
+  }
+  const lineEl   = document.getElementById('bigChartLine');
+  const areaEl   = document.getElementById('bigChartArea');
+  const labelTop = document.querySelector('.chart-label-top');
+  const labelBot = document.querySelector('.chart-label-bottom');
+
+  function setRange(range) {
+    const cfg = RANGE_CONFIG[range];
+    if (!cfg) return;
+    const { line, area } = buildPath(cfg);
+    lineEl.setAttribute('d', line);
+    areaEl.setAttribute('d', area);
+    labelTop.textContent = cfg.hi;
+    labelBot.textContent = cfg.lo;
+  }
+  setRange('7D');
+
+  document.querySelectorAll('.chart-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.chart-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      setRange(t.dataset.range);
+    });
+  });
+
+  // Balance hide/show toggle
+  const eyeBtn   = document.getElementById('balanceEyeBtn');
+  const eyeOpen  = document.getElementById('iconEyeOpen');
+  const eyeOff   = document.getElementById('iconEyeOff');
+  const amountEl = document.getElementById('balanceAmount');
+  const pnlVal   = document.querySelector('.balance-pnl-value');
+  const pnlOriginal = pnlVal.textContent;
+  let hidden = false;
+  eyeBtn.addEventListener('click', () => {
+    hidden = !hidden;
+    if (hidden) {
+      amountEl.textContent = '••••••••';
+      pnlVal.textContent   = '••••';
+      eyeOpen.style.display = 'none';
+      eyeOff.style.display  = 'block';
+    } else {
+      const sym = CURRENCIES[currencyIdx].symbol;
+      amountEl.textContent = sym + amountEl.dataset.value;
+      pnlVal.textContent   = pnlOriginal;
+      eyeOpen.style.display = 'block';
+      eyeOff.style.display  = 'none';
+    }
+  });
+
+  // ─── CURRENCY BOTTOM SHEET ───
+  const CURRENCIES = [
+    { code: 'USD', symbol: '$',  name: 'US Dollar',           flag: '🇺🇸' },
+    { code: 'EUR', symbol: '€',  name: 'Euro',                flag: '🇪🇺' },
+    { code: 'GBP', symbol: '£',  name: 'British Pound',       flag: '🇬🇧' },
+    { code: 'JPY', symbol: '¥',  name: 'Japanese Yen',        flag: '🇯🇵' },
+    { code: 'AUD', symbol: 'A$', name: 'Australian Dollar',   flag: '🇦🇺' },
+    { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar',     flag: '🇨🇦' },
+    { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc',         flag: '🇨🇭' },
+    { code: 'CNY', symbol: '¥',  name: 'Chinese Yuan',        flag: '🇨🇳' },
+    { code: 'HKD', symbol: 'HK$',name: 'Hong Kong Dollar',    flag: '🇭🇰' },
+    { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar',    flag: '🇸🇬' },
+  ];
+  let currencyIdx = 0;
+  const currencyCode = document.getElementById('balanceCurrencyCode');
+  const sheetBackdrop = document.getElementById('currencySheetBackdrop');
+  const sheet         = document.getElementById('currencySheet');
+  const sheetList     = document.getElementById('currencySheetList');
+
+  function renderCurrencyList() {
+    sheetList.innerHTML = CURRENCIES.map((c, i) => `
+      <button class="currency-row${i === currencyIdx ? ' active' : ''}" data-idx="${i}" type="button">
+        <span class="currency-flag">${c.flag}</span>
+        <div class="currency-info">
+          <div class="currency-code">${c.code}</div>
+          <div class="currency-name">${c.name}</div>
+        </div>
+        <div class="currency-check">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 11L9.5 15.5L17 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </button>
+    `).join('');
+  }
+  function openSheet() {
+    renderCurrencyList();
+    sheetBackdrop.classList.add('open');
+    sheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSheet() {
+    sheetBackdrop.classList.remove('open');
+    sheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('balanceCurrencyBtn').addEventListener('click', openSheet);
+  document.getElementById('currencySheetClose').addEventListener('click', closeSheet);
+  sheetBackdrop.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && sheet.classList.contains('open')) closeSheet();
+  });
+
+  sheetList.addEventListener('click', e => {
+    const row = e.target.closest('.currency-row');
+    if (!row) return;
+    currencyIdx = +row.dataset.idx;
+    const c = CURRENCIES[currencyIdx];
+    currencyCode.textContent = c.code;
+    if (!hidden) amountEl.textContent = c.symbol + amountEl.dataset.value;
+    closeSheet();
+  });
+</script>
+</body>
+</html>

@@ -240,7 +240,7 @@
       border-radius: 100px;
       color: #fff;
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 600;
       letter-spacing: 0.06px;
       text-transform: uppercase;
       border: none;
@@ -725,9 +725,13 @@
         autoplay
         loop
         muted
+        defaultMuted
         playsinline
+        webkit-playsinline=""
+        x5-playsinline=""
         preload="auto"
         disablepictureinpicture
+        crossorigin="anonymous"
       ></video>
       <div class="hero-chart-fade"></div>
     </div>
@@ -821,9 +825,13 @@
           autoplay
           loop
           muted
+          defaultMuted
           playsinline
+          webkit-playsinline=""
+          x5-playsinline=""
           preload="auto"
           disablepictureinpicture
+          crossorigin="anonymous"
         ></video>
       </div>
     </div>
@@ -1282,25 +1290,53 @@
 <script src="bottom-nav.js" defer></script>
 <script>
   // Force autoplay + reliable looping for hero/banner videos.
+  // Works around iOS Safari blocking autoplay (Low Power Mode, data-saver, etc.)
+  // by also firing play() on the first user interaction.
   (function () {
-    const videos = document.querySelectorAll('video.auto-loop-video');
+    const videos = Array.from(document.querySelectorAll('video.auto-loop-video'));
     const forcePlay = v => {
-      const p = v.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
+      try {
+        v.muted = true;          // re-assert before each play()
+        v.defaultMuted = true;
+        v.setAttribute('muted', '');
+        v.setAttribute('playsinline', '');
+        const p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) {}
     };
     videos.forEach(v => {
-      v.muted = true;
-      v.loop = true;
+      v.muted = true; v.defaultMuted = true; v.loop = true;
       forcePlay(v);
       v.addEventListener('loadedmetadata', () => forcePlay(v));
       v.addEventListener('canplay',        () => forcePlay(v));
-      // Some browsers occasionally drop the loop on CDN-hosted MP4s — restart on `ended`.
+      // Some browsers drop the loop on CDN-hosted MP4s — restart on `ended`.
       v.addEventListener('ended', () => { v.currentTime = 0; forcePlay(v); });
     });
-    // Resume if the user backgrounds and returns to the tab.
+
+    // Resume on tab visibility.
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') videos.forEach(forcePlay);
     });
+
+    // First-touch fallback: iOS Safari Low Power Mode and some data-saver
+    // setups REFUSE to honor autoplay even with muted+playsinline.
+    // The first user gesture (anywhere on the page) is enough to start
+    // playback — we hook every option to maximize coverage.
+    const kick = () => {
+      videos.forEach(forcePlay);
+      ['touchstart','touchend','click','pointerdown','keydown','scroll']
+        .forEach(ev => window.removeEventListener(ev, kick, { capture: true }));
+    };
+    ['touchstart','touchend','click','pointerdown','keydown','scroll']
+      .forEach(ev => window.addEventListener(ev, kick, { capture: true, passive: true }));
+
+    // Retry every 500ms for the first 3 seconds in case the network was slow
+    // and `canplay` hasn't fired yet by the time the user opens the page.
+    let attempts = 0;
+    const retry = setInterval(() => {
+      videos.forEach(v => { if (v.paused) forcePlay(v); });
+      if (++attempts > 6) clearInterval(retry);
+    }, 500);
   })();
 </script>
 </body>
