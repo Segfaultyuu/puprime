@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=393, initial-scale=1.0" />
+  <title>PU Prime – Promo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #1dd1a1;
+      --red: #ee5253;
+      --blue: #006bff;
+    }
+    .phone {
+      --bg-dark: #0b0c1a;
+      --bg-card: #141527;
+      --bg-card2: #1a1b2e;
+      --border-dark: rgba(255,255,255,0.08);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.55);
+      --text-muted: rgba(255,255,255,0.35);
+    }
+
+    body {
+      background: #0b0c1a;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .phone {
+      width: 393px;
+      margin: 0 auto;
+      background: var(--bg-dark);
+      position: relative;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* ── BG GLOWS ── */
+    .promo-glow-1 {
+      position: absolute;
+      top: -100px; left: -120px;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,107,255,0.25) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .promo-glow-2 {
+      position: absolute;
+      top: 120px; right: -90px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,180,255,0.13) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .scroll { position: relative; z-index: 5; }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      height: 54px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 20px 10px;
+      justify-content: space-between;
+    }
+    .status-time { font-size: 17px; font-weight: 600; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+    .status-icons svg { fill: #fff; }
+
+    /* ── HEADER ── */
+    .promo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      height: 44px;
+    }
+    .promo-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.22px;
+    }
+    .promo-search {
+      width: 22px; height: 22px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: #fff;
+    }
+    .promo-search svg { width: 100%; height: 100%; }
+
+    /* ── HERO BANNER (featured) ── */
+    .promo-hero {
+      margin: 12px 16px 0;
+      border-radius: 20px;
+      padding: 22px 22px 22px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(120,90,240,0.32) 0%, transparent 55%),
+        radial-gradient(circle at 10% 90%, rgba(0,180,255,0.30) 0%, transparent 55%),
+        linear-gradient(135deg, #0a2050 0%, #0f3380 50%, #0a1838 100%);
+      border: 1px solid rgba(120,180,255,0.18);
+      box-shadow: 0 12px 28px rgba(0,30,90,0.45);
+    }
+    .promo-hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.4px;
+      color: #9ec0ff;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .promo-hero-eyebrow svg { width: 13px; height: 13px; }
+    .promo-hero-title {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.4px;
+      margin-bottom: 6px;
+      max-width: 270px;
+    }
+    .promo-hero-title .gold {
+      background: linear-gradient(90deg, #5c9fff 0%, #8b5cf6 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .promo-hero-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.78);
+      max-width: 280px;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+    .promo-hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 100px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,107,255,0.45);
+    }
+    .promo-hero-cta:hover { filter: brightness(1.08); }
+    .promo-hero-cta svg { width: 12px; height: 12px; }
+
+    /* coin video decoration on the right */
+    .promo-hero-coin {
+      position: absolute;
+      right: 4px;
+      top: 8px;
+      width: 120px;
+      height: 120px;
+      pointer-events: none;
+      /* Tight radial mask: fully opaque only in the inner ~35%, then a
+         long feather to transparent so the video bleeds into the banner. */
+      -webkit-mask-image: radial-gradient(circle at 50% 50%,
+        #000 30%, rgba(0,0,0,0.45) 55%, transparent 85%);
+              mask-image: radial-gradient(circle at 50% 50%,
+        #000 30%, rgba(0,0,0,0.45) 55%, transparent 85%);
+      -webkit-mask-repeat: no-repeat;
+              mask-repeat: no-repeat;
+    }
+    .promo-hero-coin video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* `lighten` blend mode is far stricter than `screen`: it ONLY shows
+         the pixel if it's brighter than the banner behind it. Since the
+         video's "black" bg (~rgb(10,10,20)) is darker than the banner's
+         dark-blue gradient, every dark pixel is dropped completely.
+         Only the bright coin/highlights survive. */
+      mix-blend-mode: lighten;
+      /* Push midtones up so the coin reads bright, while keeping the
+         dark bg dark enough that `lighten` always picks the banner. */
+      filter: brightness(1.05) contrast(1.3) saturate(1.4);
+    }
+
+    .promo-hero-dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+    .promo-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.20);
+    }
+    .promo-dot.active {
+      width: 18px;
+      border-radius: 100px;
+      background: var(--blue);
+    }
+
+    /* ── QUICK CATEGORY CHIPS ── */
+    .cat-row {
+      display: flex;
+      gap: 8px;
+      padding: 20px 16px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cat-row::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      height: 32px;
+      border-radius: 100px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .cat-chip.active {
+      background: rgba(0,107,255,0.16);
+      border-color: rgba(0,107,255,0.45);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section {
+      padding: 24px 16px 0;
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.18px;
+    }
+    .section-link {
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* ── REWARD CARDS GRID (2-col) ── */
+    .reward-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .reward-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 14px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s, border-color 0.18s;
+    }
+    .reward-card:hover { transform: translateY(-2px); border-color: rgba(0,107,255,0.35); }
+    .reward-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+    .reward-icon svg { width: 22px; height: 22px; }
+    .reward-icon.blue   { background: linear-gradient(135deg, rgba(0,107,255,0.30), rgba(0,107,255,0.12)); color: #5c9fff; }
+    .reward-icon.green  { background: linear-gradient(135deg, rgba(29,209,161,0.30), rgba(29,209,161,0.10)); color: var(--green); }
+    .reward-icon.purple { background: linear-gradient(135deg, rgba(139,92,246,0.30), rgba(139,92,246,0.10)); color: #a5b4fc; }
+    .reward-icon.gold   { background: linear-gradient(135deg, rgba(255,180,30,0.30), rgba(255,180,30,0.10)); color: #ffc26b; }
+    .reward-icon.red    { background: linear-gradient(135deg, rgba(238,82,83,0.30), rgba(238,82,83,0.10)); color: var(--red); }
+    .reward-icon.cyan   { background: linear-gradient(135deg, rgba(34,209,255,0.30), rgba(34,209,255,0.10)); color: #38d4ff; }
+
+    .reward-tag {
+      position: absolute;
+      top: 10px; right: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      background: rgba(0,107,255,0.18);
+      color: var(--blue);
+    }
+    .reward-tag.hot { background: rgba(238,82,83,0.18); color: var(--red); }
+    .reward-tag.new { background: rgba(29,209,161,0.18); color: var(--green); }
+
+    .reward-amount {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .reward-amount .small { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+    .reward-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .reward-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ── EVENT LIST (full-width rows) ── */
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .event-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: border-color 0.18s;
+    }
+    .event-row:hover { border-color: rgba(0,107,255,0.32); }
+    .event-thumb {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .event-thumb svg { width: 26px; height: 26px; }
+    .event-body { flex: 1; min-width: 0; }
+    .event-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.14px;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+    .event-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.35;
+    }
+    .event-foot {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      align-items: center;
+    }
+    .event-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.7);
+    }
+    .event-pill.green { background: rgba(29,209,161,0.16); color: var(--green); }
+    .event-pill.blue  { background: rgba(0,107,255,0.16); color: var(--blue); }
+    .event-pill.muted { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); }
+    /* expired/past row treatment — desaturate thumb + dim text */
+    .event-row.past .event-thumb { filter: grayscale(0.7) brightness(0.75); }
+    .event-row.past .event-title { color: rgba(255,255,255,0.78); }
+    .event-row.past .event-sub   { color: rgba(255,255,255,0.40); }
+    .event-arrow {
+      width: 14px; height: 14px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .event-arrow svg { width: 100%; height: 100%; }
+
+    /* ── PROGRESS CARD ── */
+    .progress-card {
+      margin: 16px 16px 0;
+      padding: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+    }
+    .progress-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .progress-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .progress-tag {
+      padding: 2px 8px;
+      border-radius: 100px;
+      background: rgba(29,209,161,0.18);
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+    .progress-bar {
+      height: 6px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue) 0%, #38d4ff 100%);
+      border-radius: 100px;
+      box-shadow: 0 0 12px rgba(0,107,255,0.55);
+    }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-feature-settings: 'tnum' 1;
+    }
+    .progress-meta strong { color: #fff; font-weight: 600; }
+
+    /* bottom spacer so content clears sticky nav */
+    .promo-bottom-spacer { height: 140px; }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="promo-glow-1"></div>
+  <div class="promo-glow-2"></div>
+  <div class="scroll">
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12">
+          <rect x="0" y="8" width="3" height="4" rx="0.5" fill="currentColor"/>
+          <rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5" fill="currentColor"/>
+          <rect x="9" y="3" width="3" height="9" rx="0.5" fill="currentColor"/>
+          <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="currentColor"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+          <path d="M8 9.5L8 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M5.5 7.2C6.2 6.5 7.05 6.1 8 6.1C8.95 6.1 9.8 6.5 10.5 7.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <path d="M3 4.7C4.35 3.4 6.1 2.6 8 2.6C9.9 2.6 11.65 3.4 13 4.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <path d="M0.5 2.1C2.35 0.35 5.05 -0.5 8 0.2C10.5 0.5 12.7 1.65 14.5 3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+        </svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
+          <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+          <rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"/>
+          <path d="M23.5 4.5V8.5C24.5 8 24.5 5 23.5 4.5Z" fill="currentColor" opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="promo-header">
+      <span class="promo-title">Promo</span>
+      <button class="promo-search" aria-label="Search" type="button">
+        <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="9.5" cy="9.5" r="6.5" stroke="currentColor" stroke-width="1.6" fill="none"/>
+          <path d="M14.5 14.5L19 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- FEATURED HERO -->
+    <div class="promo-hero">
+      <div class="promo-hero-eyebrow">
+        <svg viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6.5 0.5L8 4.5L12.5 5L9 8L10 12.5L6.5 10L3 12.5L4 8L0.5 5L5 4.5L6.5 0.5Z" fill="currentColor"/>
+        </svg>
+        FEATURED
+      </div>
+      <div class="promo-hero-title">
+        Free <span class="gold">USD 80</span> Gold Contract on First Deposit
+      </div>
+      <div class="promo-hero-sub">
+        Fund your account with USD 100 or more and instantly receive a tradable XAUUSD bonus contract.
+      </div>
+      <button class="promo-hero-cta" type="button">
+        Claim now
+        <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <!-- Coin video decoration -->
+      <div class="promo-hero-coin">
+        <video class="auto-loop-video"
+          src="https://cdn.dribbble.com/userupload/2800094/file/original-64758650fe270ef744cb536e4a49f08d.mp4"
+          autoplay loop muted defaultMuted playsinline webkit-playsinline=""
+          x5-playsinline="" preload="auto" disablepictureinpicture
+          crossorigin="anonymous"></video>
+      </div>
+      <div class="promo-hero-dots">
+        <div class="promo-dot active"></div>
+        <div class="promo-dot"></div>
+        <div class="promo-dot"></div>
+      </div>
+    </div>
+
+    <!-- CATEGORY CHIPS -->
+    <div class="cat-row">
+      <button class="cat-chip active" type="button">All</button>
+      <button class="cat-chip" type="button">Deposit</button>
+      <button class="cat-chip" type="button">Trading</button>
+      <button class="cat-chip" type="button">Referral</button>
+      <button class="cat-chip" type="button">Cashback</button>
+      <button class="cat-chip" type="button">Mission</button>
+    </div>
+
+    <!-- ACTIVE PROGRESS CARD -->
+    <div class="progress-card">
+      <div class="progress-head">
+        <div>
+          <div class="progress-name">Trade USD 5,000 this month — earn USD 25 cashback</div>
+          <div class="event-sub">Resets June 30, 2026 (UTC)</div>
+        </div>
+        <span class="progress-tag">ACTIVE</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-bar-fill" style="width: 64%;"></div>
+      </div>
+      <div class="progress-meta">
+        <span><strong>USD 3,200</strong> traded</span>
+        <span>USD 5,000 goal</span>
+      </div>
+    </div>
+
+    <!-- REWARDS GRID -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Rewards</span>
+        <button class="section-link" type="button">See all</button>
+      </div>
+      <div class="reward-grid">
+
+        <div class="reward-card">
+          <div class="reward-tag hot">HOT</div>
+          <div class="reward-icon blue">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M11 6V11.5M8 9.5L11 11.5L14 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 16h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="reward-amount">USD 80 <span class="small">bonus</span></div>
+          <div class="reward-name">First Deposit Reward</div>
+          <div class="reward-meta">Min. deposit USD 100</div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-tag">NEW</div>
+          <div class="reward-icon purple">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M3 19c0-3 2.4-5 5-5s5 2 5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M14.5 8h6M17.5 5l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="reward-amount">USD 50 <span class="small">/ friend</span></div>
+          <div class="reward-name">Referral Rewards</div>
+          <div class="reward-meta">Unlimited invites</div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-tag">VIP</div>
+          <div class="reward-icon gold">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 4h10v3.5a5 5 0 0 1-10 0V4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M6 5.5H3.5a2.5 2.5 0 0 0 2.5 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M16 5.5h2.5a2.5 2.5 0 0 1-2.5 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M11 12.5V15M8 18h6M9 15h4l1 3H8l1-3Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="reward-amount">Up to USD 2,000</div>
+          <div class="reward-name">Trade Volume Rewards</div>
+          <div class="reward-meta">Tiered by lots traded</div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-icon green">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 10c1.5-2 4-3 7-3s5.5 1 7 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M3 14c1.5 2 4 3 7 3s5.5-1 7-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <circle cx="3" cy="12" r="1.6" fill="currentColor"/>
+              <circle cx="17" cy="12" r="1.6" fill="currentColor"/>
+              <circle cx="10" cy="6" r="1.6" fill="currentColor"/>
+              <circle cx="10" cy="18" r="1.6" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="reward-amount">USD 10 <span class="small">per lot</span></div>
+          <div class="reward-name">Spread Cashback</div>
+          <div class="reward-meta">Auto-credited daily</div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-icon cyan">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="11" cy="11" r="4" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="11" cy="11" r="1.4" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="reward-amount">5 missions</div>
+          <div class="reward-name">Daily Missions</div>
+          <div class="reward-meta">Earn coupons + XP</div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-icon red">
+            <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 6.5C3 5.7 3.7 5 4.5 5h11c1 0 2 0.7 2.5 1.5L20 9c-1.5 0-2.5 1-2.5 2.2v0.6c0 1.2 1 2.2 2.5 2.2l-2 2.5c-0.5 0.8-1.5 1.5-2.5 1.5h-11C3.7 17 3 16.3 3 15.5v-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M9 9v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="1.5 2"/>
+            </svg>
+          </div>
+          <div class="reward-amount">3 coupons</div>
+          <div class="reward-name">Welcome Coupons</div>
+          <div class="reward-meta">Use within 30 days</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ONGOING EVENTS LIST -->
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Past Events</span>
+        <button class="section-link" type="button">View all</button>
+      </div>
+      <div class="event-list">
+
+        <div class="event-row past">
+          <div class="event-thumb" style="background: linear-gradient(135deg,#0a3d8f,#5c9fff);">
+            <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 18L11 12L15 16L21 8" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M16 8H21V13" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="event-body">
+            <div class="event-title">May Trading Marathon</div>
+            <div class="event-sub">USD 30,000 prize pool — winners announced</div>
+            <div class="event-foot">
+              <span class="event-pill muted">Ended May 31, 2026</span>
+              <span class="event-pill muted">Trading</span>
+            </div>
+          </div>
+          <span class="event-arrow">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="event-row past">
+          <div class="event-thumb" style="background: linear-gradient(135deg,#1dd1a1,#0a4b3e);">
+            <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="9" cy="9" r="3" stroke="#fff" stroke-width="1.6"/>
+              <path d="M3 22c0-3 2.6-5 6-5s6 2 6 5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+              <circle cx="18" cy="11" r="2.4" stroke="#fff" stroke-width="1.6"/>
+              <path d="M14.5 22c0-2.5 1.8-4 3.5-4s3.5 1.5 3.5 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="event-body">
+            <div class="event-title">Spring Refer-a-Friend Boost</div>
+            <div class="event-sub">3x referral bonus campaign — over 12K friends invited</div>
+            <div class="event-foot">
+              <span class="event-pill muted">Ended Apr 30, 2026</span>
+              <span class="event-pill muted">Referral</span>
+            </div>
+          </div>
+          <span class="event-arrow">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="event-row past">
+          <div class="event-thumb" style="background: linear-gradient(135deg,#a76a18,#ffd97a);">
+            <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <text x="13" y="18" text-anchor="middle" font-family="Georgia, serif" font-weight="800" font-size="14" fill="#5c3a0a">Au</text>
+            </svg>
+          </div>
+          <div class="event-body">
+            <div class="event-title">Gold Rush Q1</div>
+            <div class="event-sub">USD 5 cashback per XAUUSD lot — total USD 480K paid out</div>
+            <div class="event-foot">
+              <span class="event-pill muted">Ended Mar 31, 2026</span>
+              <span class="event-pill muted">Cashback</span>
+            </div>
+          </div>
+          <span class="event-arrow">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="event-row past">
+          <div class="event-thumb" style="background: linear-gradient(135deg,#7c3aed,#a5b4fc);">
+            <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 4l2.6 5.4 5.9 0.85-4.25 4.15 1 5.85L13 17.5L7.75 20.25l1-5.85L4.5 10.25l5.9-0.85L13 4Z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="event-body">
+            <div class="event-title">2026 New Year Leaderboard</div>
+            <div class="event-sub">Top 50 traders shared USD 10,000 — winners listed</div>
+            <div class="event-foot">
+              <span class="event-pill muted">Ended Feb 14, 2026</span>
+              <span class="event-pill muted">Trading</span>
+            </div>
+          </div>
+          <span class="event-arrow">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="event-row past">
+          <div class="event-thumb" style="background: linear-gradient(135deg,#ee5253,#7a1c1d);">
+            <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="9" width="18" height="3.5" rx="1" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+              <rect x="5.5" y="12.5" width="15" height="9" rx="1" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M13 9V21.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M13 9C11 9 8 7.7 8 5.7 8 4.7 8.7 4 9.7 4 11.7 4 13 9 13 9Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M13 9C15 9 18 7.7 18 5.7 18 4.7 17.3 4 16.3 4 14.3 4 13 9 13 9Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="event-body">
+            <div class="event-title">Lunar New Year Pack</div>
+            <div class="event-sub">USD 25 + 2 coupons — limited-time gift bundle</div>
+            <div class="event-foot">
+              <span class="event-pill muted">Ended Feb 28, 2026</span>
+              <span class="event-pill muted">Gift</span>
+            </div>
+          </div>
+          <span class="event-arrow">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="promo-bottom-spacer"></div>
+
+  </div><!-- end scroll -->
+</div><!-- end phone -->
+
+<script src="bottom-nav.js" defer></script>
+<script>
+  // Force autoplay + reliable looping for the hero coin video.
+  (function () {
+    const videos = Array.from(document.querySelectorAll('video.auto-loop-video'));
+    const forcePlay = v => {
+      try {
+        v.muted = true; v.defaultMuted = true;
+        const p = v.play();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    };
+    videos.forEach(v => {
+      v.muted = true; v.defaultMuted = true; v.loop = true;
+      forcePlay(v);
+      v.addEventListener('loadedmetadata', () => forcePlay(v));
+      v.addEventListener('canplay',        () => forcePlay(v));
+      v.addEventListener('ended', () => { v.currentTime = 0; forcePlay(v); });
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') videos.forEach(forcePlay);
+    });
+    const kick = () => {
+      videos.forEach(forcePlay);
+      ['touchstart','click','pointerdown','scroll'].forEach(ev =>
+        window.removeEventListener(ev, kick, { capture: true }));
+    };
+    ['touchstart','click','pointerdown','scroll'].forEach(ev =>
+      window.addEventListener(ev, kick, { capture: true, passive: true }));
+  })();
+
+  // Activate Promo tab on the bottom nav
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.vt-tab').forEach(t => t.classList.remove('active'));
+      const t = document.querySelector('.vt-tab[data-tab="promo"]');
+      if (t) t.classList.add('active');
+    }, 0);
+  });
+
+  // Category chip switching
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.cat-chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
