@@ -160,6 +160,81 @@
       height: 220px;
       padding: 18px 16px 12px;
     }
+    .main-chart svg {
+      cursor: crosshair;
+      /* CRITICAL: keep vertical page-scroll working when the user drags
+         the chart on mobile. pan-y reserves the y-axis for the browser. */
+      touch-action: pan-y;
+    }
+    /* hairline crosshair + dot that follow the pointer */
+    #chartCrosshair {
+      stroke: rgba(255,255,255,0.35);
+      stroke-width: 1;
+      stroke-dasharray: 3 3;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    #chartCrosshair.visible { opacity: 1; }
+    #chartHoverDot {
+      fill: #5c9fff;
+      stroke: #fff;
+      stroke-width: 1.5;
+      r: 4;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      filter: drop-shadow(0 0 6px rgba(92,159,255,0.7));
+    }
+    #chartHoverDot.visible { opacity: 1; }
+    /* tooltip card */
+    .chart-tooltip {
+      position: absolute;
+      pointer-events: none;
+      z-index: 10;
+      padding: 8px 10px;
+      background: rgba(11,12,26,0.95);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 8px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+      font-size: 11px;
+      color: #fff;
+      min-width: 140px;
+      opacity: 0;
+      transform: translate(-50%, -100%) translateY(-12px);
+      transition: opacity 0.15s, left 0.05s;
+      white-space: nowrap;
+    }
+    .chart-tooltip.visible { opacity: 1; }
+    .chart-tooltip .tt-date {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 6px;
+      letter-spacing: -0.11px;
+    }
+    .chart-tooltip .tt-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .chart-tooltip .tt-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .chart-tooltip .tt-name {
+      color: rgba(255,255,255,0.65);
+      flex: 1;
+    }
+    .chart-tooltip .tt-pct {
+      color: #fff;
+      font-weight: 700;
+      font-feature-settings: 'tnum' 1;
+    }
     .main-chart-grid {
       position: absolute;
       inset: 18px 16px 64px;
@@ -780,7 +855,10 @@
       <path id="chartLine0" stroke="#5c9fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       <path id="chartLine1" stroke="#a5b4fc" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       <path id="chartLine2" stroke="#ee5253" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <line id="chartCrosshair" x1="0" y1="0" x2="0" y2="130"/>
+      <circle id="chartHoverDot" cx="0" cy="0"/>
     </svg>
+    <div class="chart-tooltip" id="chartTooltip" role="tooltip"></div>
     <div class="main-chart-tabs">
       <button class="main-chart-tab active" type="button">Today</button>
       <button class="main-chart-tab" type="button">5D</button>
@@ -1397,6 +1475,149 @@
     document.querySelectorAll('.region-tab').forEach(x => x.classList.remove('active'));
     tab.classList.add('active');
     renderRegion(tab.dataset.region);
+  });
+
+  // ─── CHART HOVER TOOLTIP ───
+  const mainChartEl = document.querySelector('.main-chart');
+  const chartSvg    = mainChartEl.querySelector('svg');
+  const crosshair   = document.getElementById('chartCrosshair');
+  const hoverDot    = document.getElementById('chartHoverDot');
+  const tooltipEl   = document.getElementById('chartTooltip');
+
+  // Sample 30 hours over the trading day (Today range)
+  const HOUR_LABELS = (() => {
+    const out = [];
+    for (let i = 0; i < 30; i++) {
+      const minutes = i * 13;       // ~6.5 hours = 26 ticks; 30 ≈ broader
+      const h = 9 + Math.floor((30 + minutes) / 60);
+      const m = (30 + minutes) % 60;
+      out.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+    }
+    return out;
+  })();
+
+  // Get the y-coordinate at a given x for a given path's `d` attribute
+  // by parsing its M+L commands.
+  function pathPoints(d) {
+    if (!d) return [];
+    return d.split(/[ML]/).filter(Boolean).map(s => {
+      const [x, y] = s.trim().split(',').map(parseFloat);
+      return { x, y };
+    });
+  }
+  function yAtX(points, x) {
+    if (!points.length) return 0;
+    if (x <= points[0].x) return points[0].y;
+    if (x >= points[points.length - 1].x) return points[points.length - 1].y;
+    for (let i = 1; i < points.length; i++) {
+      if (x <= points[i].x) {
+        const a = points[i - 1], b = points[i];
+        const t = (x - a.x) / (b.x - a.x);
+        return a.y + (b.y - a.y) * t;
+      }
+    }
+    return points[points.length - 1].y;
+  }
+
+  // Convert chart y (0..130) to a % change using the region's grid labels.
+  // Grid: top label at y=0 → bottom label at y≈130. Linear interpolation.
+  function yToPct(y, gridLabels) {
+    const top = parseFloat(gridLabels[0].replace(/[^\-\d.]/g, ''));
+    const bot = parseFloat(gridLabels[gridLabels.length - 1].replace(/[^\-\d.]/g, ''));
+    const range = top - bot;
+    const t = y / 130;
+    const pct = top - range * t;
+    return pct;
+  }
+  function fmtPct(p) { return (p >= 0 ? '+' : '') + p.toFixed(2) + '%'; }
+
+  function moveTooltip(clientX) {
+    const rect = chartSvg.getBoundingClientRect();
+    let svgX = ((clientX - rect.left) / rect.width) * 360;
+    svgX = Math.max(0, Math.min(360, svgX));
+    crosshair.setAttribute('x1', svgX);
+    crosshair.setAttribute('x2', svgX);
+    crosshair.classList.add('visible');
+
+    const region = REGIONS[document.querySelector('.region-tab.active')?.dataset.region || 'us'];
+    if (!region) return;
+
+    // Sample y on each of the 3 lines at this x
+    const ys = region.lines.map(d => yAtX(pathPoints(d), svgX));
+    // Anchor dot to the first (primary) line
+    hoverDot.setAttribute('cx', svgX);
+    hoverDot.setAttribute('cy', ys[0]);
+    hoverDot.classList.add('visible');
+
+    // Time label — pick from HOUR_LABELS based on the x position
+    const idx = Math.round((svgX / 360) * (HOUR_LABELS.length - 1));
+    const time = HOUR_LABELS[idx];
+    const today = new Date(2026, 5, 9);  // June 9, 2026 (current date)
+    const dateStr = today.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' ' + time;
+
+    const colors = ['#5c9fff', '#a5b4fc', '#ee5253'];
+    const rows = region.chips.map((c, i) => `
+      <div class="tt-row">
+        <span class="tt-dot" style="background:${colors[i]};"></span>
+        <span class="tt-name">${c.name}</span>
+        <span class="tt-pct">${fmtPct(yToPct(ys[i], region.grid))}</span>
+      </div>
+    `).join('');
+    tooltipEl.innerHTML = `<div class="tt-date">${dateStr}</div>${rows}`;
+    tooltipEl.classList.add('visible');
+
+    // Position the tooltip above the dot, clamped to chart bounds
+    const dotPx  = (svgX / 360) * rect.width;
+    const padding = 16;
+    let left = dotPx + padding;  // chart-relative + the chart's own padding
+    const tipWidth = tooltipEl.offsetWidth;
+    const chartWidth = mainChartEl.offsetWidth;
+    let centeredLeft = left;
+    centeredLeft = Math.max(tipWidth / 2 + 12, Math.min(chartWidth - tipWidth / 2 - 12, centeredLeft));
+    tooltipEl.style.left = centeredLeft + 'px';
+    tooltipEl.style.top  = (((ys[0] / 130) * (rect.height)) + 18) + 'px';
+  }
+
+  function hideTooltip() {
+    crosshair.classList.remove('visible');
+    hoverDot.classList.remove('visible');
+    tooltipEl.classList.remove('visible');
+  }
+
+  // For mouse pointer: hover always works. For touch: only show tooltip
+  // on long-press (so a normal tap/scroll doesn't capture the gesture).
+  let touchHoldTimer = null;
+  let touchActive    = false;
+  chartSvg.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch' && !touchActive) return; // let scroll happen
+    moveTooltip(e.clientX);
+  });
+  chartSvg.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse') {
+      moveTooltip(e.clientX);
+      return;
+    }
+    // touch: arm a hold timer; only enter "scrub" mode after 220ms still-press
+    clearTimeout(touchHoldTimer);
+    touchHoldTimer = setTimeout(() => {
+      touchActive = true;
+      moveTooltip(e.clientX);
+    }, 220);
+  });
+  chartSvg.addEventListener('pointerleave', () => {
+    clearTimeout(touchHoldTimer);
+    touchActive = false;
+    hideTooltip();
+  });
+  chartSvg.addEventListener('pointerup', () => {
+    clearTimeout(touchHoldTimer);
+    touchActive = false;
+    hideTooltip();
+  });
+  chartSvg.addEventListener('pointercancel', () => {
+    clearTimeout(touchHoldTimer);
+    touchActive = false;
+    hideTooltip();
   });
 
   // Main chart range tabs
