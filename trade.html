@@ -212,7 +212,7 @@
 
     /* ── BAR BENEATH (red/green progress) ── */
     .ba-progress {
-      margin: 8px 0 4px;
+      margin: 16px 0 4px;
       display: flex;
       align-items: center;
       height: 4px;
@@ -222,14 +222,14 @@
       position: relative;
     }
     .ba-progress .red {
-      flex: 1;
       background: var(--red);
       height: 100%;
+      transition: width 0.5s ease;
     }
     .ba-progress .green {
-      width: 163px;
       background: var(--green);
       height: 100%;
+      transition: width 0.5s ease;
     }
     .ba-tip {
       font-size: 9px;
@@ -258,23 +258,41 @@
       font-family: inherit;
     }
     .field.outlined { border: 1px solid #eee; }
+    /* Type-select field uses a 3-column grid so the label is centered to
+       the field (not to the residual flex space between icon + caret). */
+    .field.type-select {
+      display: grid;
+      grid-template-columns: 14px 1fr 14px;
+      gap: 0;
+      width: 100%;
+      cursor: pointer;
+      background: var(--field);
+      border: none;
+      padding: 0 12px;
+    }
     .field-info-icon {
       width: 14px; height: 14px;
       color: var(--text-secondary);
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .field-info-icon svg { width: 100%; height: 100%; }
     .field-label-only {
-      flex: 1;
       text-align: center;
       font-size: 14px;
       font-weight: 400;
+      color: #fff;
     }
     .field-caret {
-      width: 12px; height: 12px;
+      width: 14px; height: 14px;
       color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .field-caret svg { width: 100%; height: 100%; }
+    .field-caret svg { width: 12px; height: 12px; }
     .stepper {
       display: flex;
       align-items: center;
@@ -324,6 +342,28 @@
       animation: blink 1s steps(2) infinite;
     }
     @keyframes blink { to { opacity: 0; } }
+    /* editable volume input — visually identical to .stepper-value */
+    .stepper-input {
+      width: 100%;
+      max-width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      padding: 0;
+      font-feature-settings: 'tnum' 1;
+      -moz-appearance: textfield;
+    }
+    .stepper-input:focus { color: var(--blue); }
+    .stepper-input::-webkit-outer-spin-button,
+    .stepper-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
 
     .field.combo {
       gap: 8px;
@@ -616,11 +656,25 @@
       margin-left: 2px;
     }
     .pos-share {
-      width: 14px; height: 14px;
-      color: var(--text-secondary);
+      width: 22px; height: 22px;
       flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-secondary);
+      cursor: pointer;
+      align-self: center;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
     }
-    .pos-share svg { width: 100%; height: 100%; }
+    .pos-share:hover {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      border-color: rgba(255,255,255,0.16);
+    }
+    .pos-share svg { width: 12px; height: 12px; }
 
     .pos-grid {
       display: grid;
@@ -1213,6 +1267,53 @@
     }
     .strat-arrow svg { width: 100%; height: 100%; }
 
+    /* order-type rows in the type sheet */
+    .ot-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .ot-row:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.10);
+    }
+    .ot-row.active {
+      background:
+        radial-gradient(ellipse at top right, rgba(0,107,255,0.18) 0%, rgba(0,107,255,0.06) 50%, transparent 100%),
+        rgba(0,107,255,0.08);
+      border-color: rgba(0,107,255,0.45);
+    }
+    .ot-row .ot-info { flex: 1; min-width: 0; }
+    .ot-row .ot-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.15px;
+    }
+    .ot-row .ot-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+    .ot-row .ot-check {
+      width: 22px; height: 22px;
+      flex-shrink: 0;
+      color: var(--blue);
+      opacity: 0;
+    }
+    .ot-row.active .ot-check { opacity: 1; }
+    .ot-row .ot-check svg { width: 18px; height: 18px; filter: drop-shadow(0 0 4px rgba(0,107,255,0.55)); }
+
     /* signal-source promo tip below Add fund.
        Border style ported from AuthKit (.cta-box):
        ::before = static hairline gradient rim
@@ -1716,12 +1817,15 @@
         </svg>
       </button>
       <div class="pair-actions">
-        <button class="pair-action" aria-label="Indicators" type="button">
+        <button class="pair-action" aria-label="K-line chart" type="button">
+          <!-- K-line / candlestick chart -->
           <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 5h6M13 5h2M3 9h2M9 9h6M3 13h6M13 13h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-            <circle cx="11" cy="5"  r="1.6" stroke="currentColor" stroke-width="1.3" fill="none"/>
-            <circle cx="7"  cy="9"  r="1.6" stroke="currentColor" stroke-width="1.3" fill="none"/>
-            <circle cx="11" cy="13" r="1.6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+            <!-- left candle (up) -->
+            <path d="M5 1.5V16.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <rect x="3.25" y="4" width="3.5" height="8" rx="0.6" stroke="currentColor" stroke-width="1.4" fill="none"/>
+            <!-- right candle (down) -->
+            <path d="M13 0.5V17.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <rect x="11.25" y="6" width="3.5" height="6" rx="0.6" stroke="currentColor" stroke-width="1.4" fill="none"/>
           </svg>
         </button>
         <button class="pair-action" aria-label="Chart" type="button">
@@ -1736,27 +1840,27 @@
     <!-- BUY / SELL ACTION ROW -->
     <div class="order-action">
       <div class="ba-row">
-        <button class="ba-btn sell" type="button">
+        <button class="ba-btn sell" type="button" data-side="sell">
           <span class="label">Sell</span>
-          <span class="price">105,390.71</span>
+          <span class="price" id="sellPrice">105,390.71</span>
         </button>
-        <button class="ba-btn buy" type="button">
-          <span class="price">105,390.71</span>
+        <button class="ba-btn buy" type="button" data-side="buy">
+          <span class="price" id="buyPrice">105,390.71</span>
           <span class="label">Buy</span>
         </button>
-        <span class="ba-spread-pill">18</span>
+        <span class="ba-spread-pill" id="spreadPill">18</span>
       </div>
       <div class="ba-progress">
-        <div class="red"></div>
-        <div class="green"></div>
+        <div class="red"  id="baRed"   style="flex: 0 0 auto; width: 50%;"></div>
+        <div class="green" id="baGreen" style="flex: 0 0 auto; width: 50%;"></div>
       </div>
-      <div class="ba-tip">+8888</div>
+      <div class="ba-tip" id="baTip">+8888</div>
     </div>
 
     <!-- ORDER FIELDS -->
     <div class="order-fields">
-      <!-- order type select -->
-      <div class="field">
+      <!-- order type select (Limit / Market / Stop / Stop Limit) -->
+      <button class="field type-select" id="orderTypeBtn" type="button">
         <span class="field-info-icon">
           <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/>
@@ -1764,40 +1868,55 @@
             <path d="M7 6V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
           </svg>
         </span>
-        <span class="field-label-only">Limit</span>
+        <span class="field-label-only" id="orderTypeLabel">Limit</span>
         <span class="field-caret">
           <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
-      </div>
+      </button>
 
-      <!-- limit price stepper (focused) -->
-      <div class="field outlined">
+      <!-- price stepper #1 (focused) — label + target swap per order type -->
+      <div class="field outlined" id="primaryPriceField">
         <div class="stepper">
-          <button class="stepper-btn" type="button" data-step="-" data-target="limitPrice">−</button>
+          <button class="stepper-btn primary-stepper" type="button" data-step="-">−</button>
           <div class="stepper-center">
-            <span class="stepper-label">Limit Price</span>
+            <span class="stepper-label" id="primaryPriceLabel">Limit Price</span>
             <span class="stepper-value">
-              <span id="limitPrice">92,636.40</span><span class="stepper-cursor"></span>
+              <span id="primaryPriceValue">92,636.40</span><span class="stepper-cursor"></span>
             </span>
           </div>
-          <button class="stepper-btn" type="button" data-step="+" data-target="limitPrice">+</button>
+          <button class="stepper-btn primary-stepper" type="button" data-step="+">+</button>
         </div>
       </div>
 
-      <!-- volume + lots toggle -->
+      <!-- secondary price stepper (only Stop Limit needs this — Stop price) -->
+      <div class="field outlined" id="secondaryPriceField" style="display:none;">
+        <div class="stepper">
+          <button class="stepper-btn" type="button" data-step="-" data-target="stopPrice">−</button>
+          <div class="stepper-center">
+            <span class="stepper-label">Stop Price</span>
+            <span class="stepper-value">
+              <span id="stopPrice">92,636.40</span>
+            </span>
+          </div>
+          <button class="stepper-btn" type="button" data-step="+" data-target="stopPrice">+</button>
+        </div>
+      </div>
+
+      <!-- volume input + lots/USD unit toggle -->
       <div class="field combo">
         <div class="vol-stepper">
           <button class="stepper-btn" type="button" data-step="-" data-target="volume">−</button>
           <div class="stepper-center">
-            <span style="font-size:14px; color: var(--text-secondary);">Volume</span>
+            <span class="stepper-label">Volume</span>
+            <input type="text" inputmode="decimal" class="stepper-input" id="volumeInput" value="1.00" />
           </div>
           <button class="stepper-btn" type="button" data-step="+" data-target="volume">+</button>
         </div>
         <span class="divider"></span>
-        <button class="lots-toggle" type="button">
-          <span class="lots-text">Lots</span>
+        <button class="lots-toggle" id="unitToggleBtn" type="button">
+          <span class="lots-text" id="unitLabel">Lots</span>
           <span class="field-caret">
             <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1811,11 +1930,11 @@
     <div class="slider-wrap">
       <div class="slider">
         <div class="track">
-          <div class="dot active" style="left: 0%;"></div>
-          <div class="dot" style="left: 25%;"></div>
-          <div class="dot" style="left: 50%;"></div>
-          <div class="dot" style="left: 75%;"></div>
-          <div class="dot" style="left: 100%;"></div>
+          <div class="dot active" data-lots="1"   style="left: 0%;"></div>
+          <div class="dot"        data-lots="25"  style="left: 25%;"></div>
+          <div class="dot"        data-lots="50"  style="left: 50%;"></div>
+          <div class="dot"        data-lots="75"  style="left: 75%;"></div>
+          <div class="dot"        data-lots="100" style="left: 100%;"></div>
         </div>
       </div>
       <div class="slider-info">Max open <span style="color:#eee;">100</span> Lots</div>
@@ -1855,19 +1974,19 @@
     <div class="margin-info">
       <div class="margin-row">
         <span class="key">Margin / Fees</span>
-        <span class="val">1,283.32 / 12.00 USD</span>
+        <span class="val" id="marginFees">1,283.32 / 12.00 USD</span>
       </div>
       <div class="margin-row">
         <span class="key no-dash">Free Margin</span>
-        <span class="val">2,357.00 USD</span>
+        <span class="val" id="freeMargin">2,357.00 USD</span>
       </div>
       <div class="margin-row">
         <span class="key no-dash">Margin Level After Trading</span>
-        <span class="val">1,234,98.00%</span>
+        <span class="val" id="marginLevel">1,234.98%</span>
       </div>
       <div class="margin-row">
         <span class="key">Leverage</span>
-        <span class="val">1:2,000,000</span>
+        <span class="val" id="leverage">1:500</span>
       </div>
     </div>
 
@@ -1907,16 +2026,25 @@
         <span class="pos-tag sell">SELL</span>
         <div class="pos-symbol-wrap">
           <span class="pos-symbol">BTCUSD</span>
-          <span class="small-icon">
+          <span class="small-icon" aria-label="K-line chart">
+            <!-- Mini K-line / candlestick: two candles with wicks -->
             <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 5h8M5 7h6M3 9h6M5 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <!-- left candle (up) -->
+              <path d="M5 2.5V11.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <rect x="3.5" y="4" width="3" height="6" rx="0.6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+              <!-- right candle (down) -->
+              <path d="M10 1.5V12.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <rect x="8.5" y="6" width="3" height="4.5" rx="0.6" stroke="currentColor" stroke-width="1.2" fill="none"/>
             </svg>
           </span>
         </div>
         <span class="pos-pnl">+10.12<span class="unit"> USD</span></span>
-        <span class="pos-share">
+        <span class="pos-share" aria-label="Share">
+          <!-- Share / upload arrow out of tray -->
           <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 7.5L3 9.5M3 9.5L5 11.5M3 9.5H8.5C10.4 9.5 11.5 8.4 11.5 6.5V3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 2L7 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M4.5 4.5L7 2L9.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 8.5V11C3 11.55 3.45 12 4 12H10C10.55 12 11 11.55 11 11V8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
       </div>
@@ -1968,16 +2096,25 @@
         <span class="pos-tag sell">SELL</span>
         <div class="pos-symbol-wrap">
           <span class="pos-symbol">BTCUSD</span>
-          <span class="small-icon">
+          <span class="small-icon" aria-label="K-line chart">
+            <!-- Mini K-line / candlestick: two candles with wicks -->
             <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 5h8M5 7h6M3 9h6M5 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <!-- left candle (up) -->
+              <path d="M5 2.5V11.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <rect x="3.5" y="4" width="3" height="6" rx="0.6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+              <!-- right candle (down) -->
+              <path d="M10 1.5V12.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <rect x="8.5" y="6" width="3" height="4.5" rx="0.6" stroke="currentColor" stroke-width="1.2" fill="none"/>
             </svg>
           </span>
         </div>
         <span class="pos-pnl">+10.12<span class="unit"> USD</span></span>
-        <span class="pos-share">
+        <span class="pos-share" aria-label="Share">
+          <!-- Share / upload arrow out of tray -->
           <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 7.5L3 9.5M3 9.5L5 11.5M3 9.5H8.5C10.4 9.5 11.5 8.4 11.5 6.5V3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 2L7 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M4.5 4.5L7 2L9.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 8.5V11C3 11.55 3.45 12 4 12H10C10.55 12 11 11.55 11 11V8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
       </div>
@@ -2301,6 +2438,26 @@
   <div class="sheet-list" id="accSheetList"></div>
 </div>
 
+<!-- VOLUME UNIT BOTTOM SHEET -->
+<div class="copy-sheet-backdrop" id="unitBackdrop"></div>
+<div class="copy-sheet" id="unitSheet" role="dialog" aria-modal="true">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Volume unit</span>
+  </div>
+  <div class="sheet-list" id="unitList"></div>
+</div>
+
+<!-- ORDER TYPE BOTTOM SHEET -->
+<div class="copy-sheet-backdrop" id="orderTypeBackdrop"></div>
+<div class="copy-sheet" id="orderTypeSheet" role="dialog" aria-modal="true">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Order type</span>
+  </div>
+  <div class="sheet-list" id="orderTypeList"></div>
+</div>
+
 <!-- MY COPY (copied strategies) BOTTOM SHEET -->
 <div class="copy-sheet-backdrop" id="copySheetBackdrop"></div>
 <div class="copy-sheet" id="copySheet" role="dialog" aria-modal="true" aria-labelledby="copySheetTitle">
@@ -2613,32 +2770,325 @@
     });
   });
 
-  // Stepper buttons
+  // ─── DYNAMIC TRADE PAGE STATE ───
+  // Single source of truth. Anything that changes here re-renders the UI.
+  const state = {
+    orderType: 'limit',    // 'limit' | 'market' | 'stop' | 'stoplimit'
+    side: 'sell',          // 'sell' | 'buy' — drives submit button
+    bidPrice: 105390.71,   // Sell price (live)
+    askPrice: 105390.89,   // Buy price (live)
+    limitPrice: 92636.40,  // user-set limit
+    stopPrice: 92636.40,   // used by stop / stop-limit
+    lots: 1,               // canonical volume in lots (0.01..100)
+    unit: 'lots',          // 'lots' | 'usd' — display unit for the volume input
+    contractSize: 1,       // BTCUSD = 1 BTC per lot
+    leverage: 500,
+    accountEquity: 10000,  // USD — used for free-margin calc
+    tpEnabled: true,
+    tp: 92636.40,
+    sl: 92636.40,
+  };
+  const VOL_UNITS = {
+    lots: { label: 'Lots', desc: 'Standard contract units (1 lot = 1 BTC).' },
+    usd:  { label: 'USD',  desc: 'Notional value in US dollars.' },
+  };
+
+  const fmtNum   = n => n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtPrice = n => n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const sellPriceEl = document.getElementById('sellPrice');
+  const buyPriceEl  = document.getElementById('buyPrice');
+  const spreadEl    = document.getElementById('spreadPill');
+  const baRedEl     = document.getElementById('baRed');
+  const baGreenEl   = document.getElementById('baGreen');
+  const baTipEl     = document.getElementById('baTip');
+  const primaryPriceValueEl = document.getElementById('primaryPriceValue');
+  const stopEl       = document.getElementById('stopPrice');
+  const volumeInput  = document.getElementById('volumeInput');
+  const unitLabelEl  = document.getElementById('unitLabel');
+  const tpEl        = document.getElementById('tp');
+  const slEl        = document.getElementById('sl');
+  const marginFeesEl  = document.getElementById('marginFees');
+  const freeMarginEl  = document.getElementById('freeMargin');
+  const marginLevelEl = document.getElementById('marginLevel');
+  const leverageEl    = document.getElementById('leverage');
+  const submitBtn     = document.getElementById('submitBtn');
+
+  const orderTypeLabelEl   = document.getElementById('orderTypeLabel');
+  const primaryPriceField  = document.getElementById('primaryPriceField');
+  const primaryPriceLabelEl = document.getElementById('primaryPriceLabel');
+  const secondaryPriceField = document.getElementById('secondaryPriceField');
+
+  // Per-type config: which fields show, what label, what executes
+  const ORDER_TYPES = {
+    limit:     { name: 'Limit',      desc: 'Trade only when price reaches your set limit.',          showPrimary: true,  primaryLabel: 'Limit Price', showSecondary: false },
+    market:    { name: 'Market',     desc: 'Execute immediately at the current market price.',       showPrimary: false, showSecondary: false },
+    stop:      { name: 'Stop',       desc: 'Triggers a market order when price hits the stop.',      showPrimary: true,  primaryLabel: 'Stop Price',  showSecondary: false },
+    stoplimit: { name: 'Stop Limit', desc: 'Triggers a limit order when price hits the stop.',       showPrimary: true,  primaryLabel: 'Limit Price', showSecondary: true  },
+  };
+
+  function render() {
+    sellPriceEl.textContent = fmtPrice(state.bidPrice);
+    buyPriceEl.textContent  = fmtPrice(state.askPrice);
+
+    // spread in pips (price diff × 100, BTC-style)
+    const spread = Math.max(0, Math.round((state.askPrice - state.bidPrice) * 100));
+    spreadEl.textContent = spread;
+
+    // pseudo "buy/sell pressure": let asker volume vs bidder volume drive the bar
+    // randomized per render to feel alive
+    const buyPct = Math.max(15, Math.min(85, state.buyPressure ?? 50));
+    baRedEl.style.width   = (100 - buyPct) + '%';
+    baGreenEl.style.width = buyPct + '%';
+
+    // order type — toggles which price fields show + the label
+    const cfg = ORDER_TYPES[state.orderType] || ORDER_TYPES.limit;
+    orderTypeLabelEl.textContent = cfg.name;
+    primaryPriceField.style.display  = cfg.showPrimary  ? '' : 'none';
+    secondaryPriceField.style.display = cfg.showSecondary ? '' : 'none';
+    if (cfg.showPrimary) primaryPriceLabelEl.textContent = cfg.primaryLabel;
+    // For Stop and Stop-Limit, the primary stepper holds the stop price
+    if (state.orderType === 'stop' || state.orderType === 'stoplimit') {
+      // Re-target the primary stepper buttons + readout to stop / limit accordingly
+      // (We just swap the displayed value source.)
+    }
+
+    // primary stepper shows stop price for "stop" order, otherwise limit price
+    const primaryValue = state.orderType === 'stop' ? state.stopPrice : state.limitPrice;
+    primaryPriceValueEl.textContent = fmtPrice(primaryValue);
+    stopEl.textContent   = fmtPrice(state.stopPrice);
+
+    // Volume input — show in the active unit. Skip while focused so the
+    // user's typing isn't clobbered.
+    if (document.activeElement !== volumeInput) {
+      const refPrice = state.limitPrice || state.bidPrice || 1;
+      volumeInput.value = state.unit === 'usd'
+        ? (state.lots * state.contractSize * refPrice).toFixed(2)
+        : state.lots.toFixed(2);
+    }
+    unitLabelEl.textContent = VOL_UNITS[state.unit].label;
+
+    tpEl.textContent     = fmtPrice(state.tp);
+    slEl.textContent     = fmtPrice(state.sl);
+
+    // For market orders, use ask/bid as the execution price for margin math.
+    const execPrice =
+      state.orderType === 'market'
+        ? (state.side === 'buy' ? state.askPrice : state.bidPrice)
+        : state.orderType === 'stop'
+        ? state.stopPrice
+        : state.orderType === 'stoplimit'
+        ? state.limitPrice
+        : state.limitPrice;
+    const notional = state.lots * state.contractSize * execPrice;
+    const margin = notional / state.leverage;
+    const fees   = state.lots * state.contractSize * 0.6;   // dummy fee = 0.6 USD per lot
+    marginFeesEl.textContent  = `${fmtNum(margin)} / ${fmtNum(fees)} USD`;
+
+    const freeMargin = Math.max(0, state.accountEquity - margin);
+    freeMarginEl.textContent  = `${fmtNum(freeMargin)} USD`;
+
+    const marginLevel = margin > 0 ? (state.accountEquity / margin) * 100 : 0;
+    marginLevelEl.textContent = `${marginLevel.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+
+    leverageEl.textContent = `1:${state.leverage.toLocaleString()}`;
+
+    // submit button label/color reflects active side
+    submitBtn.textContent = state.side === 'buy' ? 'Buy' : 'Sell';
+    submitBtn.classList.toggle('buy',  state.side === 'buy');
+    submitBtn.classList.toggle('sell', state.side === 'sell');
+  }
+
+  // Sell/Buy buttons set the active side + update the submit button
+  document.querySelectorAll('.ba-btn[data-side]').forEach(b => {
+    b.addEventListener('click', () => {
+      state.side = b.dataset.side;
+      render();
+    });
+  });
+
+  // ─── ORDER TYPE BOTTOM SHEET ───
+  const orderTypeBackdrop = document.getElementById('orderTypeBackdrop');
+  const orderTypeSheet    = document.getElementById('orderTypeSheet');
+  const orderTypeListEl   = document.getElementById('orderTypeList');
+
+  function renderOrderTypeList() {
+    orderTypeListEl.innerHTML = Object.entries(ORDER_TYPES).map(([key, cfg]) => `
+      <button class="ot-row${key === state.orderType ? ' active' : ''}" data-type="${key}" type="button">
+        <div class="ot-info">
+          <div class="ot-name">${cfg.name}</div>
+          <div class="ot-desc">${cfg.desc}</div>
+        </div>
+        <div class="ot-check">
+          <svg viewBox="0 0 18 18" fill="none">
+            <path d="M4 9.5L7.5 13L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </button>
+    `).join('');
+  }
+  function openOrderTypeSheet() {
+    renderOrderTypeList();
+    orderTypeBackdrop.classList.add('open');
+    orderTypeSheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeOrderTypeSheet() {
+    orderTypeBackdrop.classList.remove('open');
+    orderTypeSheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('orderTypeBtn').addEventListener('click', openOrderTypeSheet);
+  orderTypeBackdrop.addEventListener('click', closeOrderTypeSheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && orderTypeSheet.classList.contains('open')) closeOrderTypeSheet();
+  });
+  orderTypeListEl.addEventListener('click', e => {
+    const row = e.target.closest('.ot-row');
+    if (!row) return;
+    state.orderType = row.dataset.type;
+    closeOrderTypeSheet();
+    render();
+  });
+
+  // Stepper buttons — each target gets its own delta + bounds
+  const STEPPERS = {
+    tp:         { get: () => state.tp,         set: v => state.tp         = v, step: 10,    min: 0.01,  max: 1e9 },
+    sl:         { get: () => state.sl,         set: v => state.sl         = v, step: 10,    min: 0.01,  max: 1e9 },
+    stopPrice:  { get: () => state.stopPrice,  set: v => state.stopPrice  = v, step: 10,    min: 0.01,  max: 1e9 },
+    volume:     { get: () => state.lots,       set: v => state.lots       = v, step: 0.10,  min: 0.01,  max: 100 },
+  };
   document.querySelectorAll('.stepper-btn[data-target]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const id = btn.dataset.target;
+      const cfg = STEPPERS[btn.dataset.target];
+      if (!cfg) return;
       const dir = btn.dataset.step === '+' ? 1 : -1;
-      const el = document.getElementById(id);
-      if (!el) return;
-      const num = parseFloat(el.textContent.replace(/,/g, '')) || 0;
-      const next = num + dir * 0.10;
-      el.textContent = next.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const next = Math.max(cfg.min, Math.min(cfg.max, cfg.get() + dir * cfg.step));
+      cfg.set(next);
+      // syncing volume slider dots if volume changed
+      if (btn.dataset.target === 'volume') syncSliderDots();
+      render();
     });
   });
 
-  // TP/SL toggle
+  // Primary price stepper — target depends on order type (limit vs stop price)
+  document.querySelectorAll('.primary-stepper').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.dataset.step === '+' ? 1 : -1;
+      const step = 10;
+      if (state.orderType === 'stop') {
+        state.stopPrice = Math.max(0.01, state.stopPrice + dir * step);
+      } else {
+        state.limitPrice = Math.max(0.01, state.limitPrice + dir * step);
+      }
+      render();
+    });
+  });
+
+  // TP/SL checkbox toggle
   const tpslCheck = document.getElementById('tpslCheck');
   tpslCheck.addEventListener('click', () => {
-    tpslCheck.classList.toggle('off');
+    state.tpEnabled = !state.tpEnabled;
+    tpslCheck.classList.toggle('off', !state.tpEnabled);
   });
 
-  // Slider dot click
+  // Volume slider dots — snap to preset lots
+  function syncSliderDots() {
+    document.querySelectorAll('.slider .dot').forEach(d => {
+      const n = parseFloat(d.dataset.lots);
+      d.classList.toggle('active', state.lots >= n - 0.01 && state.lots <= n + 0.01);
+    });
+  }
   document.querySelectorAll('.slider .dot').forEach(d => {
     d.addEventListener('click', () => {
-      document.querySelectorAll('.slider .dot').forEach(x => x.classList.remove('active'));
-      d.classList.add('active');
+      state.lots = parseFloat(d.dataset.lots);
+      syncSliderDots();
+      render();
     });
   });
+
+  // Manual volume input — typed in the displayed unit, normalized to lots
+  function commitVolume() {
+    const raw = parseFloat(volumeInput.value.replace(/,/g, ''));
+    if (!isFinite(raw) || raw <= 0) {
+      // revert to last known state
+      render();
+      return;
+    }
+    let nextLots;
+    if (state.unit === 'usd') {
+      const refPrice = state.limitPrice || state.bidPrice || 1;
+      nextLots = raw / (state.contractSize * refPrice);
+    } else {
+      nextLots = raw;
+    }
+    state.lots = Math.max(0.01, Math.min(100, nextLots));
+    syncSliderDots();
+    render();
+  }
+  volumeInput.addEventListener('change', commitVolume);
+  volumeInput.addEventListener('blur',   commitVolume);
+  volumeInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      volumeInput.blur();
+    }
+  });
+  volumeInput.addEventListener('focus', () => volumeInput.select());
+
+  // ─── VOLUME UNIT BOTTOM SHEET ───
+  const unitBackdrop = document.getElementById('unitBackdrop');
+  const unitSheet    = document.getElementById('unitSheet');
+  const unitListEl   = document.getElementById('unitList');
+  function renderUnitList() {
+    unitListEl.innerHTML = Object.entries(VOL_UNITS).map(([key, cfg]) => `
+      <button class="ot-row${key === state.unit ? ' active' : ''}" data-unit="${key}" type="button">
+        <div class="ot-info">
+          <div class="ot-name">${cfg.label}</div>
+          <div class="ot-desc">${cfg.desc}</div>
+        </div>
+        <div class="ot-check">
+          <svg viewBox="0 0 18 18" fill="none">
+            <path d="M4 9.5L7.5 13L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </button>
+    `).join('');
+  }
+  function openUnitSheet() {
+    renderUnitList();
+    unitBackdrop.classList.add('open');
+    unitSheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeUnitSheet() {
+    unitBackdrop.classList.remove('open');
+    unitSheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('unitToggleBtn').addEventListener('click', openUnitSheet);
+  unitBackdrop.addEventListener('click', closeUnitSheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && unitSheet.classList.contains('open')) closeUnitSheet();
+  });
+  unitListEl.addEventListener('click', e => {
+    const row = e.target.closest('.ot-row');
+    if (!row) return;
+    state.unit = row.dataset.unit;
+    closeUnitSheet();
+    render();
+  });
+
+  // Live price ticker — random walk on bid/ask + buy pressure
+  function tick() {
+    const drift = (Math.random() - 0.5) * 8;        // ±4 USD
+    state.bidPrice = Math.max(1, state.bidPrice + drift);
+    state.askPrice = state.bidPrice + 0.18 + Math.random() * 0.4;  // ~18-58 cent spread
+    state.buyPressure = Math.max(20, Math.min(80, (state.buyPressure || 50) + (Math.random() - 0.5) * 8));
+    render();
+  }
+  setInterval(tick, 1500);
+  render();
 </script>
 </body>
 </html>

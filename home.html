@@ -709,6 +709,225 @@
       cursor: pointer;
     }
     .view-more svg { width: 18px; height: 18px; opacity: 0.6; }
+    .view-more { background: none; border: none; font-family: inherit; font-size: 13px; }
+    .view-more:hover { opacity: 0.85; }
+
+    /* Watchlist footer row — Add Symbol on the left, Edit on the right */
+    .watchlist-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0 48px;
+    }
+    .watchlist-actions .add-symbol,
+    .watchlist-actions .edit-watchlist {
+      padding: 6px 12px;
+    }
+    .add-symbol {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--text-secondary);
+      transition: color 0.18s;
+    }
+    .add-symbol:hover { opacity: 0.85; }
+    .add-symbol svg { width: 14px; height: 14px; opacity: 0.85; }
+    .edit-watchlist {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--text-secondary);
+      transition: color 0.18s;
+    }
+    /* hover only on devices that actually have hover (not touch) */
+    @media (hover: hover) {
+      .edit-watchlist:hover { color: #fff; }
+    }
+    .edit-watchlist svg { width: 14px; height: 14px; }
+    .edit-watchlist.active { color: var(--blue); }
+    .edit-watchlist.active:hover { color: var(--blue); }
+    /* immediately after click, defeat the lingering hover/focus highlight */
+    .edit-watchlist:focus { outline: none; }
+    .edit-watchlist:focus:not(:focus-visible) { color: var(--text-secondary); }
+    .edit-watchlist.active:focus:not(:focus-visible) { color: var(--blue); }
+
+    /* Drag handle — visible only in edit mode */
+    .drag-handle {
+      display: none;
+      width: 28px; height: 28px;
+      flex-shrink: 0;
+      margin-left: 4px;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      cursor: grab;
+      touch-action: none;        /* required so touch-drag doesn't scroll the page */
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .market-list.editing .drag-handle { display: flex; }
+    .drag-handle:active { cursor: grabbing; }
+    .drag-handle svg { width: 16px; height: 16px; }
+    .drag-handle:hover { color: #fff; }
+
+    /* Edit-mode visual treatment */
+    .market-list.editing .market-item { cursor: default; }
+    .market-list.editing .market-item::before { display: none; } /* hide animated sweep so drag is clean */
+    .market-list.editing .market-item.dragging {
+      opacity: 0.85;
+      transform: scale(1.02);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,107,255,0.45);
+      z-index: 10;
+      transition: none;
+    }
+    .market-list.editing .market-item:not(.dragging) {
+      transition: transform 0.20s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Add-symbol sheet rows */
+    .symbol-search {
+      width: 100%;
+      height: 40px;
+      padding: 0 16px;
+      margin: 0 0 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .symbol-search::placeholder { color: rgba(255,255,255,0.55); }
+    .symbol-search:focus {
+      border-color: rgba(0,107,255,0.55);
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* category tabs at the top of the sheet */
+    .sym-cats {
+      display: flex;
+      gap: 8px;
+      padding: 4px 16px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .sym-cats::-webkit-scrollbar { display: none; }
+    .sym-cat {
+      flex-shrink: 0;
+      height: 30px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.78);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .sym-cat.active {
+      background: rgba(0,107,255,0.18);
+      border-color: rgba(0,107,255,0.55);
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .symbol-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .symbol-row:hover { background: rgba(255,255,255,0.05); }
+    .symbol-row .sym-logo {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--bg-card2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .symbol-row .sym-logo svg { width: 100%; height: 100%; display: block; }
+    .symbol-row .sym-info { flex: 1; min-width: 0; }
+    .symbol-row .sym-code {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.06px;
+    }
+    .symbol-row .sym-name {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .symbol-row .sym-toggle {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .symbol-row .sym-toggle svg { width: 14px; height: 14px; }
+    .symbol-row.added .sym-toggle {
+      background: rgba(0,107,255,0.20);
+      border-color: rgba(0,107,255,0.55);
+      color: var(--blue);
+    }
+    .symbol-empty {
+      text-align: center;
+      padding: 28px 16px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+    }
+    /* Add-symbol sheet: fixed height so the panel doesn't jump as filters
+       narrow / widen the list. The list itself scrolls within the panel. */
+    #addSymbolSheet {
+      height: 78vh;
+      max-height: 78vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 16px;
+    }
+    #addSymbolSheet .sheet-list {
+      flex: 1;
+      max-height: none;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body>
@@ -987,9 +1206,9 @@
       </div>
     </div>
 
-    <!-- POPULAR -->
+    <!-- WATCHLIST -->
     <div class="section-header popular-section" style="padding-bottom:0;">
-      <span class="section-title">Popular</span>
+      <span class="section-title">Watchlist</span>
     </div>
 
     <svg width="0" height="0" style="position:absolute">
@@ -1005,7 +1224,7 @@
       </defs>
     </svg>
 
-    <div style="padding-bottom: 0;">
+    <div class="market-list" id="marketList" style="padding-bottom: 0;">
       <!-- BTCUSD -->
       <div class="market-item up">
         <div class="market-left">
@@ -1140,10 +1359,18 @@
         </div>
       </div>
 
-      <!-- View more -->
-      <div class="view-more">
-        <span style="font-size:13px;">View more</span>
-        <svg viewBox="0 0 18 18" fill="none"><path d="M7 4l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <!-- Add Symbol + Edit row -->
+      <div class="watchlist-actions">
+        <button class="add-symbol" id="addSymbolBtn" type="button">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M7 3V11M3 7H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Add Symbol
+        </button>
+        <button class="edit-watchlist" id="editWatchlistBtn" type="button">
+          <span id="editWatchlistLabel">Edit</span>
+          <svg viewBox="0 0 14 14" fill="none">
+            <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -1152,6 +1379,30 @@
 </div><!-- end scroll-area -->
 
 </div><!-- end phone -->
+
+<!-- ADD-SYMBOL BOTTOM SHEET (watchlist editor) -->
+<div class="sheet-backdrop" id="addSymbolBackdrop"></div>
+<div class="sheet" id="addSymbolSheet" role="dialog" aria-modal="true">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Add to Watchlist</span>
+  </div>
+  <div style="padding: 0 16px;">
+    <input type="text" class="symbol-search" id="symbolSearch" placeholder="Search symbol or name…" />
+  </div>
+  <div class="sym-cats" id="symCats">
+    <button class="sym-cat active" data-cat="all"        type="button">All</button>
+    <button class="sym-cat"        data-cat="indices"    type="button">Indices</button>
+    <button class="sym-cat"        data-cat="forex"      type="button">Forex</button>
+    <button class="sym-cat"        data-cat="crypto"     type="button">Crypto</button>
+    <button class="sym-cat"        data-cat="metals"     type="button">Metals</button>
+    <button class="sym-cat"        data-cat="cfd"        type="button">Share CFDs</button>
+    <button class="sym-cat"        data-cat="commodity"  type="button">Commodities</button>
+    <button class="sym-cat"        data-cat="etf"        type="button">ETF</button>
+    <button class="sym-cat"        data-cat="bond"       type="button">Bond</button>
+  </div>
+  <div class="sheet-list" id="symbolList"></div>
+</div>
 
 <!-- CURRENCY BOTTOM SHEET -->
 <div class="sheet-backdrop" id="currencySheetBackdrop"></div>
@@ -1353,6 +1604,251 @@
     if (!hidden) amountEl.textContent = c.symbol + amountEl.dataset.value;
     closeSheet();
   });
+
+  // ─── ADD SYMBOL (Watchlist editor) ───
+  const FLAG = iso => `<img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/${iso}.svg" style="width:100%;height:100%;object-fit:cover;" alt=""/>`;
+  // Generic round letter-tile for stocks/etfs/bonds where a brand logo isn't easy
+  const TILE = (text, bg, fg='#fff', sz=10) => `<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="${bg}"/><text x="14" y="18" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="${sz}" fill="${fg}">${text}</text></svg>`;
+  const SYMBOLS = [
+    // ── Indices ──
+    { code: 'NIKKEI225', name: 'Nikkei 225',          cat: 'indices', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#bc002d"/><text x="14" y="18" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="10" fill="#fff">225</text></svg>' },
+    { code: 'DJ30',      name: 'Dow Jones Index',     cat: 'indices', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#0a3d8f"/><text x="14" y="18" text-anchor="middle" font-family="Arial" font-weight="800" font-size="9" fill="#fff">DJ30</text></svg>' },
+    { code: 'NAS100',    name: 'Nasdaq 100',          cat: 'indices', logo: TILE('NAS', '#0a2c5e', '#fff', 9) },
+    { code: 'SPX500',    name: 'S&P 500',             cat: 'indices', logo: TILE('SPX', '#5c1f2c', '#fff', 9) },
+    { code: 'UK100',     name: 'FTSE 100',            cat: 'indices', logo: TILE('UK',  '#012169', '#fff', 11) },
+    { code: 'GER40',     name: 'DAX 40',              cat: 'indices', logo: TILE('DAX', '#1c1c1c', '#ffce00', 9) },
+    { code: 'HK50',      name: 'Hang Seng',           cat: 'indices', logo: TILE('HK',  '#bc002d', '#fff', 11) },
+
+    // ── Forex ──
+    { code: 'EURUSD', name: 'Euro vs US Dollar',     cat: 'forex', logo: FLAG('eu') },
+    { code: 'GBPUSD', name: 'British Pound vs US',   cat: 'forex', logo: FLAG('gb') },
+    { code: 'USDJPY', name: 'US Dollar vs Yen',      cat: 'forex', logo: FLAG('jp') },
+    { code: 'USDCHF', name: 'US Dollar vs Swiss',    cat: 'forex', logo: FLAG('ch') },
+    { code: 'AUDUSD', name: 'Australian Dollar',     cat: 'forex', logo: FLAG('au') },
+    { code: 'NZDUSD', name: 'New Zealand Dollar',    cat: 'forex', logo: FLAG('nz') },
+    { code: 'CADJPY', name: 'Canadian / Japanese',   cat: 'forex', logo: FLAG('ca') },
+    { code: 'EURJPY', name: 'Euro vs Yen',           cat: 'forex', logo: FLAG('eu') },
+
+    // ── Crypto ──
+    { code: 'BTCUSD', name: 'Bitcoin',               cat: 'crypto', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#f7931a"/><text x="14" y="19" text-anchor="middle" font-family="Georgia,serif" font-weight="800" font-size="15" fill="#fff">₿</text></svg>' },
+    { code: 'ETHUSD', name: 'Ethereum',              cat: 'crypto', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#627eea"/><text x="14" y="19" text-anchor="middle" font-family="Georgia,serif" font-weight="800" font-size="15" fill="#fff">Ξ</text></svg>' },
+    { code: 'SOLUSD', name: 'Solana',                cat: 'crypto', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#0d0d0d"/><path d="M9 10l8-2-2 2-8 2 2-2zm0 4l8-2-2 2-8 2 2-2zm0 4l8-2-2 2-8 2 2-2z" fill="#14f195"/></svg>' },
+    { code: 'XRPUSD', name: 'Ripple',                cat: 'crypto', logo: TILE('XRP', '#23292f', '#fff', 9) },
+    { code: 'ADAUSD', name: 'Cardano',               cat: 'crypto', logo: TILE('ADA', '#0033ad', '#fff', 9) },
+    { code: 'DOGEUSD',name: 'Dogecoin',              cat: 'crypto', logo: TILE('DGE', '#c2a633', '#fff', 9) },
+    { code: 'LRCUSD', name: 'Loopring',              cat: 'crypto', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#1c60ff"/><text x="14" y="18" text-anchor="middle" font-family="Arial" font-weight="800" font-size="10" fill="#fff">LRC</text></svg>' },
+
+    // ── Metals ──
+    { code: 'XAUUSD', name: 'Gold vs US Dollar',     cat: 'metals', logo: '<svg viewBox="0 0 28 28"><defs><linearGradient id="agX" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fde08a"/><stop offset="100%" stop-color="#b8801c"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#agX)"/><text x="14" y="19" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="13" fill="#5c3a0a">Au</text></svg>' },
+    { code: 'XAGUSD', name: 'Silver vs US Dollar',   cat: 'metals', logo: '<svg viewBox="0 0 28 28"><defs><linearGradient id="slvX" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e8edf3"/><stop offset="100%" stop-color="#8a96a8"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#slvX)"/><text x="14" y="19" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="13" fill="#3a4250">Ag</text></svg>' },
+    { code: 'XPTUSD', name: 'Platinum vs USD',       cat: 'metals', logo: '<svg viewBox="0 0 28 28"><defs><linearGradient id="ptX" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#dde2e8"/><stop offset="100%" stop-color="#7d8ca0"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#ptX)"/><text x="14" y="19" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="13" fill="#2c3543">Pt</text></svg>' },
+    { code: 'XPDUSD', name: 'Palladium vs USD',      cat: 'metals', logo: TILE('Pd', '#8d96a3', '#fff', 12) },
+
+    // ── Share CFDs ──
+    { code: 'AAPL', name: 'Apple',          cat: 'cfd', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#000"/><path d="M18.5 15c0-2.3 1.85-3.4 1.95-3.5-1.05-1.5-2.7-1.7-3.3-1.7-1.4-.15-2.7.8-3.4.8s-1.8-.8-3-.8c-1.5 0-2.9.9-3.65 2.2-1.55 2.7-.4 6.7 1.1 8.9.7 1 1.65 2.3 2.85 2.25 1.15-.05 1.6-.75 3-.75s1.85.75 3 .7c1.25-.05 2-1.1 2.75-2.2.85-1.3 1.2-2.55 1.2-2.6-.05-.05-2.3-.9-2.3-3.3z" fill="#fff"/></svg>' },
+    { code: 'TSLA', name: 'Tesla',          cat: 'cfd', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#c8060c"/><path d="M14 8.5l-3 1L11.5 11L14 10.7L16.5 11L17 9.5L14 8.5Z M14 10.7V18.5" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' },
+    { code: 'GOOG', name: 'Google',         cat: 'cfd', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#fff"/><path d="M21 14.2c0-.5-.05-.95-.13-1.4H14v2.66h3.95c-.17.85-.68 1.57-1.45 2.05v1.7h2.34c1.36-1.18 2.16-2.92 2.16-5.01z" fill="#4285f4"/><path d="M14 21c1.96 0 3.6-.6 4.8-1.63l-2.34-1.7c-.65.4-1.48.65-2.46.65-1.9 0-3.5-1.18-4.07-2.78H7.5v1.74c1.2 2.2 3.65 3.72 6.5 3.72z" fill="#34a853"/><path d="M9.93 15.54a4.5 4.5 0 0 1 0-3.08v-1.74H7.5a7 7 0 0 0 0 6.56l2.43-1.74z" fill="#fbbc04"/><path d="M14 9.36c1.06 0 2.02.36 2.78 1.07l2.07-2.07A6.95 6.95 0 0 0 14 6.5c-2.85 0-5.3 1.5-6.5 3.72l2.43 1.74C10.5 10.54 12.1 9.36 14 9.36z" fill="#ea4335"/></svg>' },
+    { code: 'NVDA', name: 'Nvidia',         cat: 'cfd', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#76b900"/><text x="14" y="18" text-anchor="middle" font-family="Arial" font-weight="800" font-size="11" fill="#fff">NV</text></svg>' },
+    { code: 'AMZN', name: 'Amazon',         cat: 'cfd', logo: TILE('A',   '#ff9900', '#000', 16) },
+    { code: 'META', name: 'Meta Platforms', cat: 'cfd', logo: TILE('M',   '#1877f2', '#fff', 16) },
+    { code: 'MSFT', name: 'Microsoft',      cat: 'cfd', logo: TILE('MS',  '#00a4ef', '#fff', 11) },
+    { code: 'NFLX', name: 'Netflix',        cat: 'cfd', logo: TILE('N',   '#e50914', '#fff', 16) },
+
+    // ── Commodities ──
+    { code: 'USOUSD', name: 'US Crude Oil (WTI)',    cat: 'commodity', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#1d1d1d"/><path d="M14 6c-2.5 3-5 6.5-5 9.5a5 5 0 0 0 10 0c0-3-2.5-6.5-5-9.5z" fill="#1ea76a"/></svg>' },
+    { code: 'UKOUSD', name: 'UK Brent Oil',          cat: 'commodity', logo: '<svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#0a1f1d"/><path d="M14 6c-2.5 3-5 6.5-5 9.5a5 5 0 0 0 10 0c0-3-2.5-6.5-5-9.5z" fill="#3a8c52"/></svg>' },
+    { code: 'NATGAS', name: 'Natural Gas',           cat: 'commodity', logo: TILE('NG',  '#1f57a5', '#fff', 11) },
+    { code: 'COPPER', name: 'Copper',                cat: 'commodity', logo: TILE('Cu',  '#b87333', '#fff', 12) },
+    { code: 'WHEAT',  name: 'Wheat',                 cat: 'commodity', logo: TILE('WHT', '#c79b3a', '#fff', 9) },
+    { code: 'CORN',   name: 'Corn',                  cat: 'commodity', logo: TILE('CRN', '#e8a32a', '#000', 9) },
+
+    // ── ETFs ──
+    { code: 'SPY',  name: 'SPDR S&P 500 ETF',         cat: 'etf', logo: TILE('SPY', '#244f8c', '#fff', 9) },
+    { code: 'QQQ',  name: 'Invesco QQQ Trust',        cat: 'etf', logo: TILE('QQQ', '#0046b8', '#fff', 9) },
+    { code: 'GLD',  name: 'SPDR Gold Shares ETF',     cat: 'etf', logo: TILE('GLD', '#b8801c', '#fff', 9) },
+    { code: 'IWM',  name: 'iShares Russell 2000',     cat: 'etf', logo: TILE('IWM', '#0e3b73', '#fff', 9) },
+    { code: 'XLF',  name: 'Financial Select Sector',  cat: 'etf', logo: TILE('XLF', '#1a6a3c', '#fff', 9) },
+    { code: 'ARKK', name: 'ARK Innovation ETF',       cat: 'etf', logo: TILE('ARK', '#000',    '#fff', 9) },
+
+    // ── Bonds ──
+    { code: 'US10Y',  name: 'US 10-Year Treasury',     cat: 'bond', logo: TILE('10Y', '#1a3b66', '#fff', 9) },
+    { code: 'US30Y',  name: 'US 30-Year Treasury',     cat: 'bond', logo: TILE('30Y', '#1a3b66', '#fff', 9) },
+    { code: 'DE10Y',  name: 'German 10-Year Bund',     cat: 'bond', logo: TILE('DE',  '#000',    '#ffce00', 11) },
+    { code: 'UK10Y',  name: 'UK 10-Year Gilt',         cat: 'bond', logo: TILE('UK',  '#012169', '#fff', 11) },
+    { code: 'JP10Y',  name: 'Japan 10-Year JGB',       cat: 'bond', logo: TILE('JP',  '#bc002d', '#fff', 11) },
+  ];
+  // Watchlist starts with whatever's already on the page (the 9 hard-coded rows)
+  const initialWatchlist = ['BTCUSD','EURUSD','XAUUSD','AAPL','CADJPY','ETHUSD','GOOG','LRCUSD','USOUSD'];
+  const watchlist = new Set(initialWatchlist);
+
+  const addSymBackdrop = document.getElementById('addSymbolBackdrop');
+  const addSymSheet    = document.getElementById('addSymbolSheet');
+  const addSymList     = document.getElementById('symbolList');
+  const symbolSearch   = document.getElementById('symbolSearch');
+
+  let activeCat = 'all';
+  function renderSymbolList() {
+    const q = symbolSearch.value.trim().toLowerCase();
+    const filtered = SYMBOLS.filter(s => {
+      if (activeCat !== 'all' && s.cat !== activeCat) return false;
+      return !q || s.code.toLowerCase().includes(q) || s.name.toLowerCase().includes(q);
+    });
+    if (!filtered.length) {
+      const why = q
+        ? `No symbols match "${symbolSearch.value}".`
+        : 'No symbols available in this category yet.';
+      addSymList.innerHTML = `<div class="symbol-empty">${why}</div>`;
+      return;
+    }
+    addSymList.innerHTML = filtered.map(s => {
+      const added = watchlist.has(s.code);
+      const icon = added
+        ? '<svg viewBox="0 0 14 14" fill="none"><path d="M3 7L6 10L11 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg viewBox="0 0 14 14" fill="none"><path d="M7 3V11M3 7H11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+      return `
+        <button class="symbol-row${added ? ' added' : ''}" data-code="${s.code}" type="button">
+          <div class="sym-logo">${s.logo}</div>
+          <div class="sym-info">
+            <div class="sym-code">${s.code}</div>
+            <div class="sym-name">${s.name}</div>
+          </div>
+          <div class="sym-toggle">${icon}</div>
+        </button>
+      `;
+    }).join('');
+  }
+  function openAddSymbolSheet() {
+    symbolSearch.value = '';
+    activeCat = 'all';
+    document.querySelectorAll('#symCats .sym-cat').forEach(c =>
+      c.classList.toggle('active', c.dataset.cat === 'all')
+    );
+    renderSymbolList();
+    addSymBackdrop.classList.add('open');
+    addSymSheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => symbolSearch.focus(), 100);
+  }
+
+  document.getElementById('symCats').addEventListener('click', e => {
+    const c = e.target.closest('.sym-cat');
+    if (!c) return;
+    document.querySelectorAll('#symCats .sym-cat').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    activeCat = c.dataset.cat;
+    renderSymbolList();
+  });
+  function closeAddSymbolSheet() {
+    addSymBackdrop.classList.remove('open');
+    addSymSheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('addSymbolBtn').addEventListener('click', openAddSymbolSheet);
+  addSymBackdrop.addEventListener('click', closeAddSymbolSheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && addSymSheet.classList.contains('open')) closeAddSymbolSheet();
+  });
+  symbolSearch.addEventListener('input', renderSymbolList);
+  addSymList.addEventListener('click', e => {
+    const row = e.target.closest('.symbol-row');
+    if (!row) return;
+    const code = row.dataset.code;
+    if (watchlist.has(code)) watchlist.delete(code);
+    else watchlist.add(code);
+    renderSymbolList();
+  });
+
+  // ─── WATCHLIST EDIT (drag-to-reorder) ───
+  const marketList = document.getElementById('marketList');
+  const editBtn   = document.getElementById('editWatchlistBtn');
+  const editLabel = document.getElementById('editWatchlistLabel');
+
+  // Inject a 6-dot drag handle into every market-item once
+  marketList.querySelectorAll('.market-item').forEach(row => {
+    const h = document.createElement('div');
+    h.className = 'drag-handle';
+    h.setAttribute('aria-label', 'Drag to reorder');
+    h.innerHTML = `
+      <svg viewBox="0 0 16 16" fill="currentColor">
+        <circle cx="6" cy="4" r="1.3"/>
+        <circle cx="10" cy="4" r="1.3"/>
+        <circle cx="6" cy="8" r="1.3"/>
+        <circle cx="10" cy="8" r="1.3"/>
+        <circle cx="6" cy="12" r="1.3"/>
+        <circle cx="10" cy="12" r="1.3"/>
+      </svg>
+    `;
+    row.appendChild(h);
+  });
+
+  editBtn.addEventListener('click', () => {
+    const editing = marketList.classList.toggle('editing');
+    editBtn.classList.toggle('active', editing);
+    editLabel.textContent = editing ? 'Done' : 'Edit';
+  });
+
+  // Drag-to-reorder: pointer-based for touch + mouse
+  let drag = null;  // { row, startY, offsetY, ghostHeight, siblings }
+
+  marketList.addEventListener('pointerdown', e => {
+    if (!marketList.classList.contains('editing')) return;
+    const handle = e.target.closest('.drag-handle');
+    if (!handle) return;
+    const row = handle.closest('.market-item');
+    if (!row) return;
+
+    e.preventDefault();
+    handle.setPointerCapture(e.pointerId);
+
+    drag = {
+      pointerId: e.pointerId,
+      row,
+      handle,
+      startY: e.clientY,
+      offsetY: 0,
+      ghostHeight: row.offsetHeight,
+    };
+    row.classList.add('dragging');
+  });
+
+  marketList.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    const dy = e.clientY - drag.startY;
+    drag.offsetY = dy;
+    drag.row.style.transform = `translateY(${dy}px) scale(1.02)`;
+
+    // Determine if we should swap with neighbors based on midpoint crossings
+    const rect = drag.row.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+
+    const siblings = [...marketList.querySelectorAll('.market-item:not(.dragging)')];
+    for (const sib of siblings) {
+      const sRect = sib.getBoundingClientRect();
+      const sMid  = sRect.top + sRect.height / 2;
+      // Moving down: drag's bottom passed sibling's mid → place after
+      // Moving up:   drag's top passed sibling's mid → place before
+      if (dy > 0 && midY > sMid && drag.row.compareDocumentPosition(sib) & Node.DOCUMENT_POSITION_FOLLOWING) {
+        marketList.insertBefore(sib, drag.row);
+        // re-anchor: keep visual position smooth
+        const newRect = drag.row.getBoundingClientRect();
+        drag.startY += (newRect.top - rect.top);
+      } else if (dy < 0 && midY < sMid && drag.row.compareDocumentPosition(sib) & Node.DOCUMENT_POSITION_PRECEDING) {
+        marketList.insertBefore(drag.row, sib);
+        const newRect = drag.row.getBoundingClientRect();
+        drag.startY += (newRect.top - rect.top);
+      }
+    }
+  });
+
+  function endDrag() {
+    if (!drag) return;
+    drag.row.classList.remove('dragging');
+    drag.row.style.transform = '';
+    try { drag.handle.releasePointerCapture(drag.pointerId); } catch (e) {}
+    drag = null;
+  }
+  marketList.addEventListener('pointerup',     endDrag);
+  marketList.addEventListener('pointercancel', endDrag);
 </script>
 </body>
 </html>

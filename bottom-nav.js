@@ -14,7 +14,7 @@
   const ICONS = {
     home: `
       <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 8.2L10 2.5L17 8.2V16.5C17 17.05 16.55 17.5 16 17.5H12.8V12.5H7.2V17.5H4C3.45 17.5 3 17.05 3 16.5V8.2Z" fill="currentColor"/>
+        <path d="M3 8.2L10 2.5L17 8.2V16.5C17 17.05 16.55 17.5 16 17.5H12.8V12.5H7.2V17.5H4C3.45 17.5 3 17.05 3 16.5V8.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="none"/>
       </svg>`,
     markets: `
       <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
