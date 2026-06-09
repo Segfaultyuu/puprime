@@ -260,6 +260,12 @@
       promo:   'promo.html',
       funds:   'funds.html',
     };
+    // Tabs that require an authenticated session — pre-login users are
+    // redirected to login.html instead.
+    const PROTECTED = new Set(['trade', 'funds']);
+    const isLoggedIn = () => {
+      try { return localStorage.getItem('puprime.loggedIn') === '1'; } catch (e) { return false; }
+    };
     wrap.addEventListener('click', e => {
       const tab = e.target.closest('.vt-tab');
       if (!tab) return;
@@ -269,7 +275,12 @@
         detail: { id: tab.dataset.tab },
         bubbles: true,
       }));
-      const dest = ROUTES[tab.dataset.tab];
+      const id = tab.dataset.tab;
+      if (PROTECTED.has(id) && !isLoggedIn()) {
+        location.href = 'login.html';
+        return;
+      }
+      const dest = ROUTES[id];
       if (dest) {
         const here = location.pathname.split('/').pop() || 'home.html';
         if (here !== dest) location.href = dest;

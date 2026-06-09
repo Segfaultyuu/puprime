@@ -325,7 +325,7 @@
   <div class="login-content">
     <h1 class="login-title">Login</h1>
 
-    <form class="form" onsubmit="event.preventDefault(); window.location.href='home.html';">
+    <form class="form" onsubmit="event.preventDefault(); try { localStorage.setItem('puprime.loggedIn', '1'); } catch(e) {} window.location.href='home.html';">
       <!-- EMAIL -->
       <div class="field">
         <label class="field-label" for="login-email">Email address</label>

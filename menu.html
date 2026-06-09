@@ -520,7 +520,7 @@
 
   <!-- LOGOUT -->
   <div class="menu-footer">
-    <button class="menu-logout" type="button" onclick="window.location.href='index.html'">Log out</button>
+    <button class="menu-logout" type="button" onclick="try { localStorage.removeItem('puprime.loggedIn'); } catch(e) {} window.location.href='index.html'">Log out</button>
   </div>
 
 </div><!-- end phone -->
