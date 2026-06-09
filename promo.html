@@ -25,19 +25,24 @@
       --text-muted: rgba(255,255,255,0.35);
     }
 
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
     body {
       background: #0b0c1a;
       min-height: 100vh;
-      overflow-x: hidden;
     }
     .phone {
-      width: 393px;
+      width: 100%;
+      max-width: 393px;
       margin: 0 auto;
       background: var(--bg-dark);
       position: relative;
       font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
       color: #fff;
       min-height: 100vh;
+      overflow-x: clip;        /* clip horizontally without breaking sticky */
     }
 
     /* ── BG GLOWS ── */
