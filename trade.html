@@ -686,6 +686,982 @@
 
     /* bottom padding so the last row clears the bottom-nav */
     .trade-bottom-spacer { height: 140px; }
+
+    /* ─── COPY VIEW (reuses home page balance + banner + traders) ─── */
+
+    /* ── ACCOUNT SWITCHER ── */
+    .account-switcher-wrap {
+      padding: 12px 24px 0;
+      display: flex;
+    }
+    .account-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px 4px 8px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.18s, background 0.18s;
+      max-width: 100%;
+    }
+    .account-switcher:hover { border-color: rgba(0,107,255,0.35); }
+    .account-switcher .acc-icon {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+    }
+    .account-switcher .acc-icon svg { width: 100%; height: 100%; }
+    .account-switcher .acc-info {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .account-switcher .acc-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .account-switcher .acc-uid {
+      font-size: 11px;
+      color: var(--text-secondary);
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+    .account-switcher .acc-caret {
+      width: 12px; height: 12px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .account-switcher .acc-caret svg { width: 100%; height: 100%; }
+
+    /* ── COPY ACCOUNT BOTTOM SHEET (PU Prime style) ── */
+    .acc-sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,10,21,0.72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .acc-sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+    .acc-sheet {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 100%);
+      width: 393px;
+      max-width: 100vw;
+      background:
+        radial-gradient(ellipse 280px 200px at 50% 0%, rgba(0,107,255,0.18) 0%, transparent 70%),
+        linear-gradient(180deg, #141527 0%, #0b0c1a 100%);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      border-top: 1px solid rgba(0,107,255,0.18);
+      padding: 8px 0 32px;
+      z-index: 210;
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      box-shadow:
+        0 -16px 48px rgba(0,0,0,0.55),
+        0 -4px 16px rgba(0,107,255,0.18);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .acc-sheet.open { transform: translate(-50%, 0); }
+    .acc-sheet .sheet-handle {
+      width: 38px; height: 4px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.20);
+      margin: 6px auto 14px;
+    }
+    .acc-sheet .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 24px 16px;
+    }
+    .acc-sheet .sheet-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.17px;
+    }
+    .acc-sheet .sheet-close {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+    .acc-sheet .sheet-close:hover {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      border-color: rgba(255,255,255,0.12);
+    }
+    .acc-sheet .sheet-close svg { width: 14px; height: 14px; }
+    .acc-sheet .sheet-list {
+      padding: 0 16px 4px;
+      max-height: 60vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .acc-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .acc-row:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.10);
+    }
+    .acc-row.active {
+      background:
+        radial-gradient(ellipse at top right, rgba(0,107,255,0.18) 0%, rgba(0,107,255,0.06) 50%, transparent 100%),
+        rgba(0,107,255,0.08);
+      border-color: rgba(0,107,255,0.45);
+      box-shadow: 0 0 0 1px rgba(0,107,255,0.10) inset;
+    }
+    .acc-row .acc-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: var(--bg-card2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .acc-row .acc-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .acc-row .acc-info { flex: 1; min-width: 0; }
+    .acc-row .acc-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.14px;
+    }
+    .acc-row .acc-uid {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+      letter-spacing: 0;
+    }
+    .acc-row .acc-balance {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .acc-row .acc-balance .b-amount {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      font-feature-settings: 'tnum' 1;
+    }
+    .acc-row .acc-balance .b-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 2px;
+      letter-spacing: 0.4px;
+    }
+    .acc-row .acc-check {
+      width: 22px; height: 22px;
+      flex-shrink: 0;
+      color: var(--blue);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .acc-row.active .acc-check { opacity: 1; }
+    .acc-row .acc-check svg { width: 18px; height: 18px; filter: drop-shadow(0 0 4px rgba(0,107,255,0.55)); }
+
+    /* balance-hero — reused from home.html (collapse / expand + chevron) */
+    .balance-hero {
+      padding: 16px 24px 0;
+      position: relative;
+    }
+    .balance-hero.expanded .balance-mini-chart { display: none; }
+    .balance-mini-chart { transition: transform 0.18s ease; }
+    .balance-mini-chart:hover { transform: scale(1.02); }
+
+    /* expanded chart area — animated height collapse */
+    .balance-chart-area {
+      position: relative;
+      width: 100%;
+      height: 0;
+      margin-top: 0;
+      overflow: hidden;
+      transition: height 0.35s ease, margin-top 0.35s ease;
+    }
+    .balance-hero.expanded .balance-chart-area {
+      height: 230px;
+      margin-top: 12px;
+    }
+    .chart-wrapper {
+      position: relative;
+      width: calc(100% + 48px);
+      height: 150px;
+      margin: 4px -24px 0;
+    }
+    .chart-wrapper svg { width: 100%; height: 100%; display: block; }
+    .chart-label-top {
+      position: absolute;
+      top: 4px; right: 24px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      font-feature-settings: 'tnum' 1;
+      z-index: 2;
+    }
+    .chart-label-bottom {
+      position: absolute;
+      bottom: 8px; left: 90px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      font-feature-settings: 'tnum' 1;
+      z-index: 2;
+    }
+    .chart-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .chart-tab {
+      padding: 0 14px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #fff;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      font-family: inherit;
+    }
+    .chart-tab.active { background: #fff; color: #232020; border-color: #fff; }
+
+    .balance-collapse {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin-top: 16px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+    }
+    .balance-collapse svg {
+      width: 22px; height: 22px;
+      transition: transform 0.3s ease;
+    }
+    .balance-hero.expanded .balance-collapse svg { transform: rotate(180deg); }
+
+    /* Add fund + My Copy buttons row below balance hero */
+    .add-fund-wrap {
+      padding: 16px 24px 0;
+      display: flex;
+      gap: 12px;
+    }
+    .add-fund-btn,
+    .my-copy-btn {
+      flex: 1;
+      height: 44px;
+      border-radius: 100px;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: filter 0.18s, background 0.18s, border-color 0.18s;
+    }
+    .add-fund-btn {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(0,107,255,0.35);
+    }
+    .add-fund-btn:hover { filter: brightness(1.08); }
+    .add-fund-btn svg { width: 16px; height: 16px; }
+    .my-copy-btn {
+      background: #3e3d43;
+      color: #fff;
+      border: none;
+    }
+    .my-copy-btn:hover { filter: brightness(1.08); }
+    .my-copy-btn svg { width: 16px; height: 16px; }
+
+    /* ── MY COPY BOTTOM SHEET (copied strategies list) ── */
+    .copy-sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4,10,21,0.72);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .copy-sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+    .copy-sheet {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 100%);
+      width: 393px;
+      max-width: 100vw;
+      background:
+        radial-gradient(ellipse 280px 200px at 50% 0%, rgba(0,107,255,0.18) 0%, transparent 70%),
+        linear-gradient(180deg, #141527 0%, #0b0c1a 100%);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      border-top: 1px solid rgba(0,107,255,0.18);
+      padding: 8px 0 32px;
+      z-index: 210;
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      box-shadow:
+        0 -16px 48px rgba(0,0,0,0.55),
+        0 -4px 16px rgba(0,107,255,0.18);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .copy-sheet.open { transform: translate(-50%, 0); }
+    .copy-sheet .sheet-handle {
+      width: 38px; height: 4px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.20);
+      margin: 6px auto 14px;
+    }
+    .copy-sheet .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 24px 12px;
+    }
+    .copy-sheet .sheet-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.17px;
+    }
+    .copy-sheet .sheet-close {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, color 0.18s, border-color 0.18s;
+    }
+    .copy-sheet .sheet-close:hover {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      border-color: rgba(255,255,255,0.12);
+    }
+    .copy-sheet .sheet-close svg { width: 14px; height: 14px; }
+    .copy-sheet .sheet-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 4px 24px 16px;
+      flex-wrap: wrap;
+    }
+    .copy-sheet .sheet-summary .label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .copy-sheet .sheet-summary .summary-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+    }
+    .copy-sheet .sheet-summary .summary-stats > span {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .copy-sheet .sheet-summary .stat-num {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      font-feature-settings: 'tnum' 1;
+    }
+    .copy-sheet .sheet-summary .stat-num.pos { color: var(--green); }
+    .copy-sheet .sheet-list {
+      padding: 0 16px 4px;
+      max-height: 56vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .strat-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .strat-row:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.10);
+    }
+    .strat-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: var(--bg-card2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .strat-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .strat-info { flex: 1; min-width: 0; }
+    .strat-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .strat-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .strat-status {
+      flex-shrink: 0;
+      padding: 1px 6px;
+      border-radius: 100px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .strat-status.live  { background: rgba(29,209,161,0.18); color: var(--green); }
+    .strat-status.paused { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.75); }
+    .strat-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      font-feature-settings: 'tnum' 1;
+      flex-wrap: wrap;
+    }
+    .strat-meta > span {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .strat-meta .num { color: #fff; font-weight: 600; }
+    .strat-meta .num.pos { color: var(--green); }
+    .strat-meta .num.neg { color: var(--red); }
+    .strat-arrow {
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+      color: rgba(255,255,255,0.45);
+    }
+    .strat-arrow svg { width: 100%; height: 100%; }
+
+    /* signal-source promo tip below Add fund.
+       Border style ported from AuthKit (.cta-box):
+       ::before = static hairline gradient rim
+       ::after  = single bright conic line that sweeps around the rim */
+    @property --sig-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    .signal-promo-wrap { padding: 16px 16px 0; }
+    .signal-promo {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 14px;
+      background:
+        radial-gradient(circle at 90% 0%, rgba(0,107,255,0.22) 0%, transparent 60%),
+        radial-gradient(circle at 10% 100%, rgba(140,90,240,0.18) 0%, transparent 60%),
+        linear-gradient(135deg, rgba(20,21,39,0.95) 0%, rgba(11,12,26,0.95) 100%);
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      font-family: inherit;
+      text-align: left;
+      isolation: isolate;
+      transition: filter 0.18s, transform 0.18s;
+    }
+    .signal-promo:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    /* static hairline gradient border */
+    .signal-promo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(180deg, rgba(120,180,255,0.30) 0%, rgba(120,180,255,0) 100%),
+                  rgba(0,107,255,0.18);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+              mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* moving bright sweep line — single highlight orbiting the rim */
+    .signal-promo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: conic-gradient(
+        from var(--sig-angle),
+        transparent 0%,
+        rgba(120,170,255,0.95) 40%,
+        transparent 45%);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+              mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      animation: signalLineAnim 6s linear infinite;
+      opacity: 0.85;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .signal-promo:hover::after { opacity: 1; }
+    @keyframes signalLineAnim {
+      to { --sig-angle: 360deg; }
+    }
+    .signal-promo .promo-title {
+      flex: 1;
+      min-width: 0;
+      font-size: 12px;
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: -0.12px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+      z-index: 1;
+    }
+    .signal-promo .promo-arrow {
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+      color: var(--blue);
+      position: relative;
+      z-index: 1;
+    }
+    .signal-promo .promo-arrow svg { width: 100%; height: 100%; }
+    .balance-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .balance-info { display: flex; flex-direction: column; gap: 4px; }
+    .balance-label-row { display: flex; align-items: center; gap: 8px; }
+    .balance-label {
+      font-size: 14px;
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: -0.14px;
+    }
+    .balance-eye {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      padding: 0;
+      width: 18px; height: 18px;
+      justify-content: center;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.18s;
+    }
+    .balance-eye:hover { color: #fff; }
+    .balance-eye svg { width: 14px; height: 14px; display: block; }
+    .balance-amount {
+      font-size: 32px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -0.4px;
+      line-height: 44px;
+      font-feature-settings: 'tnum' 1;
+    }
+    .balance-pnl {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      margin-top: -2px;
+    }
+    .balance-pnl-label { font-size: 13px; color: #898787; }
+    .balance-pnl-value { font-size: 13px; font-weight: 500; color: var(--green); font-feature-settings: 'tnum' 1; }
+    .balance-mini-chart {
+      width: 132px;
+      height: 64px;
+      flex-shrink: 0;
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .balance-mini-chart .mini-grid {
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(0,107,255,0.45) 0.6px, transparent 0.7px);
+      background-size: 7px 7px;
+      opacity: 0.55;
+    }
+    .balance-mini-chart svg {
+      position: relative;
+      width: 100%; height: 100%;
+      display: block;
+      filter: drop-shadow(0 0 4px rgba(92,159,255,0.7));
+    }
+
+    /* TOP TRADERS section */
+    .copy-section { padding: 24px 16px 0; }
+    .copy-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .copy-section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.18px;
+    }
+    .copy-see-all {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .copy-see-all svg { width: 16px; height: 16px; opacity: 0.5; }
+    .traders-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+      margin: 0 -16px;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .traders-scroll::-webkit-scrollbar { display: none; }
+    .trader-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 12px;
+      min-width: 160px;
+      max-width: 160px;
+      flex-shrink: 0;
+    }
+    .trader-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .trader-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: var(--bg-card2);
+    }
+    .trader-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .trader-name {
+      font-size: 10px;
+      color: #fff;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 67px;
+    }
+    .trader-ticker { font-size: 14px; font-weight: 800; color: #fff; line-height: 1; }
+    .trader-meta {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .trader-return { font-size: 12px; font-weight: 700; }
+    .trader-return.pos { color: var(--green); }
+    .trader-return.neg { color: var(--red); }
+    .trader-return-label { color: var(--text-muted); }
+
+    /* ALL TRADERS — full-width list with filter chips */
+    .alltraders-filters {
+      display: flex;
+      gap: 8px;
+      padding: 0 0 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .alltraders-filters::-webkit-scrollbar { display: none; }
+    .alltraders-filter {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      height: 30px;
+      border-radius: 100px;
+      background: var(--bg-card2);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.65);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .alltraders-filter.active {
+      background: rgba(0,107,255,0.16);
+      border-color: rgba(0,107,255,0.55);
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .alltraders-list {
+      display: flex;
+      flex-direction: column;
+      margin-top: 4px;
+    }
+    .alltraders-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 0.5px solid #262930;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .alltraders-row:first-child { border-top: none; }
+    .alltraders-row:hover { background: rgba(255,255,255,0.02); }
+    .alltraders-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: var(--bg-card2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .alltraders-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .alltraders-info { flex: 1; min-width: 0; }
+    .alltraders-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.14px;
+    }
+    .alltraders-stats {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .alltraders-stats .stat-num { color: #fff; font-weight: 600; font-feature-settings: 'tnum' 1; }
+    .alltraders-stats .stat-num.pos { color: var(--green); }
+    .alltraders-cta {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      height: 28px;
+      border-radius: 100px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+    .alltraders-cta:hover { filter: brightness(1.08); }
+
+    /* BANNER (reused from home) */
+    .copy-banner-wrap { padding: 24px 16px 0; }
+    .banner-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 17px 0 16px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      min-height: 86px;
+    }
+    .banner-text h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.35;
+      max-width: 200px;
+    }
+    .banner-text .claim-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      margin-top: 6px;
+      padding: 0;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue);
+      cursor: pointer;
+      letter-spacing: 0.1px;
+    }
+    .banner-text .claim-btn svg { width: 12px; height: 12px; }
+    .banner-chart {
+      width: 130px; height: 86px;
+      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: 0 16px 16px 0;
+      position: relative;
+    }
+    .banner-chart video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      mix-blend-mode: screen;
+    }
+
+    /* STARTER GUIDE */
+    .starter-section { padding: 24px 16px 0; }
+    .starter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .starter-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color 0.18s, transform 0.18s;
+      display: flex;
+      flex-direction: column;
+    }
+    .starter-card .starter-cta { margin-top: auto; }
+    .starter-card:hover { transform: translateY(-2px); border-color: rgba(0,107,255,0.32); }
+    .starter-step {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(0,107,255,0.40), rgba(0,107,255,0.18));
+      border: 1px solid rgba(0,107,255,0.55);
+      margin-bottom: 12px;
+    }
+    .starter-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, rgba(0,107,255,0.30), rgba(0,107,255,0.10));
+      color: #5c9fff;
+    }
+    .starter-icon svg { width: 22px; height: 22px; }
+    .starter-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      letter-spacing: -0.14px;
+    }
+    .starter-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .starter-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue);
+    }
+    .starter-cta svg { width: 12px; height: 12px; }
   </style>
 </head>
 <body>
@@ -727,6 +1703,9 @@
         <span></span><span></span><span></span>
       </button>
     </div>
+
+    <!-- ─── CONTRACT VIEW ─── -->
+    <div id="contractView">
 
     <!-- PAIR BAR -->
     <div class="pair-bar">
@@ -1044,10 +2023,300 @@
       </div>
     </div>
 
+    </div><!-- end #contractView -->
+
+    <!-- ─── COPY VIEW ─── -->
+    <div id="copyView" style="display:none;">
+
+      <!-- ACCOUNT SWITCHER -->
+      <div class="account-switcher-wrap">
+        <button class="account-switcher" id="accountSwitcherBtn" type="button">
+          <div class="acc-icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="6" r="2.6" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M3.5 13c0-2.2 2-4 4.5-4s4.5 1.8 4.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="acc-info">
+            <span class="acc-name" id="accSwName">Jason Wong</span>
+            <span class="acc-uid" id="accSwUID">UID: 5996638</span>
+          </div>
+          <div class="acc-caret">
+            <svg viewBox="0 0 16 16" fill="none">
+              <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </button>
+      </div>
+
+      <!-- BALANCE HERO (reused from home.html — expand/collapse with chevron) -->
+      <div class="balance-hero" id="copyBalanceHero">
+        <div class="balance-row">
+          <div class="balance-info">
+            <div class="balance-label-row">
+              <span class="balance-label">Total Value</span>
+              <button class="balance-eye" id="copyEyeBtn" type="button" aria-label="Toggle balance">
+                <svg id="copyIconEyeOpen" viewBox="0 0 14 14" fill="none">
+                  <path d="M1 7s2.2-3.7 6-3.7S13 7 13 7s-2.2 3.7-6 3.7S1 7 1 7Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="7" cy="7" r="1.7" stroke="currentColor" stroke-width="1.2"/>
+                </svg>
+                <svg id="copyIconEyeOff" viewBox="0 0 14 14" fill="none" style="display:none;">
+                  <path d="M2 2L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                  <path d="M5.7 3.7C6.1 3.6 6.55 3.55 7 3.55C10.5 3.55 13 7 13 7C12.6 7.65 12.1 8.25 11.5 8.8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M3.7 4.7C2.7 5.55 1.8 6.65 1 7C1 7 3.5 10.5 7 10.5C7.95 10.5 8.8 10.25 9.55 9.85" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="balance-amount" id="copyBalanceAmount" data-value="10,483.01">$10,483.01</div>
+            <div class="balance-pnl">
+              <span class="balance-pnl-label">Today's PnL</span>
+              <span class="balance-pnl-value" id="copyPnlValue">+$0.00 (0.00%)</span>
+            </div>
+          </div>
+
+          <!-- compact mini chart (visible only when collapsed) -->
+          <div class="balance-mini-chart" id="copyBalanceMiniChart" role="button" aria-label="Expand chart">
+            <div class="mini-grid"></div>
+            <svg viewBox="0 0 132 64" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="copyMiniArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stop-color="#5c9fff" stop-opacity="0.55"/>
+                  <stop offset="55%"  stop-color="#1a3a8a" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#0b0c1a" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,40 L4,38 L8,34 L12,30 L16,26 L20,28 L24,22 L28,16 L32,18 L36,14 L40,12 L44,10 L48,12 L52,8 L56,18 L60,14 L64,22 L68,18 L72,16 L76,20 L80,18 L84,14 L88,16 L92,12 L96,18 L100,16 L104,22 L108,18 L112,14 L116,16 L120,12 L124,16 L128,14 L132,18 L132,64 L0,64 Z"
+                    fill="url(#copyMiniArea)"/>
+              <path d="M0,40 L4,38 L8,34 L12,30 L16,26 L20,28 L24,22 L28,16 L32,18 L36,14 L40,12 L44,10 L48,12 L52,8 L56,18 L60,14 L64,22 L68,18 L72,16 L76,20 L80,18 L84,14 L88,16 L92,12 L96,18 L100,16 L104,22 L108,18 L112,14 L116,16 L120,12 L124,16 L128,14 L132,18"
+                    stroke="#5c9fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- expanded chart area (collapses to 0 height when toggled off) -->
+        <div class="balance-chart-area">
+          <div class="chart-wrapper">
+            <span class="chart-label-top">$ 30,980.09</span>
+            <span class="chart-label-bottom">$ 30,980.09</span>
+            <svg viewBox="0 0 393 150" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="copyBigArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stop-color="#5c9fff" stop-opacity="0.55"/>
+                  <stop offset="55%"  stop-color="#1a3a8a" stop-opacity="0.30"/>
+                  <stop offset="100%" stop-color="#0b0c1a" stop-opacity="0"/>
+                </linearGradient>
+                <radialGradient id="copyBigGlow" cx="50%" cy="60%" r="55%">
+                  <stop offset="0%"  stop-color="rgba(0,107,255,0.18)"/>
+                  <stop offset="100%" stop-color="rgba(0,107,255,0)"/>
+                </radialGradient>
+              </defs>
+              <rect x="0" y="0" width="393" height="150" fill="url(#copyBigGlow)"/>
+              <path id="copyBigChartArea" fill="url(#copyBigArea)"/>
+              <path id="copyBigChartLine" stroke="#5c9fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="drop-shadow(0 0 6px rgba(92,159,255,0.55))"/>
+            </svg>
+          </div>
+
+          <div class="chart-tabs">
+            <button class="chart-tab active" data-range="7D"   type="button">7D</button>
+            <button class="chart-tab" data-range="30D"  type="button">30D</button>
+            <button class="chart-tab" data-range="90D"  type="button">90D</button>
+            <button class="chart-tab" data-range="180D" type="button">180D</button>
+            <button class="chart-tab" data-range="360D" type="button">360D</button>
+          </div>
+        </div>
+
+        <button class="balance-collapse" id="copyCollapseBtn" type="button" aria-label="Toggle chart">
+          <svg viewBox="0 0 22 22" fill="none">
+            <path d="M5 9L11 15L17 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Add fund + My Copy buttons -->
+      <div class="add-fund-wrap">
+        <button class="my-copy-btn" id="myCopyBtn" type="button">
+          <svg viewBox="0 0 16 16" fill="none">
+            <rect x="4.5" y="3" width="8" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M3 5V12.5C3 13 3.4 13.4 4 13.4H10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          My Copy
+        </button>
+        <button class="add-fund-btn" type="button">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          Add fund
+        </button>
+      </div>
+
+      <!-- Signal source incentive promo -->
+      <div class="signal-promo-wrap">
+        <button class="signal-promo" type="button">
+          <span class="promo-title">Become a signal source &amp; win profit incentives</span>
+          <span class="promo-arrow">
+            <svg viewBox="0 0 16 16" fill="none">
+              <path d="M5 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+
+      <!-- TOP TRADERS -->
+      <div class="copy-section">
+        <div class="copy-section-head">
+          <span class="copy-section-title">Popular Traders</span>
+        </div>
+        <div class="traders-scroll">
+          <div class="trader-card">
+            <div class="trader-header">
+              <div class="trader-avatar"><img src="images/avatar2.png" alt="Savanna"/></div>
+              <div><div class="trader-name">Savanna...</div></div>
+            </div>
+            <div class="trader-ticker">35632.12</div>
+            <div class="trader-meta">Demi Wilkinson • 16 Jan 2026</div>
+            <div style="margin-top:6px;">
+              <div style="font-size:10px; margin-bottom:2px;" class="trader-return-label">3M Return</div>
+              <div class="trader-return pos">+0.0025 (+0.3661%)</div>
+            </div>
+          </div>
+          <div class="trader-card">
+            <div class="trader-header">
+              <div class="trader-avatar"><img src="images/avatar3.png" alt="Mia"/></div>
+              <div><div class="trader-name">Mia Iasabella</div></div>
+            </div>
+            <div class="trader-ticker">35632.12</div>
+            <div class="trader-meta">Demi Wilkinson • 16 Jan 2026</div>
+            <div style="margin-top:6px;">
+              <div style="font-size:10px; margin-bottom:2px;" class="trader-return-label">3M Return</div>
+              <div class="trader-return neg">-162,348.76%</div>
+            </div>
+          </div>
+          <div class="trader-card">
+            <div class="trader-header">
+              <div class="trader-avatar"><img src="images/avatar4.png" alt="Mia"/></div>
+              <div><div class="trader-name">Mia Iasabella</div></div>
+            </div>
+            <div class="trader-ticker">35632.12</div>
+            <div class="trader-meta">Demi Wilkinson • 16 Jan 2026</div>
+            <div style="margin-top:6px;">
+              <div style="font-size:10px; margin-bottom:2px;" class="trader-return-label">3M Return</div>
+              <div class="trader-return pos">+12.45%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL TRADERS (filterable list) -->
+      <div class="copy-section">
+        <div class="copy-section-head">
+          <span class="copy-section-title">All Traders</span>
+          <button class="copy-see-all" type="button">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="alltraders-filters" id="allTradersFilters">
+          <button class="alltraders-filter active" data-filter="high-return"  type="button">High Return</button>
+          <button class="alltraders-filter"        data-filter="high-copiers" type="button">High Copiers</button>
+          <button class="alltraders-filter"        data-filter="high-winrate" type="button">High Win Rate</button>
+        </div>
+        <div class="alltraders-list" id="allTradersList"></div>
+      </div>
+
+      <!-- BANNER (reused from home) -->
+      <div class="copy-banner-wrap">
+        <div class="banner-card">
+          <div class="banner-text">
+            <h3>Free USD 80 Gold Contract<br/>On your first deposit</h3>
+            <button class="claim-btn" type="button">
+              Claim now
+              <svg viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="banner-chart">
+            <video class="auto-loop-video"
+              src="https://cdn.dribbble.com/userupload/2800094/file/original-64758650fe270ef744cb536e4a49f08d.mp4"
+              autoplay loop muted defaultMuted playsinline webkit-playsinline=""
+              x5-playsinline="" preload="auto" disablepictureinpicture
+              crossorigin="anonymous"></video>
+          </div>
+        </div>
+      </div>
+
+      <!-- STARTER GUIDE -->
+      <div class="starter-section">
+        <span class="copy-section-title">Starter Guide</span>
+        <div class="starter-grid">
+          <div class="starter-card">
+            <div class="starter-step">1</div>
+            <div class="starter-title">Fund your account</div>
+            <div class="starter-sub">Deposit USD 100+ to unlock copy trading.</div>
+            <span class="starter-cta">Deposit
+              <svg viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+
+          <div class="starter-card">
+            <div class="starter-step">2</div>
+            <div class="starter-title">Pick a trader</div>
+            <div class="starter-sub">Browse leaders by 3M return and risk score.</div>
+            <span class="starter-cta">Explore
+              <svg viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+
+          <div class="starter-card">
+            <div class="starter-step">3</div>
+            <div class="starter-title">Set your stake</div>
+            <div class="starter-sub">Choose how much to copy per trade and start.</div>
+            <span class="starter-cta">Configure
+              <svg viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+
+          <div class="starter-card">
+            <div class="starter-step">4</div>
+            <div class="starter-title">Track performance</div>
+            <div class="starter-sub">Monitor PnL and rebalance anytime.</div>
+            <span class="starter-cta">View dashboard
+              <svg viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end #copyView -->
+
     <div class="trade-bottom-spacer"></div>
 
   </div><!-- end scroll -->
 </div><!-- end phone -->
+
+<!-- COPY ACCOUNT SWITCHER BOTTOM SHEET -->
+<div class="acc-sheet-backdrop" id="accSheetBackdrop"></div>
+<div class="acc-sheet" id="accSheet" role="dialog" aria-modal="true" aria-labelledby="accSheetTitle">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title" id="accSheetTitle">Switch copy account</span>
+  </div>
+  <div class="sheet-list" id="accSheetList"></div>
+</div>
+
+<!-- MY COPY (copied strategies) BOTTOM SHEET -->
+<div class="copy-sheet-backdrop" id="copySheetBackdrop"></div>
+<div class="copy-sheet" id="copySheet" role="dialog" aria-modal="true" aria-labelledby="copySheetTitle">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title" id="copySheetTitle">My Copy</span>
+  </div>
+  <div class="sheet-summary">
+    <span class="label">5 active · 1 paused</span>
+    <div class="summary-stats">
+      <span>Allocated <span class="stat-num">$8,400</span></span>
+      <span>3M PnL <span class="stat-num pos">+$612</span></span>
+    </div>
+  </div>
+  <div class="sheet-list" id="copySheetList"></div>
+</div>
 
 <script src="bottom-nav.js" defer></script>
 <script>
@@ -1060,11 +2329,279 @@
     }, 0);
   });
 
-  // Header (Contract / Copy) tab switching
+  // Header (Contract / Copy) tab switching — toggles which view is visible
+  const contractView = document.getElementById('contractView');
+  const copyView     = document.getElementById('copyView');
   document.querySelectorAll('.header-tab').forEach(t => {
     t.addEventListener('click', () => {
       document.querySelectorAll('.header-tab').forEach(x => x.classList.remove('active'));
       t.classList.add('active');
+      const isCopy = t.dataset.view === 'copy';
+      contractView.style.display = isCopy ? 'none' : '';
+      copyView.style.display     = isCopy ? '' : 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (isCopy) {
+        // kick the lazy banner video the first time the Copy tab is opened
+        copyView.querySelectorAll('video.auto-loop-video').forEach(v => {
+          try { v.muted = true; const p = v.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+        });
+      }
+    });
+  });
+
+  // Copy view: balance eye toggle
+  const copyEye    = document.getElementById('copyEyeBtn');
+  const copyEyeOn  = document.getElementById('copyIconEyeOpen');
+  const copyEyeOff = document.getElementById('copyIconEyeOff');
+  const copyAmt    = document.getElementById('copyBalanceAmount');
+  const copyPnl    = document.getElementById('copyPnlValue');
+  const copyPnlOriginal = copyPnl.textContent;
+  let copyHidden = false;
+  copyEye.addEventListener('click', () => {
+    copyHidden = !copyHidden;
+    if (copyHidden) {
+      copyAmt.textContent = '••••••••';
+      copyPnl.textContent = '••••';
+      copyEyeOn.style.display  = 'none';
+      copyEyeOff.style.display = 'block';
+    } else {
+      copyAmt.textContent = '$' + copyAmt.dataset.value;
+      copyPnl.textContent = copyPnlOriginal;
+      copyEyeOn.style.display  = 'block';
+      copyEyeOff.style.display = 'none';
+    }
+  });
+
+  // Copy view: balance hero collapse / expand
+  const copyHero = document.getElementById('copyBalanceHero');
+  document.getElementById('copyCollapseBtn').addEventListener('click', () => {
+    copyHero.classList.toggle('expanded');
+  });
+  document.getElementById('copyBalanceMiniChart').addEventListener('click', () => {
+    copyHero.classList.add('expanded');
+  });
+
+  // Copy view: chart range tabs (deterministic per-range curve, matches home/funds)
+  const COPY_RANGE = {
+    '7D':   { seed: 17, points: 28, volatility: 14, trend: -0.30, hi: '$ 31,420.18', lo: '$ 30,210.55' },
+    '30D':  { seed: 41, points: 48, volatility: 22, trend: -0.55, hi: '$ 32,180.04', lo: '$ 28,640.21' },
+    '90D':  { seed: 73, points: 64, volatility: 30, trend: -0.65, hi: '$ 33,920.77', lo: '$ 26,150.92' },
+    '180D': { seed: 109, points: 80, volatility: 38, trend: -0.75, hi: '$ 35,012.60', lo: '$ 23,480.01' },
+    '360D': { seed: 211, points: 96, volatility: 46, trend: -0.85, hi: '$ 38,420.50', lo: '$ 19,720.40' },
+  };
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function buildCopyPath(cfg) {
+    const W = 393, H = 150, padTop = 22, padBottom = 18;
+    const rand = mulberry32(cfg.seed);
+    const innerH = H - padTop - padBottom;
+    const pts = [];
+    let lvl = 0.55;
+    for (let i = 0; i < cfg.points; i++) {
+      const t = i / (cfg.points - 1);
+      const jitter = (rand() - 0.5) * (cfg.volatility / 100);
+      lvl += jitter + (cfg.trend / cfg.points);
+      lvl = Math.max(0.05, Math.min(0.95, lvl));
+      pts.push([(t * W).toFixed(1), (padTop + lvl * innerH).toFixed(1)]);
+    }
+    const line = 'M' + pts.map(p => p.join(',')).join(' L');
+    const area = line + ` L${W},${H} L0,${H} Z`;
+    return { line, area };
+  }
+  const copyLineEl  = document.getElementById('copyBigChartLine');
+  const copyAreaEl  = document.getElementById('copyBigChartArea');
+  const copyLabelHi = copyView.querySelector('.chart-label-top');
+  const copyLabelLo = copyView.querySelector('.chart-label-bottom');
+  function setCopyRange(range) {
+    const cfg = COPY_RANGE[range];
+    if (!cfg) return;
+    const { line, area } = buildCopyPath(cfg);
+    copyLineEl.setAttribute('d', line);
+    copyAreaEl.setAttribute('d', area);
+    copyLabelHi.textContent = cfg.hi;
+    copyLabelLo.textContent = cfg.lo;
+  }
+  setCopyRange('7D');
+  copyView.querySelectorAll('.chart-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      copyView.querySelectorAll('.chart-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      setCopyRange(t.dataset.range);
+    });
+  });
+
+  // ─── COPY ACCOUNT SWITCHER ───
+  const COPY_ACCOUNTS = [
+    { name: 'Jason Wong',     uid: '5996638', avatar: 'images/avatar1.png', balance: '$10,483.01' },
+    { name: 'Jason Demo',     uid: '5996640', avatar: 'images/avatar2.png', balance: '$5,200.00'  },
+    { name: 'Algo Strategy',  uid: '5996641', avatar: 'images/avatar3.png', balance: '$2,150.50'  },
+    { name: 'Long Term',      uid: '5996642', avatar: 'images/avatar4.png', balance: '$725.80'    },
+  ];
+  let activeAccountIdx = 0;
+
+  const accSwName   = document.getElementById('accSwName');
+  const accSwUID    = document.getElementById('accSwUID');
+  const accSheet    = document.getElementById('accSheet');
+  const accBackdrop = document.getElementById('accSheetBackdrop');
+  const accListEl   = document.getElementById('accSheetList');
+
+  function renderAccountList() {
+    accListEl.innerHTML = COPY_ACCOUNTS.map((a, i) => `
+      <button class="acc-row${i === activeAccountIdx ? ' active' : ''}" data-idx="${i}" type="button">
+        <div class="acc-avatar"><img src="${a.avatar}" alt=""/></div>
+        <div class="acc-info">
+          <div class="acc-name">${a.name}</div>
+          <div class="acc-uid">UID: ${a.uid}</div>
+        </div>
+        <div class="acc-balance">
+          <div class="b-amount">${a.balance}</div>
+          <div class="b-label">Total</div>
+        </div>
+        <div class="acc-check">
+          <svg viewBox="0 0 18 18" fill="none">
+            <path d="M4 9.5L7.5 13L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </button>
+    `).join('');
+  }
+  function openAccSheet() {
+    renderAccountList();
+    accBackdrop.classList.add('open');
+    accSheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAccSheet() {
+    accBackdrop.classList.remove('open');
+    accSheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function applyAccount(idx) {
+    activeAccountIdx = idx;
+    const a = COPY_ACCOUNTS[idx];
+    accSwName.textContent = a.name;
+    accSwUID.textContent  = 'UID: ' + a.uid;
+    // mirror the active account's balance into the hero
+    copyAmt.dataset.value = a.balance.replace(/^\$/, '');
+    if (!copyHidden) copyAmt.textContent = a.balance;
+  }
+
+  document.getElementById('accountSwitcherBtn').addEventListener('click', openAccSheet);
+  accBackdrop.addEventListener('click', closeAccSheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && accSheet.classList.contains('open')) closeAccSheet();
+  });
+  accListEl.addEventListener('click', e => {
+    const row = e.target.closest('.acc-row');
+    if (!row) return;
+    applyAccount(+row.dataset.idx);
+    closeAccSheet();
+  });
+
+  // ─── MY COPY SHEET (copied strategies) ───
+  const COPIED_STRATEGIES = [
+    { name: 'Phoenix Baker',   avatar: 'images/avatar2.png', allocated: 1500, pnl3m: +212.40, copiers: 3120, status: 'live'   },
+    { name: 'Mia Iasabella',   avatar: 'images/avatar3.png', allocated: 2000, pnl3m: +168.55, copiers: 12760, status: 'live'   },
+    { name: 'Demi Wilkinson',  avatar: 'images/avatar4.png', allocated: 800,  pnl3m:  +52.10, copiers: 6510,  status: 'live'   },
+    { name: 'Olivia Rhye',     avatar: 'images/avatar1.png', allocated: 1200, pnl3m:  +94.80, copiers: 15240, status: 'live'   },
+    { name: 'Drew Cano',       avatar: 'images/avatar2.png', allocated: 1500, pnl3m:  +84.95, copiers: 4750,  status: 'live'   },
+    { name: 'Lana Steiner',    avatar: 'images/avatar3.png', allocated: 1400, pnl3m:  -36.20, copiers: 22030, status: 'paused' },
+  ];
+  const fmtMoney = n => (n < 0 ? '-' : '+') + '$' + Math.abs(n).toFixed(2);
+  const fmtCopiersK = n => n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K' : String(n);
+
+  const copySheet      = document.getElementById('copySheet');
+  const copyBackdrop   = document.getElementById('copySheetBackdrop');
+  const copySheetList  = document.getElementById('copySheetList');
+
+  function renderCopiedStrategies() {
+    copySheetList.innerHTML = COPIED_STRATEGIES.map(s => `
+      <button class="strat-row" type="button">
+        <div class="strat-avatar"><img src="${s.avatar}" alt=""/></div>
+        <div class="strat-info">
+          <div class="strat-name-row">
+            <span class="strat-name">${s.name}</span>
+            <span class="strat-status ${s.status}">${s.status}</span>
+          </div>
+          <div class="strat-meta">
+            <span>Allocated <span class="num">$${s.allocated.toLocaleString()}</span></span>
+            <span>3M PnL <span class="num ${s.pnl3m >= 0 ? 'pos' : 'neg'}">${fmtMoney(s.pnl3m)}</span></span>
+            <span>${fmtCopiersK(s.copiers)} copiers</span>
+          </div>
+        </div>
+        <span class="strat-arrow">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M5 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    `).join('');
+  }
+  function openCopySheet() {
+    renderCopiedStrategies();
+    copyBackdrop.classList.add('open');
+    copySheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCopySheet() {
+    copyBackdrop.classList.remove('open');
+    copySheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('myCopyBtn').addEventListener('click', openCopySheet);
+  copyBackdrop.addEventListener('click', closeCopySheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && copySheet.classList.contains('open')) closeCopySheet();
+  });
+
+  // ─── ALL TRADERS FILTER + LIST RENDER ───
+  const ALL_TRADERS = [
+    { name: 'Savanna Nguyen',   avatar: 'images/avatar2.png', return3m: 162.4, copiers: 8420, winRate: 71.2 },
+    { name: 'Mia Iasabella',    avatar: 'images/avatar3.png', return3m: 138.9, copiers: 12760, winRate: 64.5 },
+    { name: 'Demi Wilkinson',   avatar: 'images/avatar4.png', return3m: 92.7,  copiers: 6510,  winRate: 78.3 },
+    { name: 'Olivia Rhye',      avatar: 'images/avatar1.png', return3m: 84.5,  copiers: 15240, winRate: 69.8 },
+    { name: 'Phoenix Baker',    avatar: 'images/avatar2.png', return3m: 211.6, copiers: 3120,  winRate: 58.4 },
+    { name: 'Lana Steiner',     avatar: 'images/avatar3.png', return3m: 56.2,  copiers: 22030, winRate: 81.6 },
+    { name: 'Candice Wu',       avatar: 'images/avatar4.png', return3m: 75.3,  copiers: 9870,  winRate: 73.5 },
+    { name: 'Drew Cano',        avatar: 'images/avatar1.png', return3m: 188.4, copiers: 4750,  winRate: 62.1 },
+  ];
+  const SORTERS = {
+    'high-return':  (a, b) => b.return3m - a.return3m,
+    'high-copiers': (a, b) => b.copiers  - a.copiers,
+    'high-winrate': (a, b) => b.winRate  - a.winRate,
+  };
+  const fmtCopiers = n => n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K' : String(n);
+  const traderListEl = document.getElementById('allTradersList');
+
+  function renderAllTraders(filter) {
+    const sorted = [...ALL_TRADERS].sort(SORTERS[filter]);
+    traderListEl.innerHTML = sorted.map(t => `
+      <div class="alltraders-row">
+        <div class="alltraders-avatar"><img src="${t.avatar}" alt=""/></div>
+        <div class="alltraders-info">
+          <div class="alltraders-name">${t.name}</div>
+          <div class="alltraders-stats">
+            <span>3M Return <span class="stat-num pos">+${t.return3m.toFixed(1)}%</span></span>
+            <span>Copiers <span class="stat-num">${fmtCopiers(t.copiers)}</span></span>
+            <span>Win Rate <span class="stat-num">${t.winRate.toFixed(1)}%</span></span>
+          </div>
+        </div>
+        <button class="alltraders-cta" type="button">Copy</button>
+      </div>
+    `).join('');
+  }
+  renderAllTraders('high-return');
+  document.querySelectorAll('#allTradersFilters .alltraders-filter').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#allTradersFilters .alltraders-filter').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      renderAllTraders(b.dataset.filter);
     });
   });
 
