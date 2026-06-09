@@ -25,10 +25,6 @@
       --text-muted: rgba(255,255,255,0.35);
     }
 
-    html, body {
-      max-width: 100%;
-      overflow-x: hidden;       /* viewport-level clip — won't break sticky inside */
-    }
     body {
       background: #0b0c1a;
       min-height: 100vh;
@@ -42,12 +38,16 @@
       font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
       color: #fff;
       min-height: 100vh;
-      /* NO overflow on .phone — would break the sticky bottom nav inside.
-         The decorative bleed (glow/coin) is clipped by the .scroll wrapper
-         instead, while .phone stays a clean flow container so its
-         descendant .vt-bottom-nav-wrap can use position: sticky correctly. */
+      /* No `overflow` on .phone — that would break the sticky bottom nav.
+         Decorative bleed (glow + rotating coin) is clipped on the inner
+         .scroll wrapper instead, leaving .phone as a clean flow container
+         so its descendant .vt-bottom-nav-wrap can stick to the viewport. */
     }
-    .scroll { overflow-x: clip; }   /* clip bleed inside the scroll area */
+    .scroll {
+      overflow-x: clip;       /* clip horizontal bleed (glow / coin) */
+      overflow-y: visible;    /* DON'T scroll vertically — would create a new
+                                 scroll context and break sticky for the nav */
+    }
 
     /* ── BG GLOWS ── */
     .promo-glow-1 {
