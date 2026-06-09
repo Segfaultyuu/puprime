@@ -258,6 +258,7 @@
       markets: 'markets.html',
       trade:   'trade.html',
       promo:   'promo.html',
+      funds:   'funds.html',
     };
     wrap.addEventListener('click', e => {
       const tab = e.target.closest('.vt-tab');
