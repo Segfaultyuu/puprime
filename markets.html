@@ -340,10 +340,35 @@
     .trend-table-head {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 12px 8px 4px;
       font-size: 11px;
       color: rgba(255,255,255,0.45);
     }
+    .trend-sort-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      transition: color 0.18s;
+    }
+    .trend-sort-btn:hover { color: #fff; }
+    .sort-tri {
+      width: 10px; height: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .sort-tri svg { width: 100%; height: 100%; }
+    /* desc = pointing down (top gainers / largest first); asc = up (top losers / smallest first) */
+    .sort-tri[data-dir="asc"] { transform: rotate(180deg); }
     /* Market Trends rows reuse home.html's .market-item up/down style.
        The wrapper just aligns with the section's 8px inner padding. */
     .trend-list { padding: 4px 0 0; }
@@ -372,6 +397,31 @@
     }
     .trend-pct-pill.pos { background: rgba(29,209,161,0.18); color: var(--green); }
     .trend-pct-pill.neg { background: rgba(238,82,83,0.18);  color: var(--red); }
+    /* Right-side stat stack (used in Most Active / Top Options Volume) */
+    .trend-stat { text-align: right; flex-shrink: 0; }
+    .trend-stat-num {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      font-feature-settings: 'tnum' 1;
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+    .trend-stat-pct {
+      font-size: 12px;
+      font-weight: 600;
+      font-feature-settings: 'tnum' 1;
+    }
+    .trend-stat-pct.pos { color: var(--green); }
+    .trend-stat-pct.neg { color: var(--red); }
+    .trend-stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 2px;
+      font-feature-settings: 'tnum' 1;
+    }
 
     /* ── ALL INSTRUMENTS ── */
     /* All Instruments tabs reuse the same shape as the Market Trends tabs.
@@ -390,6 +440,236 @@
       white-space: nowrap;
       padding: 8px 0 4px;
     }
+    /* Watchlist actions row (Add Symbol + Edit) — same as home page */
+    .watchlist-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px 8px;
+    }
+    .watchlist-actions .add-symbol,
+    .watchlist-actions .edit-watchlist {
+      padding: 6px 12px;
+    }
+    .add-symbol, .edit-watchlist {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--text-secondary);
+      transition: color 0.18s;
+    }
+    .add-symbol:hover { opacity: 0.85; }
+    .add-symbol svg, .edit-watchlist svg { width: 14px; height: 14px; opacity: 0.85; }
+    @media (hover: hover) {
+      .edit-watchlist:hover { color: #fff; }
+    }
+
+    /* "View more" button shown below the truncated category lists */
+    .view-more-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      padding: 12px 0 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: color 0.18s;
+    }
+    .view-more-btn:hover { color: #fff; }
+    .view-more-btn svg { width: 14px; height: 14px; }
+
+    /* ── ADD SYMBOL BOTTOM SHEET ── */
+    .sheet-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+    .sheet {
+      position: fixed; left: 50%; bottom: 0;
+      transform: translate(-50%, 100%);
+      width: 393px; max-width: 100vw;
+      background: #141527;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 8px 0 24px;
+      z-index: 210;
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .sheet.open { transform: translate(-50%, 0); }
+    .sheet-handle {
+      width: 36px; height: 4px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.25);
+      margin: 0 auto 12px;
+    }
+    .sheet-header {
+      display: flex; align-items: center;
+      padding: 4px 20px 12px;
+    }
+    .sheet-title { font-size: 16px; font-weight: 600; color: #fff; }
+    .sheet-list {
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 0 12px 4px;
+    }
+    .symbol-search {
+      width: 100%; height: 40px;
+      padding: 0 16px;
+      margin: 0 0 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .symbol-search::placeholder { color: rgba(255,255,255,0.55); }
+    .symbol-search:focus {
+      border-color: rgba(0,107,255,0.55);
+      background: rgba(255,255,255,0.08);
+    }
+    .sym-cats {
+      display: flex; gap: 8px;
+      padding: 4px 16px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .sym-cats::-webkit-scrollbar { display: none; }
+    .sym-cat {
+      flex-shrink: 0; height: 30px; padding: 0 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      line-height: 1;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.78);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .sym-cat.active {
+      background: rgba(0,107,255,0.18);
+      border-color: rgba(0,107,255,0.55);
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .symbol-row {
+      width: 100%;
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: none; border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .symbol-row:hover { background: rgba(255,255,255,0.05); }
+    .symbol-row .sym-logo {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--bg-card2);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .symbol-row .sym-logo svg,
+    .symbol-row .sym-logo img,
+    .symbol-row .sym-logo .market-logo,
+    .symbol-row .sym-logo .market-logo-pair { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .symbol-row .sym-info { flex: 1; min-width: 0; }
+    .symbol-row .sym-code {
+      font-size: 14px; font-weight: 700; color: #fff;
+      letter-spacing: 0.06px;
+    }
+    .symbol-row .sym-name {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .symbol-row .sym-toggle {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.75);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .symbol-row .sym-toggle svg { width: 14px; height: 14px; }
+    .symbol-row.added .sym-toggle {
+      background: rgba(0,107,255,0.20);
+      border-color: rgba(0,107,255,0.55);
+      color: var(--blue);
+    }
+    .symbol-empty {
+      text-align: center;
+      padding: 28px 16px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+    }
+    #addSymbolSheet {
+      height: 78vh;
+      display: flex; flex-direction: column;
+      padding-bottom: 16px;
+    }
+    #addSymbolSheet .sheet-list {
+      flex: 1;
+      max-height: none;
+      overflow-y: auto;
+    }
+
+    /* ── EDIT MODE / DRAG-TO-REORDER ── */
+    .edit-watchlist.active { color: var(--blue); }
+    .drag-handle {
+      display: none;
+      width: 28px; height: 28px;
+      flex-shrink: 0;
+      margin-left: 4px;
+      align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.55);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #instrumentRows.editing .drag-handle { display: flex; }
+    .drag-handle:active { cursor: grabbing; }
+    .drag-handle svg { width: 16px; height: 16px; }
+    #instrumentRows.editing .market-item { cursor: default; }
+    #instrumentRows.editing .market-item::before { display: none; }
+    #instrumentRows.editing .market-item.dragging {
+      opacity: 0.85;
+      transform: scale(1.02);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,107,255,0.45);
+      z-index: 10;
+      transition: none;
+    }
+    #instrumentRows.editing .market-item:not(.dragging) {
+      transition: transform 0.20s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     /* shared by Market Trends and All Instruments */
     .instrument-value { text-align: right; }
     .instrument-price {
@@ -885,7 +1165,14 @@
     </div>
     <div class="trend-table-head">
       <span>Instrument</span>
-      <span>Last Price</span>
+      <button class="trend-sort-btn" id="trendSortBtn" type="button">
+        <span id="trendCol2">Last Price</span> · <span id="trendCol1">Change</span>
+        <span class="sort-tri" id="sortTri" data-dir="desc">
+          <svg viewBox="0 0 10 10" fill="currentColor">
+            <path d="M5 7L1.5 3h7L5 7z"/>
+          </svg>
+        </span>
+      </button>
     </div>
     <div class="trend-list" id="trendList"></div>
   </div>
@@ -897,16 +1184,19 @@
       <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
-  <div class="instrument-tabs">
-    <button class="trend-tab active" type="button">All</button>
-    <button class="trend-tab" type="button">Crypto</button>
-    <button class="trend-tab" type="button">Metals</button>
-    <button class="trend-tab" type="button">Indices</button>
-    <button class="trend-tab" type="button">Forex</button>
-    <button class="trend-tab" type="button">Commodities</button>
+  <div class="instrument-tabs" id="instrumentTabs">
+    <button class="trend-tab active" data-cat="watchlist"  type="button">Watchlist</button>
+    <button class="trend-tab"        data-cat="indices"    type="button">Indices</button>
+    <button class="trend-tab"        data-cat="forex"      type="button">Forex</button>
+    <button class="trend-tab"        data-cat="crypto"     type="button">Crypto</button>
+    <button class="trend-tab"        data-cat="metals"     type="button">Metals</button>
+    <button class="trend-tab"        data-cat="cfd"        type="button">Share CFDs</button>
+    <button class="trend-tab"        data-cat="commodity"  type="button">Commodities</button>
+    <button class="trend-tab"        data-cat="etf"        type="button">ETF</button>
+    <button class="trend-tab"        data-cat="bond"       type="button">Bond</button>
   </div>
 
-  <div class="instrument-list">
+  <div class="instrument-list" id="instrumentList">
     <svg width="0" height="0" style="position:absolute">
       <defs>
         <linearGradient id="gradUp" x1="0" y1="0" x2="0" y2="1">
@@ -919,7 +1209,8 @@
         </linearGradient>
       </defs>
     </svg>
-
+    <div id="instrumentRows"></div>
+    <template id="instrumentLegacy">
     <!-- EURUSD -->
     <div class="market-item up">
       <div class="market-left">
@@ -1142,13 +1433,14 @@
         </svg>
       </div>
     </div>
+    </template>
   </div>
 
   <!-- UPCOMING EVENTS -->
   <div class="events-header">
     <span class="section-title">Upcoming Events</span>
-    <button class="events-region" type="button">
-      US
+    <button class="events-region" id="eventsRegionBtn" type="button">
+      <span id="eventsRegionLabel">US</span>
       <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -1194,51 +1486,51 @@
     <div class="sector-grid">
       <div class="sector-tile heat-pos-soft">
         <div class="sector-name">Technology</div>
-        <div class="sector-pct pos">0.31%</div>
+        <div class="sector-pct pos">+0.31%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-pos-soft">
         <div class="sector-name">Financials</div>
-        <div class="sector-value">C125.00</div>
+        <div class="sector-pct pos">+0.18%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-pos-strong">
         <div class="sector-name">Healthcare</div>
-        <div class="sector-value">C64.24</div>
+        <div class="sector-pct pos">+0.92%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-neg-soft">
         <div class="sector-name">Consumer Goods</div>
-        <div class="sector-value">C71.89</div>
+        <div class="sector-pct neg">−0.15%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-pos-strong">
         <div class="sector-name">Industrials</div>
-        <div class="sector-value">C157.19</div>
+        <div class="sector-pct pos">+1.24%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-pos-soft">
         <div class="sector-name">Telecom</div>
-        <div class="sector-value">C42.58</div>
+        <div class="sector-pct pos">+0.06%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-neg-soft">
         <div class="sector-name">Consumer Services</div>
-        <div class="sector-value">C99.58</div>
+        <div class="sector-pct neg">−0.22%</div>
       </div>
       <div class="sector-tile heat-neg-soft">
         <div class="sector-name">Consumer Staples</div>
         <div class="sector-pct neg">−0.40%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-neg-strong">
         <div class="sector-name">Energy</div>
-        <div class="sector-value">C61.09</div>
+        <div class="sector-pct neg">−1.85%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-pos-soft">
         <div class="sector-name">Basic Materials</div>
-        <div class="sector-value">C181.59</div>
+        <div class="sector-pct pos">+0.42%</div>
       </div>
-      <div class="sector-tile">
+      <div class="sector-tile heat-pos-soft">
         <div class="sector-name">Utilities</div>
-        <div class="sector-value">C112.23</div>
+        <div class="sector-pct pos">+0.28%</div>
       </div>
-      <div class="sector-tile">
-        <div class="sector-name">Infrastructur</div>
-        <div class="sector-value">C61.28</div>
+      <div class="sector-tile heat-neg-soft">
+        <div class="sector-name">Infrastructure</div>
+        <div class="sector-pct neg">−0.08%</div>
       </div>
     </div>
   </div>
@@ -1344,6 +1636,40 @@
   </div>
 
 </div><!-- end phone -->
+
+<!-- EVENTS REGION BOTTOM SHEET -->
+<div class="sheet-backdrop" id="regionBackdrop"></div>
+<div class="sheet" id="regionSheet" role="dialog" aria-modal="true">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Region</span>
+  </div>
+  <div class="sheet-list" id="regionList"></div>
+</div>
+
+<!-- ADD-SYMBOL BOTTOM SHEET (watchlist editor) -->
+<div class="sheet-backdrop" id="addSymbolBackdrop"></div>
+<div class="sheet" id="addSymbolSheet" role="dialog" aria-modal="true">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title">Add to Watchlist</span>
+  </div>
+  <div style="padding: 0 16px;">
+    <input type="text" class="symbol-search" id="symbolSearch" placeholder="Search symbol or name…" />
+  </div>
+  <div class="sym-cats" id="symCats">
+    <button class="sym-cat active" data-cat="all"        type="button">All</button>
+    <button class="sym-cat"        data-cat="indices"    type="button">Indices</button>
+    <button class="sym-cat"        data-cat="forex"      type="button">Forex</button>
+    <button class="sym-cat"        data-cat="crypto"     type="button">Crypto</button>
+    <button class="sym-cat"        data-cat="metals"     type="button">Metals</button>
+    <button class="sym-cat"        data-cat="cfd"        type="button">Share CFDs</button>
+    <button class="sym-cat"        data-cat="commodity"  type="button">Commodities</button>
+    <button class="sym-cat"        data-cat="etf"        type="button">ETF</button>
+    <button class="sym-cat"        data-cat="bond"       type="button">Bond</button>
+  </div>
+  <div class="sheet-list" id="symbolList"></div>
+</div>
 
 <script src="bottom-nav.js" defer></script>
 <script>
@@ -1629,66 +1955,551 @@
   });
 
   // ─── MARKET TRENDS DATA + TAB SWITCHING ───
-  // 3 datasets, one per tab. Click a tab to swap the rows + active style.
+  // Logos pulled from davidepalazzo/ticker-logos via jsDelivr (MIT).
+  const trendTickerLogo = sym =>
+    `<div class="trend-logo" style="overflow:hidden;background:#fff;"><img src="https://cdn.jsdelivr.net/gh/davidepalazzo/ticker-logos@main/ticker_icons/${sym}.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/></div>`;
   const TREND_DATA = {
-    movers: [
-      { sym: 'NRIX', name: 'NURIX THERAPEUTICS INC',     price: '23.36',  change: '+72.93 (59.56%)', dir: 'up',
-        logo: '<div class="trend-logo logo-tile" style="background:#000;"><span style="color:#1dd1a1; font-size:14px; font-weight:800;">N</span></div>' },
-      { sym: 'CANG', name: 'CANG INC/NY - CLASS A',      price: '0.3010', change: '−0.0220 (−6.81%)', dir: 'down',
-        logo: '<div class="trend-logo logo-tile" style="background:#fff; color:#0d0d0d;">CG</div>' },
-      { sym: 'MLAC', name: 'MOUNTAIN LAKE ACQUISITIO…',  price: '9.50',   change: '+1.53 (19.20%)',   dir: 'up',
-        logo: '<div class="trend-logo logo-tile" style="background:#0e2f63;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><polygon points="10,2 18,18 2,18" fill="#5c9fff"/></svg></div>' },
-    ],
-    active: [
-      { sym: 'TSLA', name: 'TESLA INC',                  price: '422.50',    change: '+5.80 (1.39%)',   dir: 'up',
-        logo: '<div class="trend-logo logo-tile" style="background:#c8060c;"><span style="color:#fff;font-size:14px;font-weight:800;">T</span></div>' },
-      { sym: 'NVDA', name: 'NVIDIA CORP',                price: '142.30',    change: '−2.40 (−1.66%)',  dir: 'down',
-        logo: '<div class="trend-logo logo-tile" style="background:#76b900;"><span style="color:#fff;font-size:11px;font-weight:800;">NV</span></div>' },
-      { sym: 'AAPL', name: 'APPLE INC',                  price: '268.81',    change: '+7.23 (2.78%)',   dir: 'up',
-        logo: '<div class="trend-logo logo-tile" style="background:#000;"><span style="color:#fff;font-size:14px;font-weight:800;">A</span></div>' },
-      { sym: 'AMZN', name: 'AMAZON.COM INC',             price: '218.40',    change: '+3.20 (1.49%)',   dir: 'up',
-        logo: '<div class="trend-logo logo-tile" style="background:#ff9900;"><span style="color:#000;font-size:14px;font-weight:800;">A</span></div>' },
-    ],
-    options: [
-      { sym: 'SPY',  name: 'SPDR S&P 500 ETF TRUST',     price: '584.20',  change: '+0.85 (0.15%)',   dir: 'up',
-        logo: '<div class="trend-logo logo-tile" style="background:#244f8c;"><span style="color:#fff;font-size:11px;font-weight:800;">SPY</span></div>' },
-      { sym: 'QQQ',  name: 'INVESCO QQQ TRUST',          price: '512.30',  change: '−1.20 (−0.23%)',  dir: 'down',
-        logo: '<div class="trend-logo logo-tile" style="background:#0046b8;"><span style="color:#fff;font-size:11px;font-weight:800;">QQQ</span></div>' },
-      { sym: 'IWM',  name: 'ISHARES RUSSELL 2000 ETF',   price: '241.85',  change: '+0.45 (0.19%)',   dir: 'up',
-        logo: '<div class="trend-logo logo-tile" style="background:#0e3b73;"><span style="color:#fff;font-size:11px;font-weight:800;">IWM</span></div>' },
-    ],
+    movers: {
+      col2: 'Last Price',
+      col1: 'Change',
+      // Top gainers (desc — biggest gains first)
+      gainers: [
+        { sym: 'NRIX', name: 'NURIX THERAPEUTICS INC',    price: '23.36',  change: '+72.93 (59.56%)', dir: 'up', logo: trendTickerLogo('NRIX') },
+        { sym: 'MLAC', name: 'MOUNTAIN LAKE ACQUISITIO…', price: '9.50',   change: '+1.53 (19.20%)',   dir: 'up', logo: trendTickerLogo('MLAC') },
+        { sym: 'TSLA', name: 'TESLA INC',                 price: '422.50', change: '+5.80 (1.39%)',    dir: 'up', logo: trendTickerLogo('TSLA') },
+      ],
+      // Top losers (asc — biggest drops first)
+      losers: [
+        { sym: 'CANG', name: 'CANG INC/NY - CLASS A',     price: '0.3010', change: '−0.0220 (−6.81%)', dir: 'down', logo: trendTickerLogo('CANG') },
+        { sym: 'NVDA', name: 'NVIDIA CORP',               price: '142.30', change: '−2.40 (−1.66%)',   dir: 'down', logo: trendTickerLogo('NVDA') },
+        { sym: 'GOOG', name: 'ALPHABET INC - CLASS C',    price: '199.40', change: '−0.90 (−0.45%)',   dir: 'down', logo: trendTickerLogo('GOOG') },
+      ],
+      get rows() { return moversDir === 'desc' ? this.gainers : this.losers; },
+    },
+    active: {
+      col2: 'Last Price',
+      col1: 'Volume',
+      rows: [
+        { sym: 'TSLA', name: 'TESLA INC',   price: '422.50', change: '+1.39%',  volume: '128.4M', dir: 'up',   logo: trendTickerLogo('TSLA') },
+        { sym: 'NVDA', name: 'NVIDIA CORP', price: '142.30', change: '−1.66%',  volume: '94.2M',  dir: 'down', logo: trendTickerLogo('NVDA') },
+        { sym: 'AAPL', name: 'APPLE INC',   price: '268.81', change: '+2.78%',  volume: '78.6M',  dir: 'up',   logo: trendTickerLogo('AAPL') },
+      ],
+    },
+    options: {
+      col2: 'Last Price',
+      col1: 'Opt. Volume',
+      rows: [
+        { sym: 'SPY',  name: 'SPDR S&P 500 ETF TRUST', price: '584.20', change: '+0.15%', optVolume: '4.82M', dir: 'up',   logo: trendTickerLogo('SPY')  },
+        { sym: 'QQQ',  name: 'INVESCO QQQ TRUST',      price: '512.30', change: '−0.23%', optVolume: '3.15M', dir: 'down', logo: trendTickerLogo('QQQ')  },
+        { sym: 'TSLA', name: 'TESLA INC',              price: '422.50', change: '+1.39%', optVolume: '2.74M', dir: 'up',   logo: trendTickerLogo('TSLA') },
+      ],
+    },
   };
-  const trendList = document.getElementById('trendList');
+
+  const trendList   = document.getElementById('trendList');
+  const trendCol1El = document.getElementById('trendCol1');
+  const trendCol2El = document.getElementById('trendCol2');
+  const sortTriEl   = document.getElementById('sortTri');
+  const sortBtnEl   = document.getElementById('trendSortBtn');
+
+  // Per-tab sort direction. 'desc' = top first (default), 'asc' = bottom first
+  let moversDir  = 'desc';   // gainers vs losers
+  let activeDir  = 'desc';
+  let optionsDir = 'desc';
+  let currentTrend = 'movers';
+
+  function getDir(key) {
+    return key === 'movers' ? moversDir : key === 'active' ? activeDir : optionsDir;
+  }
+  function setDir(key, v) {
+    if (key === 'movers')   moversDir  = v;
+    if (key === 'active')   activeDir  = v;
+    if (key === 'options')  optionsDir = v;
+  }
+
   function renderTrendList(key) {
-    const rows = TREND_DATA[key] || [];
-    trendList.innerHTML = rows.map(r => `
+    currentTrend = key;
+    const ds = TREND_DATA[key];
+    if (!ds) return;
+    trendCol1El.textContent = ds.col1;
+    trendCol2El.textContent = ds.col2;
+    sortTriEl.dataset.dir = getDir(key);
+
+    // Resolve rows + apply sort
+    let rows;
+    if (key === 'movers') {
+      rows = ds.rows;   // already swapped by the getter via moversDir
+    } else {
+      rows = ds.rows.slice();
+      const numKey = key === 'active' ? 'volume' : 'optVolume';
+      const num = s => parseFloat(String(s).replace(/[^\d.]/g, ''));
+      rows.sort((a, b) => num(b[numKey]) - num(a[numKey]));
+      if (getDir(key) === 'asc') rows.reverse();
+    }
+    trendList.innerHTML = rows.map(r => {
+      // Right side varies by tab. Movers shows the change-pill.
+      // Active / Options show a 2-line stack: last price + volume metric.
+      let right;
+      if (key === 'movers') {
+        right = `<div class="trend-pct-pill ${r.dir === 'up' ? 'pos' : 'neg'}">${r.change}</div>`;
+      } else {
+        const num = key === 'active' ? r.volume : r.optVolume;
+        const changeCls = r.dir === 'up' ? 'pos' : 'neg';
+        right = `
+          <div class="trend-stat">
+            <div class="trend-stat-num">
+              ${r.price}
+              <span class="trend-stat-pct ${changeCls}">${r.change}</span>
+            </div>
+            <div class="trend-stat-label">${num} ${ds.col1.toLowerCase().includes('opt') ? 'opt' : 'vol'}</div>
+          </div>`;
+      }
+      return `
+        <div class="market-item ${r.dir}">
+          <div class="market-left">
+            ${r.logo}
+            <div class="market-info">
+              <div class="market-name-row"><span class="market-symbol">${r.sym}</span></div>
+              <div class="market-price-row">
+                <span class="market-fullname">${r.name}</span>
+              </div>
+            </div>
+          </div>
+          ${right}
+        </div>
+      `;
+    }).join('');
+  }
+  renderTrendList('movers');
+
+  // Sort triangle — flips between top-first / bottom-first.
+  // For Movers tab: desc = gainers, asc = losers.
+  // For Active / Options: desc = highest volume first, asc = lowest first.
+  sortBtnEl.addEventListener('click', () => {
+    const next = getDir(currentTrend) === 'desc' ? 'asc' : 'desc';
+    setDir(currentTrend, next);
+    renderTrendList(currentTrend);
+  });
+
+  // ─── ALL INSTRUMENTS DATA + RENDER ───
+  // Open-source icon CDNs (all MIT-licensed):
+  //  • Country flags  → hampusborgos/country-flags  (forex, bonds)
+  //  • Crypto icons   → spothq/cryptocurrency-icons (crypto)
+  //  • Stock/ETF logos → davidepalazzo/ticker-logos  (CFDs, ETFs, indices)
+  const FLG = iso  => `<img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/${iso}.svg" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+  const CRYPTO = code => `<img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/svg/color/${code.toLowerCase()}.svg" alt="" style="width:100%;height:100%;object-fit:cover;"/>`;
+  // If the upstream PNG is missing (some tickers aren't in the repo), fall back
+  // to a dark letter tile drawn inline.
+  const TICKER = code => {
+    const fallback = `'<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 32 32\\'><circle cx=\\'16\\' cy=\\'16\\' r=\\'16\\' fill=\\'%23244f8c\\'/><text x=\\'16\\' y=\\'20\\' text-anchor=\\'middle\\' font-family=\\'Arial\\' font-weight=\\'800\\' font-size=\\'9\\' fill=\\'%23fff\\'>${code}</text></svg>'`;
+    return `<img src="https://cdn.jsdelivr.net/gh/davidepalazzo/ticker-logos@main/ticker_icons/${code}.png" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;background:#fff;" onerror="this.onerror=null;this.style.background='transparent';this.src='data:image/svg+xml;utf8,'+${fallback};"/>`;
+  };
+  // Wrap a raw <img> in the .market-logo circular shell
+  const wrap = inner => `<div class="market-logo" style="overflow:hidden;">${inner}</div>`;
+  // Letter-tile fallback for things without a real logo (metals, bonds, generic indices)
+  const CIR = (text, bg, fg = '#fff', sz = 11) => `<svg class="market-logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="${bg}"/><text x="16" y="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="${sz}" fill="${fg}">${text}</text></svg>`;
+  // Reusable sparkline path (same shape, different speeds via animation-duration)
+  const sparkUp   = 'M0,17 C5,11 11,7 18,10 C25,13 29,19 36,16 C43,13 49,7 56,11 C63,15 71,19 80,17 C85,11 91,7 98,10 C105,13 109,19 116,16 C123,13 129,7 136,11 C143,15 151,19 160,17 C165,11 171,7 178,10 C185,13 189,19 196,16 C203,13 209,7 216,11 C223,15 231,19 240,17';
+  const sparkDown = 'M0,13 C6,16 12,20 20,18 C28,16 34,12 42,16 C50,20 58,23 66,20 C73,17 78,14 80,13 C86,16 92,20 100,18 C108,16 114,12 122,16 C130,20 138,23 146,20 C153,17 158,14 160,13 C166,16 172,20 180,18 C188,16 194,12 202,16 C210,20 218,23 226,20 C233,17 238,14 240,13';
+  const sparkRow = (dir, speed) => `
+    <div class="market-sparkline">
+      <svg viewBox="0 0 80 30">
+        <g class="spark-group" style="animation-duration:${speed}s">
+          <path class="spark-area" d="${dir === 'up' ? sparkUp : sparkDown} L240,30 L0,30 Z"/>
+          <path class="spark-line" d="${dir === 'up' ? sparkUp : sparkDown}"/>
+        </g>
+        <circle class="spark-dot" cx="76" cy="${dir === 'up' ? 17 : 13}" r="2.5"/>
+      </svg>
+    </div>`;
+  // Pair-flag helper for forex
+  const pair = (top, bot) => `<div class="market-logo-pair"><img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/${top}.svg" alt=""/><img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/${bot}.svg" alt=""/></div>`;
+
+  const INSTRUMENTS = [
+    // ── Indices (logos via davidepalazzo/ticker-logos) ──
+    { sym: 'NIKKEI225', name: 'Nikkei 225',          cat: 'indices',   price: '38,604.21', dir: 'down', change: '-0.54%', logo: wrap(FLG('jp')), speed: 3.2 },
+    { sym: 'DJ30',      name: 'Dow Jones Index Ca…', cat: 'indices',   price: '51,372.44', dir: 'down', change: '-0.08%', logo: '<svg class="market-logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#0a3d8f"/><text x="16" y="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="9" fill="#fff">DJ30</text></svg>', speed: 2.8 },
+    { sym: 'NAS100',    name: 'Nasdaq 100',          cat: 'indices',   price: '20,485.30', dir: 'up',   change: '+0.42%', logo: wrap(TICKER('QQQ')),     speed: 2.6 },
+    { sym: 'SPX500',    name: 'S&P 500',             cat: 'indices',   price: '6,094.18',  dir: 'up',   change: '+0.18%', logo: wrap(TICKER('SPY')),     speed: 2.5 },
+    { sym: 'GER40',     name: 'DAX 40',              cat: 'indices',   price: '20,538.91', dir: 'up',   change: '+0.31%', logo: wrap(FLG('de')), speed: 3.1 },
+    // ── Forex (flag pairs) ──
+    { sym: 'EURUSD', name: 'Euro vs US Dollar',   cat: 'forex', price: '1.16482', dir: 'up',   change: '+0.14%',  logo: pair('us', 'eu'), speed: 3.5 },
+    { sym: 'CADJPY', name: 'Canadian Dollar/Ja…', cat: 'forex', price: '159.708', dir: 'up',   change: '+0.366%', logo: pair('jp', 'ca'), speed: 4.0 },
+    { sym: 'GBPUSD', name: 'British Pound vs US', cat: 'forex', price: '1.2693',  dir: 'up',   change: '+0.08%',  logo: pair('us', 'gb'), speed: 3.4 },
+    { sym: 'USDJPY', name: 'US Dollar vs Yen',    cat: 'forex', price: '156.40',  dir: 'down', change: '-0.22%',  logo: pair('jp', 'us'), speed: 3.2 },
+    { sym: 'AUDUSD', name: 'Australian Dollar',   cat: 'forex', price: '0.6512',  dir: 'up',   change: '+0.09%',  logo: pair('us', 'au'), speed: 3.6 },
+    // ── Crypto (logos via spothq/cryptocurrency-icons) ──
+    { sym: 'BTCUSD', name: 'Bitcoin',  cat: 'crypto', price: '125,860.25', dir: 'up',   change: '+11.23%', logo: wrap(CRYPTO('btc')), speed: 2.5 },
+    { sym: 'ETHUSD', name: 'Ethereum', cat: 'crypto', price: '3,283.07',   dir: 'up',   change: '+1.29%',  logo: wrap(CRYPTO('eth')), speed: 2.7 },
+    { sym: 'SOLUSD', name: 'Solana',   cat: 'crypto', price: '170.35',     dir: 'up',   change: '+3.42%',  logo: wrap(CRYPTO('sol')), speed: 2.4 },
+    { sym: 'LRCUSD', name: 'Loopring', cat: 'crypto', price: '0.0690',     dir: 'up',   change: '+0.23%',  logo: wrap(CRYPTO('lrc')), speed: 3.0 },
+    { sym: 'XRPUSD', name: 'Ripple',   cat: 'crypto', price: '2.4015',     dir: 'down', change: '-0.86%',  logo: wrap(CRYPTO('xrp')), speed: 2.9 },
+    // ── Metals (gradient SVGs — there's no real "logo" for spot metals) ──
+    { sym: 'XAUUSD', name: 'Gold vs US Dollar',   cat: 'metals', price: '4,034.85', dir: 'down', change: '-0.23%', logo: '<svg class="market-logo" viewBox="0 0 32 32"><defs><linearGradient id="goldXi" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fde08a"/><stop offset="55%" stop-color="#f4b942"/><stop offset="100%" stop-color="#b8801c"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#goldXi)"/><text x="16" y="21" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="14" fill="#5c3a0a">Au</text></svg>', speed: 3.0 },
+    { sym: 'XAGUSD', name: 'Silver vs US Dollar', cat: 'metals', price: '32.12',    dir: 'up',   change: '+0.45%', logo: '<svg class="market-logo" viewBox="0 0 32 32"><defs><linearGradient id="agXi" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e8edf3"/><stop offset="100%" stop-color="#8a96a8"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#agXi)"/><text x="16" y="21" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="14" fill="#3a4250">Ag</text></svg>', speed: 3.1 },
+    { sym: 'XPTUSD', name: 'Platinum vs USD',     cat: 'metals', price: '985.00',   dir: 'down', change: '-0.12%', logo: '<svg class="market-logo" viewBox="0 0 32 32"><defs><linearGradient id="ptXi" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#dde2e8"/><stop offset="100%" stop-color="#7d8ca0"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#ptXi)"/><text x="16" y="21" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="14" fill="#2c3543">Pt</text></svg>', speed: 3.4 },
+    // ── Share CFDs (logos via davidepalazzo/ticker-logos) ──
+    { sym: 'AAPL', name: 'Apple',          cat: 'cfd', price: '268.81', dir: 'up',   change: '+7.23%',  logo: wrap(TICKER('AAPL')), speed: 2.8 },
+    { sym: 'TSLA', name: 'Tesla',          cat: 'cfd', price: '422.50', dir: 'up',   change: '+1.39%',  logo: wrap(TICKER('TSLA')), speed: 2.5 },
+    { sym: 'GOOG', name: 'Google',         cat: 'cfd', price: '199.40', dir: 'down', change: '-0.45%',  logo: wrap(TICKER('GOOG')), speed: 2.7 },
+    { sym: 'NVDA', name: 'Nvidia',         cat: 'cfd', price: '142.30', dir: 'down', change: '-1.66%',  logo: wrap(TICKER('NVDA')), speed: 2.6 },
+    { sym: 'AMZN', name: 'Amazon',         cat: 'cfd', price: '218.40', dir: 'up',   change: '+1.49%',  logo: wrap(TICKER('AMZN')), speed: 2.7 },
+    { sym: 'META', name: 'Meta Platforms', cat: 'cfd', price: '624.80', dir: 'up',   change: '+0.75%',  logo: wrap(TICKER('META')), speed: 2.9 },
+    // ── Commodities (oil-drop SVGs + lettered tiles for the rest) ──
+    { sym: 'USOUSD', name: 'US Crude Oil (WTI)', cat: 'commodity', price: '61.480', dir: 'up',   change: '+7.23%', logo: '<svg class="market-logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#1d1d1d"/><path d="M16 7c-3 4-6 7.4-6 11.2A6 6 0 0 0 22 18.2C22 14.4 19 11 16 7z" fill="#1ea76a"/></svg>', speed: 2.5 },
+    { sym: 'UKOUSD', name: 'UK Brent Oil',       cat: 'commodity', price: '64.220', dir: 'up',   change: '+0.62%', logo: '<svg class="market-logo" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#0a1f1d"/><path d="M16 7c-3 4-6 7.4-6 11.2A6 6 0 0 0 22 18.2C22 14.4 19 11 16 7z" fill="#3a8c52"/></svg>', speed: 2.6 },
+    { sym: 'NATGAS', name: 'Natural Gas',        cat: 'commodity', price: '3.085',  dir: 'down', change: '-1.18%', logo: CIR('NG',  '#1f57a5', '#fff', 11), speed: 3.0 },
+    { sym: 'COPPER', name: 'Copper',             cat: 'commodity', price: '4.215',  dir: 'up',   change: '+0.55%', logo: CIR('Cu',  '#b87333', '#fff', 12), speed: 3.2 },
+    // ── ETFs (logos via davidepalazzo/ticker-logos) ──
+    { sym: 'SPY',  name: 'SPDR S&P 500 ETF',     cat: 'etf', price: '584.20', dir: 'up',   change: '+0.15%', logo: wrap(TICKER('SPY')),  speed: 2.6 },
+    { sym: 'QQQ',  name: 'Invesco QQQ Trust',    cat: 'etf', price: '512.30', dir: 'down', change: '-0.23%', logo: wrap(TICKER('QQQ')),  speed: 2.7 },
+    { sym: 'GLD',  name: 'SPDR Gold Shares ETF', cat: 'etf', price: '264.10', dir: 'down', change: '-0.30%', logo: '<svg class="market-logo" viewBox="0 0 32 32"><defs><linearGradient id="goldGld" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fde08a"/><stop offset="55%" stop-color="#f4b942"/><stop offset="100%" stop-color="#b8801c"/></linearGradient></defs><circle cx="16" cy="16" r="16" fill="url(#goldGld)"/><text x="16" y="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="9" fill="#5c3a0a">GLD</text></svg>', speed: 2.9 },
+    { sym: 'ARKK', name: 'ARK Innovation ETF',   cat: 'etf', price: '52.84',  dir: 'up',   change: '+0.92%', logo: wrap(TICKER('ARKK')), speed: 3.0 },
+    // ── Bonds (country flags) ──
+    { sym: 'US10Y', name: 'US 10-Year Treasury',  cat: 'bond', price: '4.32%', dir: 'down', change: '-0.04', logo: wrap(FLG('us')), speed: 3.5 },
+    { sym: 'US30Y', name: 'US 30-Year Treasury',  cat: 'bond', price: '4.58%', dir: 'down', change: '-0.02', logo: wrap(FLG('us')), speed: 3.6 },
+    { sym: 'DE10Y', name: 'German 10-Year Bund',  cat: 'bond', price: '2.41%', dir: 'up',   change: '+0.03', logo: wrap(FLG('de')), speed: 3.4 },
+    { sym: 'UK10Y', name: 'UK 10-Year Gilt',      cat: 'bond', price: '4.51%', dir: 'up',   change: '+0.06', logo: wrap(FLG('gb')), speed: 3.5 },
+  ];
+
+  const instrumentList = document.getElementById('instrumentRows');
+  // Read the home page's saved watchlist; fallback to a default set if empty.
+  function loadWatchlistSet() {
+    try {
+      const raw = localStorage.getItem('puprime.watchlist');
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length) return new Set(arr);
+      }
+    } catch (e) {}
+    return new Set(['BTCUSD','ETHUSD','XAUUSD','AAPL']);
+  }
+  // Per-category "view more" expansion state
+  const expanded = {};
+
+  function renderInstrumentList(cat) {
+    let rows;
+    let truncated = false;
+    if (cat === 'watchlist') {
+      const set = loadWatchlistSet();
+      rows = INSTRUMENTS.filter(r => set.has(r.sym));
+    } else {
+      rows = INSTRUMENTS.filter(r => r.cat === cat);
+      // Share CFDs is hard-capped at 5 with no "View more"
+      if (cat === 'cfd') {
+        rows = rows.slice(0, 5);
+      } else if (!expanded[cat] && rows.length > 5) {
+        // Cap other non-watchlist tabs to 5 unless the user has tapped "View more"
+        rows = rows.slice(0, 5);
+        truncated = true;
+      }
+    }
+    if (!rows.length) {
+      instrumentList.innerHTML = `<div style="text-align:center; padding:32px 16px; font-size:13px; color:rgba(255,255,255,0.55);">${cat === 'watchlist' ? 'No symbols in your watchlist yet. Add some from the Home page.' : 'No instruments in this category.'}</div>`;
+      return;
+    }
+    const watchlistActions = cat === 'watchlist' ? `
+      <div class="watchlist-actions">
+        <button class="add-symbol" id="mktAddSymbolBtn" type="button">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M7 3V11M3 7H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Add Symbol
+        </button>
+        <button class="edit-watchlist" id="mktEditBtn" type="button">
+          Edit
+          <svg viewBox="0 0 14 14" fill="none">
+            <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>` : '';
+    const viewMore = truncated ? `
+      <button class="view-more-btn" data-expand="${cat}" type="button">
+        View more
+        <svg viewBox="0 0 14 14" fill="none">
+          <path d="M4 5L7 8L10 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>` : '';
+    instrumentList.innerHTML = rows.map(r => `
       <div class="market-item ${r.dir}">
         <div class="market-left">
           ${r.logo}
           <div class="market-info">
-            <div class="market-name-row"><span class="market-symbol">${r.sym}</span></div>
+            <div class="market-name-row">
+              <span class="market-symbol">${r.sym}</span>
+              <span class="market-fullname">${r.name}</span>
+            </div>
             <div class="market-price-row">
               <span class="market-price">${r.price}</span>
               <div class="market-dot"></div>
-              <span class="market-fullname">${r.name}</span>
+              <span class="market-change ${r.dir === 'up' ? 'pos' : 'neg'}">${r.change}</span>
             </div>
           </div>
         </div>
-        <div class="trend-pct-pill ${r.dir === 'up' ? 'pos' : 'neg'}">${r.change}</div>
+        ${sparkRow(r.dir, r.speed)}
       </div>
-    `).join('');
+    `).join('') + watchlistActions + viewMore;
   }
-  renderTrendList('movers');
+  renderInstrumentList('watchlist');
 
-  // Tab switching — Market Trends rows update; All Instruments tabs only toggle active state
+  // ─── ADD-SYMBOL SHEET (mirrors home.html's behaviour) ───
+  const addSymBackdrop = document.getElementById('addSymbolBackdrop');
+  const addSymSheet    = document.getElementById('addSymbolSheet');
+  const addSymList     = document.getElementById('symbolList');
+  const symbolSearch   = document.getElementById('symbolSearch');
+  const symCats        = document.getElementById('symCats');
+  let pickerCat = 'all';
+
+  function saveWatchlistSet(set) {
+    try { localStorage.setItem('puprime.watchlist', JSON.stringify([...set])); } catch (e) {}
+  }
+  function renderPicker() {
+    const set = loadWatchlistSet();
+    const q = symbolSearch.value.trim().toLowerCase();
+    const filtered = INSTRUMENTS.filter(s => {
+      if (pickerCat !== 'all' && s.cat !== pickerCat) return false;
+      return !q || s.sym.toLowerCase().includes(q) || s.name.toLowerCase().includes(q);
+    });
+    if (!filtered.length) {
+      addSymList.innerHTML = '<div class="symbol-empty">No symbols match.</div>';
+      return;
+    }
+    addSymList.innerHTML = filtered.map(s => {
+      const added = set.has(s.sym);
+      const icon = added
+        ? '<svg viewBox="0 0 14 14" fill="none"><path d="M3 7L6 10L11 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg viewBox="0 0 14 14" fill="none"><path d="M7 3V11M3 7H11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+      return '<button class="symbol-row' + (added ? ' added' : '') + '" data-code="' + s.sym + '" type="button">' +
+        '<div class="sym-logo">' + s.logo + '</div>' +
+        '<div class="sym-info">' +
+          '<div class="sym-code">' + s.sym + '</div>' +
+          '<div class="sym-name">' + s.name + '</div>' +
+        '</div>' +
+        '<div class="sym-toggle">' + icon + '</div>' +
+      '</button>';
+    }).join('');
+  }
+  function openAddSymbolSheet() {
+    symbolSearch.value = '';
+    pickerCat = 'all';
+    document.querySelectorAll('#symCats .sym-cat').forEach(c =>
+      c.classList.toggle('active', c.dataset.cat === 'all')
+    );
+    renderPicker();
+    addSymBackdrop.classList.add('open');
+    addSymSheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => symbolSearch.focus(), 100);
+  }
+  function closeAddSymbolSheet() {
+    addSymBackdrop.classList.remove('open');
+    addSymSheet.classList.remove('open');
+    document.body.style.overflow = '';
+    // refresh visible watchlist if it's the active tab
+    const activeCat = document.querySelector('.instrument-tabs .trend-tab.active')?.dataset.cat;
+    if (activeCat === 'watchlist') {
+      renderInstrumentList('watchlist');
+      if (editing) syncEditMode();
+    }
+  }
+  addSymBackdrop.addEventListener('click', closeAddSymbolSheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && addSymSheet.classList.contains('open')) closeAddSymbolSheet();
+  });
+  symbolSearch.addEventListener('input', renderPicker);
+  symCats.addEventListener('click', e => {
+    const c = e.target.closest('.sym-cat');
+    if (!c) return;
+    document.querySelectorAll('#symCats .sym-cat').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    pickerCat = c.dataset.cat;
+    renderPicker();
+  });
+  addSymList.addEventListener('click', e => {
+    const row = e.target.closest('.symbol-row');
+    if (!row) return;
+    const code = row.dataset.code;
+    const set = loadWatchlistSet();
+    if (set.has(code)) set.delete(code); else set.add(code);
+    saveWatchlistSet(set);
+    renderPicker();
+  });
+
+  // ─── EDIT MODE (drag-to-reorder, mirrors home.html) ───
+  let editing = false;
+  function injectDragHandles() {
+    instrumentList.querySelectorAll('.market-item').forEach(row => {
+      if (row.querySelector('.drag-handle')) return;
+      const h = document.createElement('div');
+      h.className = 'drag-handle';
+      h.setAttribute('aria-label', 'Drag to reorder');
+      h.innerHTML =
+        '<svg viewBox="0 0 16 16" fill="currentColor">' +
+          '<circle cx="6" cy="4" r="1.3"/><circle cx="10" cy="4" r="1.3"/>' +
+          '<circle cx="6" cy="8" r="1.3"/><circle cx="10" cy="8" r="1.3"/>' +
+          '<circle cx="6" cy="12" r="1.3"/><circle cx="10" cy="12" r="1.3"/>' +
+        '</svg>';
+      row.appendChild(h);
+    });
+  }
+  function syncEditMode() {
+    instrumentList.classList.toggle('editing', editing);
+    const editBtn = document.getElementById('mktEditBtn');
+    if (editBtn) {
+      editBtn.classList.toggle('active', editing);
+      // change label between Edit / Done
+      editBtn.childNodes.forEach(n => {
+        if (n.nodeType === 3 && n.textContent.trim()) {
+          n.textContent = '\n          ' + (editing ? 'Done' : 'Edit') + '\n          ';
+        }
+      });
+    }
+    if (editing) injectDragHandles();
+  }
+
+  // Click delegation for the watchlist actions row + view-more
+  instrumentList.addEventListener('click', e => {
+    const more = e.target.closest('.view-more-btn');
+    if (more) {
+      const cat = more.dataset.expand;
+      expanded[cat] = true;
+      renderInstrumentList(cat);
+      return;
+    }
+    if (e.target.closest('#mktAddSymbolBtn')) {
+      openAddSymbolSheet();
+      return;
+    }
+    if (e.target.closest('#mktEditBtn')) {
+      editing = !editing;
+      syncEditMode();
+      return;
+    }
+  });
+
+  // ─── EVENTS REGION SHEET ───
+  const REGION_OPTIONS = [
+    { code: 'US', name: 'United States',  iso: 'us' },
+    { code: 'EU', name: 'Eurozone',       iso: 'eu' },
+    { code: 'UK', name: 'United Kingdom', iso: 'gb' },
+    { code: 'JP', name: 'Japan',          iso: 'jp' },
+    { code: 'CN', name: 'China',          iso: 'cn' },
+    { code: 'HK', name: 'Hong Kong',      iso: 'hk' },
+    { code: 'AU', name: 'Australia',      iso: 'au' },
+    { code: 'CA', name: 'Canada',         iso: 'ca' },
+    { code: 'DE', name: 'Germany',        iso: 'de' },
+    { code: 'GLOBAL', name: 'Global',     iso: 'un' },
+  ];
+  let activeRegion = 'US';
+  const regionBackdrop  = document.getElementById('regionBackdrop');
+  const regionSheet     = document.getElementById('regionSheet');
+  const regionListEl    = document.getElementById('regionList');
+  const eventsRegionLbl = document.getElementById('eventsRegionLabel');
+
+  function renderRegionList() {
+    regionListEl.innerHTML = REGION_OPTIONS.map(r => {
+      const flagSrc = 'https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/' + r.iso + '.svg';
+      const checkOn = r.code === activeRegion;
+      const check = checkOn
+        ? '<svg viewBox="0 0 14 14" fill="none"><path d="M3 7L6 10L11 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '';
+      return '<button class="symbol-row' + (checkOn ? ' added' : '') + '" data-code="' + r.code + '" type="button">' +
+        '<div class="sym-logo"><img src="' + flagSrc + '" alt=""/></div>' +
+        '<div class="sym-info">' +
+          '<div class="sym-code">' + r.code + '</div>' +
+          '<div class="sym-name">' + r.name + '</div>' +
+        '</div>' +
+        '<div class="sym-toggle">' + check + '</div>' +
+      '</button>';
+    }).join('');
+  }
+  function openRegionSheet() {
+    renderRegionList();
+    regionBackdrop.classList.add('open');
+    regionSheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeRegionSheet() {
+    regionBackdrop.classList.remove('open');
+    regionSheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('eventsRegionBtn').addEventListener('click', openRegionSheet);
+  regionBackdrop.addEventListener('click', closeRegionSheet);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && regionSheet.classList.contains('open')) closeRegionSheet();
+  });
+  regionListEl.addEventListener('click', e => {
+    const row = e.target.closest('.symbol-row');
+    if (!row) return;
+    activeRegion = row.dataset.code;
+    eventsRegionLbl.textContent = activeRegion;
+    closeRegionSheet();
+  });
+
+  // Drag-to-reorder via pointer events (touch + mouse)
+  let drag = null;
+  instrumentList.addEventListener('pointerdown', e => {
+    if (!instrumentList.classList.contains('editing')) return;
+    const handle = e.target.closest('.drag-handle');
+    if (!handle) return;
+    const row = handle.closest('.market-item');
+    if (!row) return;
+    e.preventDefault();
+    handle.setPointerCapture(e.pointerId);
+    drag = { pointerId: e.pointerId, row, handle, startY: e.clientY };
+    row.classList.add('dragging');
+  });
+  instrumentList.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    const dy = e.clientY - drag.startY;
+    drag.row.style.transform = 'translateY(' + dy + 'px) scale(1.02)';
+    const rect = drag.row.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    const siblings = [...instrumentList.querySelectorAll('.market-item:not(.dragging)')];
+    for (const sib of siblings) {
+      const sRect = sib.getBoundingClientRect();
+      const sMid  = sRect.top + sRect.height / 2;
+      if (dy > 0 && midY > sMid && drag.row.compareDocumentPosition(sib) & Node.DOCUMENT_POSITION_FOLLOWING) {
+        instrumentList.insertBefore(sib, drag.row);
+        const newRect = drag.row.getBoundingClientRect();
+        drag.startY += (newRect.top - rect.top);
+      } else if (dy < 0 && midY < sMid && drag.row.compareDocumentPosition(sib) & Node.DOCUMENT_POSITION_PRECEDING) {
+        instrumentList.insertBefore(drag.row, sib);
+        const newRect = drag.row.getBoundingClientRect();
+        drag.startY += (newRect.top - rect.top);
+      }
+    }
+  });
+  function endDrag() {
+    if (!drag) return;
+    drag.row.classList.remove('dragging');
+    drag.row.style.transform = '';
+    try { drag.handle.releasePointerCapture(drag.pointerId); } catch (e) {}
+    drag = null;
+    // persist new order if we're on the watchlist tab
+    const activeCat = document.querySelector('.instrument-tabs .trend-tab.active')?.dataset.cat;
+    if (activeCat === 'watchlist') {
+      const order = [...instrumentList.querySelectorAll('.market-item .market-symbol')]
+        .map(el => el.textContent.trim());
+      saveWatchlistSet(new Set(order));
+    }
+  }
+  instrumentList.addEventListener('pointerup', endDrag);
+  instrumentList.addEventListener('pointercancel', endDrag);
+
+  // Tab switching — Market Trends rows update; All Instruments rows also update
   document.querySelectorAll('.trend-tabs, .instrument-tabs').forEach(group => {
     group.querySelectorAll('.trend-tab').forEach(t => {
       t.addEventListener('click', () => {
         group.querySelectorAll('.trend-tab').forEach(x => x.classList.remove('active'));
         t.classList.add('active');
-        // For the Market Trends group, also re-render the rows
         if (group.id === 'trendTabs' && t.dataset.trend) {
           renderTrendList(t.dataset.trend);
+        } else if (group.id === 'instrumentTabs' && t.dataset.cat) {
+          // exit edit mode when switching tabs away from the watchlist
+          if (editing && t.dataset.cat !== 'watchlist') {
+            editing = false;
+          }
+          renderInstrumentList(t.dataset.cat);
+          if (editing && t.dataset.cat === 'watchlist') syncEditMode();
         }
       });
     });
