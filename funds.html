@@ -653,7 +653,7 @@
   </div>
 
   <!-- BALANCE HERO (reused from home.html — expand/collapse with chevron) -->
-  <div class="balance-hero expanded" id="balanceHero">
+  <div class="balance-hero" id="balanceHero">
     <div class="balance-row">
       <div class="balance-info">
         <div class="balance-label-row">
@@ -746,13 +746,13 @@
   <div class="dist-section">
     <div class="dist-head">
       <span class="dist-title">Account Distribution</span>
-      <button class="dist-toggle" id="distToggle" type="button" aria-label="Toggle distribution">
+      <button class="dist-toggle collapsed" id="distToggle" type="button" aria-label="Toggle distribution">
         <svg viewBox="0 0 22 22" fill="none">
           <path d="M5 13L11 7L17 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
     </div>
-    <div class="dist-card" id="distCard">
+    <div class="dist-card collapsed" id="distCard">
       <div class="dist-card-inner">
       <div class="donut-wrap">
         <div class="donut">
@@ -787,7 +787,7 @@
                     stroke-dashoffset="-82"/>
           </svg>
           <div class="donut-center">
-            <div class="donut-amount">1,200,000</div>
+            <div class="donut-amount">120,000</div>
             <div class="donut-currency">USD</div>
           </div>
         </div>
@@ -851,7 +851,7 @@
     <!-- Fiat icons: hampusborgos/country-flags (MIT) via jsDelivr -->
     <div class="wallet-list" id="walletFlat">
       <!-- USD: expanded by default, shows Contract + Funding allocations -->
-      <div class="wallet-group expanded">
+      <div class="wallet-group">
         <div class="wallet-row">
           <div class="wallet-icon">
             <img src="https://cdn.jsdelivr.net/gh/hampusborgos/country-flags@main/svg/us.svg" alt="USD"/>
