@@ -1677,9 +1677,23 @@
     { code: 'UK10Y',  name: 'UK 10-Year Gilt',         cat: 'bond', logo: TILE('UK',  '#012169', '#fff', 11) },
     { code: 'JP10Y',  name: 'Japan 10-Year JGB',       cat: 'bond', logo: TILE('JP',  '#bc002d', '#fff', 11) },
   ];
-  // Watchlist starts with whatever's already on the page (the 9 hard-coded rows)
-  const initialWatchlist = ['BTCUSD','EURUSD','XAUUSD','AAPL','CADJPY','ETHUSD','GOOG','LRCUSD','USOUSD'];
-  const watchlist = new Set(initialWatchlist);
+  // Watchlist persists to localStorage so other pages (markets) can read it.
+  const WATCHLIST_KEY = 'puprime.watchlist';
+  const initialWatchlist = ['BTCUSD','ETHUSD','XAUUSD','AAPL'];
+  function loadWatchlist() {
+    try {
+      const raw = localStorage.getItem(WATCHLIST_KEY);
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr) && arr.length) return new Set(arr);
+      }
+    } catch (e) {}
+    return new Set(initialWatchlist);
+  }
+  function saveWatchlist() {
+    try { localStorage.setItem(WATCHLIST_KEY, JSON.stringify([...watchlist])); } catch (e) {}
+  }
+  const watchlist = loadWatchlist();
 
   const addSymBackdrop = document.getElementById('addSymbolBackdrop');
   const addSymSheet    = document.getElementById('addSymbolSheet');
@@ -1755,6 +1769,7 @@
     const code = row.dataset.code;
     if (watchlist.has(code)) watchlist.delete(code);
     else watchlist.add(code);
+    saveWatchlist();
     renderSymbolList();
   });
 

@@ -1696,6 +1696,12 @@
     });
   });
 
+  // Activate the News tab when the URL hash is #news (e.g. linked from index)
+  if (location.hash === '#news') {
+    const newsTab = document.querySelector('.header-tab[data-view="news"]');
+    if (newsTab) newsTab.click();
+  }
+
   // ─── REGION SWITCH (chips + chart paths) ───
   // Each region has 3 indices (chip data) + 3 SVG line paths (chart data).
   // The <path> elements are pre-baked — we just swap their `d` attribute.
@@ -2176,12 +2182,17 @@
   // Per-category "view more" expansion state
   const expanded = {};
 
+  // Popular set for pre-login users — same defaults the home page uses
+  const POPULAR_CODES = ['BTCUSD','ETHUSD','XAUUSD','AAPL','EURUSD','CADJPY','GOOG','LRCUSD','USOUSD'];
   function renderInstrumentList(cat) {
     let rows;
     let truncated = false;
     if (cat === 'watchlist') {
       const set = loadWatchlistSet();
       rows = INSTRUMENTS.filter(r => set.has(r.sym));
+    } else if (cat === 'popular') {
+      const codes = new Set(POPULAR_CODES);
+      rows = INSTRUMENTS.filter(r => codes.has(r.sym));
     } else {
       rows = INSTRUMENTS.filter(r => r.cat === cat);
       // Share CFDs is hard-capped at 5 with no "View more"
@@ -2237,7 +2248,17 @@
       </div>
     `).join('') + watchlistActions + viewMore;
   }
-  renderInstrumentList('watchlist');
+  // Pre-login: replace the "Watchlist" tab with "Popular" since logged-out
+  // users have no saved watchlist + no in-page editor (the editor lives on home).
+  function isLoggedIn() {
+    try { return localStorage.getItem('puprime.loggedIn') === '1'; } catch (e) { return false; }
+  }
+  const firstTab = document.querySelector('#instrumentTabs .trend-tab[data-cat="watchlist"]');
+  if (firstTab && !isLoggedIn()) {
+    firstTab.dataset.cat = 'popular';
+    firstTab.textContent = 'Popular';
+  }
+  renderInstrumentList(firstTab ? firstTab.dataset.cat : 'popular');
 
   // ─── ADD-SYMBOL SHEET (mirrors home.html's behaviour) ───
   const addSymBackdrop = document.getElementById('addSymbolBackdrop');

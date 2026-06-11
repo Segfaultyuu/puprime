@@ -253,19 +253,22 @@
     const mount = document.querySelector('.phone') || document.body;
     mount.appendChild(wrap);
 
-    const ROUTES = {
-      home:    'home.html',
-      markets: 'markets.html',
-      trade:   'trade.html',
-      promo:   'promo.html',
-      funds:   'funds.html',
+    const isLoggedIn = () => {
+      try { return localStorage.getItem('puprime.loggedIn') === '1'; } catch (e) { return false; }
+    };
+    // Home destination depends on session: index.html for guests, home.html
+    // for logged-in users. Other routes are shared.
+    const routeFor = id => {
+      if (id === 'home')   return isLoggedIn() ? 'home.html' : 'index.html';
+      if (id === 'markets') return 'markets.html';
+      if (id === 'trade')   return 'trade.html';
+      if (id === 'promo')   return 'promo.html';
+      if (id === 'funds')   return 'funds.html';
+      return null;
     };
     // Tabs that require an authenticated session — pre-login users are
     // redirected to login.html instead.
     const PROTECTED = new Set(['trade', 'funds']);
-    const isLoggedIn = () => {
-      try { return localStorage.getItem('puprime.loggedIn') === '1'; } catch (e) { return false; }
-    };
     wrap.addEventListener('click', e => {
       const tab = e.target.closest('.vt-tab');
       if (!tab) return;
@@ -280,7 +283,7 @@
         location.href = 'login.html';
         return;
       }
-      const dest = ROUTES[id];
+      const dest = routeFor(id);
       if (dest) {
         const here = location.pathname.split('/').pop() || 'home.html';
         if (here !== dest) location.href = dest;

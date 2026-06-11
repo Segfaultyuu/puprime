@@ -521,6 +521,32 @@
     }
     .progress-meta strong { color: #fff; font-weight: 600; }
 
+    /* Guest variant — secondary login CTA replaces the progress bar */
+    .progress-cta {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      height: 36px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06px;
+      text-decoration: none;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .progress-cta:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.28);
+    }
+    .progress-cta svg { width: 12px; height: 12px; opacity: 0.85; }
+
     /* bottom spacer so content clears sticky nav */
     .promo-bottom-spacer { height: 140px; }
   </style>
@@ -626,20 +652,32 @@
     </div>
 
     <!-- ACTIVE PROGRESS CARD -->
-    <div class="progress-card">
+    <div class="progress-card" id="progressCard">
       <div class="progress-head">
         <div>
-          <div class="progress-name">Trade USD 5,000 this month — earn USD 25 cashback</div>
-          <div class="event-sub">Resets June 30, 2026 (UTC)</div>
+          <div class="progress-name" id="progressName">Trade USD 5,000 this month — earn USD 25 cashback</div>
+          <div class="event-sub" id="progressSub">Resets June 30, 2026 (UTC)</div>
         </div>
-        <span class="progress-tag">ACTIVE</span>
+        <span class="progress-tag" id="progressTag">ACTIVE</span>
       </div>
-      <div class="progress-bar">
-        <div class="progress-bar-fill" style="width: 64%;"></div>
+      <!-- Logged-in: progress bar + meta -->
+      <div id="progressLoggedIn">
+        <div class="progress-bar">
+          <div class="progress-bar-fill" style="width: 64%;"></div>
+        </div>
+        <div class="progress-meta">
+          <span><strong>USD 3,200</strong> traded</span>
+          <span>USD 5,000 goal</span>
+        </div>
       </div>
-      <div class="progress-meta">
-        <span><strong>USD 3,200</strong> traded</span>
-        <span>USD 5,000 goal</span>
+      <!-- Pre-login: login CTA instead of progress bar -->
+      <div id="progressGuest" style="display:none;">
+        <a class="progress-cta" href="login.html">
+          Log in to start
+          <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4.5 2.5L8 6L4.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
       </div>
     </div>
 
@@ -834,6 +872,31 @@
       if (t) t.classList.add('active');
     }, 0);
   });
+
+  // Progress card swaps based on session: logged-in shows the progress bar,
+  // guests get a "Log in to start" CTA + tease copy.
+  (function () {
+    let loggedIn = false;
+    try { loggedIn = localStorage.getItem('puprime.loggedIn') === '1'; } catch (e) {}
+    const guest = document.getElementById('progressGuest');
+    const live  = document.getElementById('progressLoggedIn');
+    const tag   = document.getElementById('progressTag');
+    const sub   = document.getElementById('progressSub');
+    if (!guest || !live) return;
+    if (loggedIn) {
+      guest.style.display = 'none';
+      live.style.display  = '';
+    } else {
+      guest.style.display = '';
+      live.style.display  = 'none';
+      if (tag) {
+        tag.textContent = 'GUEST';
+        tag.style.background = 'rgba(0,107,255,0.18)';
+        tag.style.color = 'var(--blue)';
+      }
+      if (sub) sub.textContent = 'Sign in to start tracking your monthly progress.';
+    }
+  })();
 
   // Category chip switching
   document.querySelectorAll('.cat-chip').forEach(c => {
