@@ -28,6 +28,8 @@
     body {
       background: #0b0c1a;
       min-height: 100vh;
+      overflow-x: hidden;       /* glows bleed past the 393px frame on real
+                                   mobile viewports — clip them at the body. */
     }
     .phone {
       width: 100%;
@@ -317,14 +319,19 @@
       letter-spacing: -0.18px;
     }
     .section-link {
-      font-size: 13px;
-      color: var(--blue);
-      font-weight: 600;
+      width: 22px;
+      height: 22px;
+      padding: 0;
       background: none;
       border: none;
       cursor: pointer;
-      font-family: inherit;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
+    .section-link svg { width: 16px; height: 16px; opacity: 0.6; }
+    .section-link:hover svg { opacity: 1; }
 
     /* ── REWARD CARDS GRID (2-col) ── */
     .reward-grid {
@@ -449,6 +456,7 @@
     .event-row.past .event-thumb { filter: grayscale(0.7) brightness(0.75); }
     .event-row.past .event-title { color: rgba(255,255,255,0.78); }
     .event-row.past .event-sub   { color: rgba(255,255,255,0.40); }
+    .event-row.past .event-arrow { display: none; }
     .event-arrow {
       width: 14px; height: 14px;
       color: var(--text-secondary);
@@ -540,9 +548,9 @@
 </head>
 <body>
 <div class="phone">
-  <div class="promo-glow-1"></div>
-  <div class="promo-glow-2"></div>
   <div class="scroll">
+    <div class="promo-glow-1"></div>
+    <div class="promo-glow-2"></div>
 
     <!-- STATUS BAR -->
     <div class="status-bar">
@@ -625,7 +633,7 @@
 
     <!-- CATEGORY CHIPS -->
     <div class="cat-row">
-      <button class="cat-chip active" type="button">All</button>
+      <button class="cat-chip active" type="button">Ongoing Events</button>
       <button class="cat-chip" type="button">Deposit</button>
       <button class="cat-chip" type="button">Trading</button>
       <button class="cat-chip" type="button">Referral</button>
@@ -667,7 +675,9 @@
     <div class="section">
       <div class="section-head">
         <span class="section-title">Regular Events</span>
-        <button class="section-link" type="button">See all</button>
+        <button class="section-link" type="button" aria-label="See all">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
       <div class="reward-grid">
 
@@ -723,7 +733,9 @@
     <div class="section">
       <div class="section-head">
         <span class="section-title">Past Events</span>
-        <button class="section-link" type="button">View all</button>
+        <button class="section-link" type="button" aria-label="View all">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
       <div class="event-list">
 
